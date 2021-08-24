@@ -1,0 +1,154 @@
+$primary:       #094151;
+$control-grey: #DFE6E8;
+
+$theme-colors: (
+    "primary": $primary,
+    "control-grey": $control-grey
+);
+
+$border-radius: 6px;
+
+// $utilities: (
+//     "rounded": (
+//         property: border-radius,
+//         class: rounded,
+//         values: (
+//             4: 10px,
+//         )
+//     ),
+// );
+
+@import "bootstrap/scss/bootstrap";
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,500;0,600;1,700&display=swap');
+
+
+// div[class*="col"] {
+//     outline: 1px solid red;
+// }
+
+html {
+    font-size: 0.8rem;
+}
+
+body{
+    font-family: 'Work Sans', sans-serif;
+    background: #eceff0;
+    color: $primary
+}
+
+.card {
+    color: black
+}
+
+.header {
+    background: #F8F8F8
+}
+
+h1 {
+    font-weight: 600
+}
+
+.country-select .dropdown-toggle::after {
+    margin-left: 3em;
+}
+
+.control-grey {
+    background: $control-grey;
+}
+
+.timeline-date-select button {
+    width: 100%;
+}
+
+.tooltip-inner {
+    background-color: $primary;
+    opacity: 1 !important;
+    font-size: 1.2em;
+}
+  
+.tooltip.bs-tooltip-right .arrow:before {
+    border-right-color: $primary !important;
+}
+  
+.tooltip.bs-tooltip-left .arrow:before {
+   border-left-color: $primary !important;
+}
+  
+.tooltip.bs-tooltip-bottom .arrow:before {
+   border-bottom-color: $primary !important;
+}
+  
+.tooltip.bs-tooltip-top .arrow:before {
+   border-top-color: $primary !important;
+}
+
+.badge-data-alert {
+    height: 25px !important;
+    width: 25px !important;
+    border-radius: 6px !important;
+}
+
+.badge-data-alert svg {
+    position: relative;
+    top: 5px;
+}
+
+.badge-data-alert path {
+    fill: $primary
+}
+
+.badge-inc-dec, .badge-ince-dec span {
+    color: #000 !important;
+}
+
+.chart-scale {
+    width: 10px !important;
+    height: 20px !important;
+    margin-right: 6px !important;
+}
+
+.noUi-target {
+    background: $control-grey !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
+}
+
+.noUi-horizontal {
+    height: 100% !important;
+}
+
+.noUi-horizontal .noUi-handle {
+    min-height:25px;
+    height: 100% !important;
+    top: 3px !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    background: $primary !important;
+    cursor: pointer !important;
+}
+
+.noUi-handle:before, .noUi-handle:after {
+    height: 10px !important;
+}
+
+.noUi-pips-horizontal {
+    top: 0 !important;
+}
+
+.noUi-value {
+    display: none;
+}
+
+.noUi-marker:first-child, .noUi-marker:nth-last-child(2) {
+    display:none !important;
+}
+
+.leaflet-container {
+    width: 100%; 
+    height: 530px;
+}
+
+hr {
+    opacity: 0.1 !important;
+}
