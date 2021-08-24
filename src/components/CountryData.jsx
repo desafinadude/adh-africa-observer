@@ -89,7 +89,7 @@ export class CountryData extends React.Component {
             self.setState({ selectedCountry: this.props.selectedCountries[0] });
         }
 
-        axios.get('http://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
         .then(function(response) {
 
 

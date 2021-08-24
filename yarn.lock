@@ -989,16 +989,6 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@mdi/js@^5.9.55":
-  version "5.9.55"
-  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-5.9.55.tgz#8f5bc4d924c23f30dab20545ddc768e778bbc882"
-  integrity sha512-BbeHMgeK2/vjdJIRnx12wvQ6s8xAYfvMmEAVsUx9b+7GiQGQ9Za8jpwp17dMKr9CgKRvemlAM4S7S3QOtEbp4A==
-
-"@mdi/react@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@mdi/react/-/react-1.5.0.tgz#461d2064ba12d509723bffc95e2f7169a6ac884a"
-  integrity sha512-NztRgUxSYD+ImaKN94Tg66VVVqXj4SmlDGzZoz48H9riJ+Awha56sfXH2fegw819NWo7KI3oeS1Es0lNQqwr0w==
-
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -2687,11 +2677,6 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
 
-custom-event@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/custom-event/-/custom-event-1.0.1.tgz#5d02a46850adf1b4a317946a3928fccb5bfd0425"
-  integrity sha1-XQKkaFCt8bSjF5RqOSj8y1v9BCU=
-
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -3061,11 +3046,6 @@ esutils@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
-
-ev-pos@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/ev-pos/-/ev-pos-1.0.1.tgz#8bd7726667dfc3322f7f33e12bfd8a79658f66d0"
-  integrity sha1-i9dyZmffwzIvfzPhK/2KeWWPZtA=
 
 eventemitter3@^4.0.0:
   version "4.0.7"
@@ -5243,14 +5223,6 @@ range-parser@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
   integrity sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
-
-rangeslider-js@^3.2.5:
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/rangeslider-js/-/rangeslider-js-3.2.5.tgz#945b557ba7494053cd7f848840e19112dffb0b1a"
-  integrity sha512-aGNQPNpM4Qd8w3UpAZGY2ax8naLiiSPDAT+jKi/cz9Gigg9ON1ODc9xpWS8Kjsf1eIBHAEXcYcQtRU7NqabM/Q==
-  dependencies:
-    custom-event "^1.0.1"
-    ev-pos "^1.0.1"
 
 react-bootstrap@^2.0.0-beta.4:
   version "2.0.0-beta.4"

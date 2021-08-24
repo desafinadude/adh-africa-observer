@@ -23,21 +23,15 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faRedo, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
-
-import Icon from '@mdi/react';
-import { mdiRefresh } from '@mdi/js';
-import { mdiPlay } from '@mdi/js';
 
 import { RiskMap } from './components/RiskMap';
 import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
-import * as resurgenceData from './data/resurgence.json';
-
-
+// import * as resurgenceData from './data/resurgence.json';
 
 export class App extends React.Component {
 
@@ -59,26 +53,26 @@ export class App extends React.Component {
 
     componentDidMount() {
         let self = this;
-        // axios.get('http://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=210404fe-e864-4aec-94a2-89764b7ba4b3&limit=100000')
-        // .then(function(response) {
-        //     self.setState({data: response.data.result.records});
-        //     let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
-        //     dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-        //     self.setState({dates: dates});
-        //     self.setState({loading: false});
-        // }).catch(function(error) {
-        //     self.setState({loading: false, error: true});
-        // })
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=210404fe-e864-4aec-94a2-89764b7ba4b3&limit=100000')
+        .then(function(response) {
+            self.setState({data: response.data.result.records});
+            let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
+            dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
+            self.setState({dates: dates});
+            self.setState({loading: false});
+        }).catch(function(error) {
+            self.setState({loading: false, error: true});
+        })
 
         // console.log(URI.query(window.location));
 
-        console.log(resurgenceData);
+        // console.log(resurgenceData);
         
-        self.setState({data: resurgenceData.result.records});
-        let dates = _.map(_.uniqBy(resurgenceData.result.records, 'date'),'date');
-        dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-        self.setState({dates: dates});
-        self.setState({loading: false});
+        // self.setState({data: resurgenceData.result.records});
+        // let dates = _.map(_.uniqBy(resurgenceData.result.records, 'date'),'date');
+        // dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
+        // self.setState({dates: dates});
+        // self.setState({loading: false});
 
 
     }
@@ -240,15 +234,7 @@ export class App extends React.Component {
                                         placement="bottom"
                                         overlay={<Tooltip>Play through entire timeline</Tooltip>}>
                                             <Button variant="control-grey" disabled>
-                                                <Icon 
-                                                    onClick={this.playTimeline}
-                                                    path={mdiPlay}
-                                                    size={1}
-                                                    horizontal
-                                                    vertical
-                                                    rotate={180}
-                                                    color="#094151"
-                                                    />
+                                                <FontAwesomeIcon icon={faPlay} color="#094151"/>
                                             </Button>
                                         </OverlayTrigger>
                                     </Col>
@@ -305,14 +291,7 @@ export class App extends React.Component {
                                         placement="top"
                                         overlay={<Tooltip>Jump to most recent</Tooltip>}>
                                             <Button variant="control-grey" style={{height: '100%'}} onClick={this.jumpToLatest}>
-                                                <Icon 
-                                                    path={mdiRefresh}
-                                                    size={1}
-                                                    horizontal
-                                                    vertical
-                                                    rotate={180}
-                                                    color="#094151"
-                                                    />
+                                                <FontAwesomeIcon icon={faRedo} color="#094151"/>
                                             </Button>
                                         </OverlayTrigger>
                                     </Col>
