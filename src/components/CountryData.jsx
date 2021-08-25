@@ -15,7 +15,7 @@ import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faCaretDown, faCaretUp, faInfo, faExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faCaretDown, faCaretUp, faInfo, faExclamation, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import * as field_desc from '../data/owid-field-descriptions.json';
 
@@ -162,7 +162,10 @@ export class CountryData extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <Row className="gx-2">
+                        <Row className="gx-2 align-items-center">
+                            <Col xs="auto">
+                                <Button variant="light-grey" style={{color: "#094151"}} onClick={() => self.props.onDeselectCountry() }><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
+                            </Col>
                             <Col xs="auto">
                                 <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
                                     {this.state.selectedCountry.iso_code != undefined ?
@@ -181,13 +184,13 @@ export class CountryData extends React.Component {
                                     }
                                 </div>
                             </Col>
-                            <Col className="position-relative">
-                                <div className="position-relative top-50 start-50 translate-middle">{this.state.selectedCountry.location}</div>
+                            <Col>
+                                <div>{this.state.selectedCountry.location}</div>
                             </Col>
                             <Col xs="auto" className="justify-content-between d-none d-lg-flex">
-                                <Badge bg="control-grey" className="badge-data-alert">
+                                {/* <Badge bg="control-grey" className="badge-data-alert">
                                     <FontAwesomeIcon icon={faExclamation} />
-                                </Badge>
+                                </Badge> */}
                                 {/* <Badge bg="control-grey" className="badge-data-alert">
                                     <FontAwesomeIcon icon={faInfo} />
                                 </Badge>
@@ -208,7 +211,7 @@ export class CountryData extends React.Component {
                     </Card.Body>
                 </Card>
 
-                <Card className="border-0 rounded mt-5">
+                <Card className="border-0 rounded mt-4">
                     <Card.Body>
                         <h5>Compare data to new cases per million</h5>
                         <hr/>
@@ -217,11 +220,11 @@ export class CountryData extends React.Component {
                             <Col>
                                 <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
                                     <option>Add a comparison metric</option>
-                                    <option value="hosp_patients">hosp_patients</option>
-                                    <option value="hosp_patients_per_million">hosp_patients_per_million</option>
-                                    <option value="hospital_beds_per_thousand">hospital_beds_per_thousand</option>
-                                    <option value="icu_patients">icu_patients</option>
-                                    <option value="icu_patients_per_million">icu_patients_per_million</option>
+                                    {/* <option value="hosp_patients">hosp_patients</option> */}
+                                    {/* <option value="hosp_patients_per_million">hosp_patients_per_million</option> */}
+                                    {/* <option value="hospital_beds_per_thousand">hospital_beds_per_thousand</option> */}
+                                    {/* <option value="icu_patients">icu_patients</option> */}
+                                    {/* <option value="icu_patients_per_million">icu_patients_per_million</option> */}
                                     <option value="new_cases">new_cases</option>
                                     <option value="new_cases_per_million">new_cases_per_million</option>
                                     <option value="new_cases_smoothed">new_cases_smoothed</option>
@@ -238,14 +241,14 @@ export class CountryData extends React.Component {
                                     <option value="new_vaccinations_smoothed">new_vaccinations_smoothed</option>
                                     <option value="new_vaccinations_smoothed_per_million">new_vaccinations_smoothed_per_million</option>
                                     <option value="people_fully_vaccinated">people_fully_vaccinated</option>
-                                    <option value="people_fully_vaccinated_per_hundred">people_fully_vaccinated_per_hundred</option>
+                                    {/* <option value="people_fully_vaccinated_per_hundred">people_fully_vaccinated_per_hundred</option> */}
                                     <option value="people_vaccinated">people_vaccinated</option>
-                                    <option value="people_vaccinated_per_hundred">people_vaccinated_per_hundred</option>
+                                    {/* <option value="people_vaccinated_per_hundred">people_vaccinated_per_hundred</option> */}
                                     <option value="positive_rate">positive_rate</option>
                                     <option value="reproduction_rate">reproduction_rate</option>
                                     <option value="stringency_index">stringency_index</option>
                                     <option value="tests_per_case">tests_per_case</option>
-                                    <option value="tests_units">tests_units</option>
+                                    {/* <option value="tests_units">tests_units</option> */}
                                     <option value="total_cases">total_cases</option>
                                     <option value="total_cases_per_million">total_cases_per_million</option>
                                     <option value="total_deaths">total_deaths</option>
@@ -253,11 +256,11 @@ export class CountryData extends React.Component {
                                     <option value="total_tests">total_tests</option>
                                     <option value="total_tests_per_thousand">total_tests_per_thousand</option>
                                     <option value="total_vaccinations">total_vaccinations</option>
-                                    <option value="total_vaccinations_per_hundred">total_vaccinations_per_hundred</option>
-                                    <option value="weekly_hosp_admissions">weekly_hosp_admissions</option>
-                                    <option value="weekly_hosp_admissions_per_million">weekly_hosp_admissions_per_million</option>
-                                    <option value="weekly_icu_admissions">weekly_icu_admissions</option>
-                                    <option value="weekly_icu_admissions_per_million">weekly_icu_admissions_per_million</option>
+                                    {/* <option value="total_vaccinations_per_hundred">total_vaccinations_per_hundred</option> */}
+                                    {/* <option value="weekly_hosp_admissions">weekly_hosp_admissions</option> */}
+                                    {/* <option value="weekly_hosp_admissions_per_million">weekly_hosp_admissions_per_million</option> */}
+                                    {/* <option value="weekly_icu_admissions">weekly_icu_admissions</option> */}
+                                    {/* <option value="weekly_icu_admissions_per_million">weekly_icu_admissions_per_million</option> */}
                                 </Form.Select>   
                             </Col>
                         </Row>

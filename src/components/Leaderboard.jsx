@@ -81,14 +81,7 @@ export class Leaderboard extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <Row>
-                            <Col><h5>New cases per million (7 day average)</h5></Col>
-                            {/* <Col xs="auto">
-                                <Button size="sm" onClick={self.shuffle} variant="control-grey">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Button>
-                            </Col> */}
-                        </Row>
+                        <h5>New cases per million (7 day average)</h5>
                         <hr/>
                         
                             {self.props.data.map((country,index) => {

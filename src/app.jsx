@@ -24,20 +24,20 @@ import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
 
 import { RiskMap } from './components/RiskMap';
 import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
-// import * as resurgenceData from './data/resurgence.json';
 
 export class App extends React.Component {
 
     constructor(){
         super();
         this.state = {
+            // dataUrl:'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=210404fe-e864-4aec-94a2-89764b7ba4b3&limit=100000',
+            dataUrl: 'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=fd38833f-6482-4772-b2d1-8859ea7726f8&limit=100000',
             error: false,
             loading: true,
             data: [],
@@ -56,7 +56,7 @@ export class App extends React.Component {
 
     componentDidMount() {
         let self = this;
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=210404fe-e864-4aec-94a2-89764b7ba4b3&limit=100000')
+        axios.get(self.state.dataUrl)
         .then(function(response) {
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
@@ -140,8 +140,13 @@ export class App extends React.Component {
         let self = this;
         if(_.find(self.state.selectedCountries, function(o) { return o.iso_code == country.iso_code }) == undefined) {
             // self.setState({selectedCountries: [...self.state.selectedCountries, country]});
-            self.setState({selectedCountries: [country]})
+            self.setState({selectedCountries: [country]});
         }
+    }
+
+    onDeselectCountry = () => {
+        let self = this;
+        self.setState({selectedCountries: []});
     }
 
     countryRemove = (country) => {
@@ -283,21 +288,21 @@ export class App extends React.Component {
                                 <Row className="gx-2">
                                     <Col xs="auto">
                                         
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
                                             { Array.from({length: 31}, (x, i) => 
                                                 <option value={i+1}>{i+1}</option>
                                             )}
                                         </Form.Select>
                                     </Col>
                                     <Col>
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
                                             {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
                                                 <option value={month}>{month}</option>
                                             )}
                                         </Form.Select>
                                     </Col>
                                     <Col>
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
                                             <option value="2020">2020</option>
                                             <option value="2021">2021</option>
                                         </Form.Select>
@@ -327,7 +332,7 @@ export class App extends React.Component {
                         <Col>
                             { 
                                 this.state.selectedCountries.length > 0 ? 
-                                    <CountryData selectedCountries={this.state.selectedCountries} /> 
+                                    <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
                                 :
                                     <Leaderboard data={this.state.selectedDateData}/>
                                     

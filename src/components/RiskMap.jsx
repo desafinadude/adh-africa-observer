@@ -80,9 +80,10 @@ export class RiskMap extends React.Component {
         let selectedColor = '';
 
         _.forEach(self.state.scale, function(color) {
-            if(amount <= color.high && amount >= color.low) {
+            if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
                 selectedColor = color.color;
             }
+            
         })
 
         return selectedColor;
@@ -185,16 +186,16 @@ export class RiskMap extends React.Component {
                                     <Badge style={{background: '#FFECEC',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> 0%
                                 </div>
                                 <div className="my-1">
-                                    <Badge style={{background: '#E0F2FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> -15%
+                                    <Badge style={{background: '#E0F2FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> 15%
                                 </div>
                                 <div className="my-1">
-                                    <Badge style={{background: '#9DD6FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> -25%
+                                    <Badge style={{background: '#9DD6FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
                                 </div>
                                 <div className="my-1">
-                                    <Badge style={{background: '#70C3FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> -50%
+                                    <Badge style={{background: '#70C3FF',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
                                 </div>
                                 <div className="my-1">
-                                    <Badge style={{background: '#2E9FF1',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> &lt; -100% decrease
+                                    <Badge style={{background: '#2E9FF1',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> &lt; 100% decrease
                                 </div>
                             </div>
                         </MapContainer>

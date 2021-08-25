@@ -7,10 +7,12 @@ import * as countriesList from '../data/countries.json';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Badge from 'react-bootstrap/Badge'
+import Badge from 'react-bootstrap/Badge';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock, faCaretDown, faCaretUp, faInfo, faExclamation } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretUp, faExclamation, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 import _ from 'lodash';
@@ -70,11 +72,10 @@ export class LeaderboardItem extends React.Component {
     }
 
     componentDidMount() {
-        
-
     }
 
     componentDidUpdate() {
+        
     }
 
     getColor = (amount) => {
@@ -82,7 +83,7 @@ export class LeaderboardItem extends React.Component {
         let selectedColor = '';
 
         _.forEach(self.state.scale, function(color) {
-            if(amount <= color.high && amount >= color.low) {
+            if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
                 selectedColor = color.color;
             }
         })
@@ -97,7 +98,7 @@ export class LeaderboardItem extends React.Component {
             <>
                 
                 <div className="my-2">
-                    <Row className="gx-2"> {/*  className={this.props.index > 9 && this.props.index < 45 ? 'visually-hidden' : ''} */}
+                    <Row className="gx-2">
                         <Col xs="auto">
                             <div style={{width: '20px'}}>{this.props.index + 1}.</div>
                         </Col>
@@ -126,16 +127,32 @@ export class LeaderboardItem extends React.Component {
                         <Col xs="auto" className="d-grid">
                             <Button style={{background: this.getColor(this.props.country.change), width: '80px'}} className="border-0 badge-inc-dec px-0 py-0">
                                 <FontAwesomeIcon icon={ this.props.country.change > 0 ? faCaretUp : faCaretDown }/>
-                                &nbsp;<span>{ Math.abs(this.props.country.change).toFixed(2) }%</span>
+                                &nbsp;<span>{ Math.round(this.props.country.change) }%</span>
                             </Button>
                         </Col>
                         <Col xs={2}>
-                            <Sparklines data={[5, 10, 5, 20, 8, 15]}><SparklinesLine /></Sparklines>
+                            <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip>New cases over the last 14 days.</Tooltip>}>
+                                <Sparklines data={this.props.country.case_history.split('|')}>
+                                    <SparklinesLine style={{ strokeWidth: 3, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
+                                </Sparklines>
+                            </OverlayTrigger>
                         </Col>
                         <Col xs="auto" className="justify-content-between d-none d-lg-flex">
-                            <Badge bg="control-grey" className="badge-data-alert">
-                                <FontAwesomeIcon icon={faExclamation} />
-                            </Badge>
+                            { this.props.country.data_gaps == 1 ?
+                                <OverlayTrigger
+                                placement="bottom"
+                                overlay={<Tooltip>This data is incomplete. Data gaps are defined as successive blocks of the same number of daily cases.</Tooltip>}>
+                                    <Badge bg="control-grey" className="badge-data-alert">
+                                        <FontAwesomeIcon icon={faExclamation} />
+                                    </Badge>
+                                </OverlayTrigger>
+                            :
+                                <Badge bg="control-grey" className="badge-data-alert" style={{opacity: 0.25}}>
+                                    <FontAwesomeIcon icon={faMinus} />
+                                </Badge>
+                            }
                             {/* <Badge bg="control-grey" className="badge-data-alert">
                                 <FontAwesomeIcon icon={faInfo} />
                             </Badge>
