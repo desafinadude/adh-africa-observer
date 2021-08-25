@@ -26,18 +26,15 @@ export class CountryData extends React.Component {
             selectedCountry: '',
             selectedMetric: '',
             options: {
-                grid: { top: 8, right: 40, bottom: 24, left: 40 },
+                grid: { bottom: 60},
                 dataZoom: [
                     {
                         show: true,
                         start: 50,
-                        end: 100
+                        end: 100,
+                        
                     },
-                    {
-                        type: 'inside',
-                        start: 50,
-                        end: 100
-                    },
+                  
                     
                 ],
                 xAxis: {

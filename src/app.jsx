@@ -23,7 +23,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faExclamationTriangle, faRedo, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 
 import { RiskMap } from './components/RiskMap';
@@ -43,6 +43,9 @@ export class App extends React.Component {
             data: [],
             dates: [],
             currentDate: '',
+            daySelect: React.createRef(),
+            monthSelect: React.createRef(),
+            yearSelect: React.createRef(),
             currentDateCount: undefined,
             selectedDateData: [],
             playingTimeline: false,
@@ -60,21 +63,11 @@ export class App extends React.Component {
             dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
             self.setState({dates: dates});
             self.setState({loading: false});
+            self.setState({currentDateCount: self.state.dates.length-1});
         }).catch(function(error) {
             self.setState({loading: false, error: true});
         })
-
-        // console.log(URI.query(window.location));
-
-        // console.log(resurgenceData);
-        
-        // self.setState({data: resurgenceData.result.records});
-        // let dates = _.map(_.uniqBy(resurgenceData.result.records, 'date'),'date');
-        // dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-        // self.setState({dates: dates});
-        // self.setState({loading: false});
-
-
+      
     }
 
     onUpdate = (render, handle, value, un, percent) => {
@@ -86,25 +79,47 @@ export class App extends React.Component {
         });
     }
 
-    dateSelect = () => {
-        console.log(ReactDOM.findDOMNode(this.refs.daySelect));
+    dateSelect = (e) => {
+        let self = this;
+        
+        let day = this.state.daySelect.current.value;
+        let month = this.state.monthSelect.current.value;
+        let year = this.state.yearSelect.current.value;
+
+        let date = new Date(day + ' ' + month + ' ' + year).toISOString().split('T')[0];
+        date = date + 'T00:00:00';
+
+        let dateCount = _.findIndex(self.state.dates, function(o) { return o == date; });
+
+        if(dateCount > -1) {
+            self.setState({
+                currentDate: date,
+                currentDateCount: dateCount,
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[dateCount]; }),['change'],['desc'])
+            });
+            const { ref } = this.state;
+            if (ref && ref.noUiSlider) {
+                ref.noUiSlider.set(dateCount);
+            }
+        }
+        
     }
 
     playTimeline = () => {
-        // let self = this;
-        // this.setState({ textValue: 0, playingTimeline: !this.state.playingTimeline });
+        let self = this;
+        // self.setState({ playingTimeline: self.state.playingTimeline == true ? false : true });
 
         // if(this.state.playingTimeline == true) {
-        //     setTimeout(function() { 
-        //         if (this.state.currentDateCount < this.state.dates.length) {
+        //     if( self.state.currentDateCount < self.state.dates.length) {
+        //         setTimeout(function() { 
         //             self.setState({ 
         //                 currentDate: self.state.dates[self.state.currentDateCount],
-        //                 currentDateCount: self.state.currentDateCount,
         //                 selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[self.state.currentDateCount]; }),['change'],['desc'])
         //             }); 
-        //         }
-        //         self.setState({currentDateCount: self.state.currentDateCount + 1});
-        //     }, 500);
+        //             self.setState({ currentDateCount: self.state.currentDateCount + 1 }); 
+        //         }, 2000);
+        //         self.playTimeline();
+        //     }
         // }
     }
 
@@ -233,8 +248,8 @@ export class App extends React.Component {
                                         <OverlayTrigger
                                         placement="bottom"
                                         overlay={<Tooltip>Play through entire timeline</Tooltip>}>
-                                            <Button variant="control-grey" disabled>
-                                                <FontAwesomeIcon icon={faPlay} color="#094151"/>
+                                            <Button variant="control-grey" onClick={this.playTimeline} disabled>
+                                                <FontAwesomeIcon icon={ this.state.playingTimeline ? faPause : faPlay} color="#094151"/>
                                             </Button>
                                         </OverlayTrigger>
                                     </Col>
@@ -267,24 +282,25 @@ export class App extends React.Component {
                                 <h5 className="mt-1">Or select a specific date:</h5>
                                 <Row className="gx-2">
                                     <Col xs="auto">
-                                        <DropdownButton ref="daySelect" title={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } variant="control-grey" style={{height: '100%'}} disabled>
+                                        
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
                                             { Array.from({length: 31}, (x, i) => 
-                                                <Dropdown.Item key={i} onClick={() => this.dateSelect()}>{i+1}</Dropdown.Item>
+                                                <option value={i+1}>{i+1}</option>
                                             )}
-                                        </DropdownButton>
+                                        </Form.Select>
                                     </Col>
                                     <Col>
-                                        <DropdownButton ref="monthSelect" title={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } variant="control-grey" style={{height: '100%'}} disabled>
-                                            {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) => {
-                                                <Dropdown.Item key={index} onClick={() => this.dateSelect()}>{month}</Dropdown.Item>
-                                            })}
-                                        </DropdownButton>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
+                                            {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
+                                                <option value={month}>{month}</option>
+                                            )}
+                                        </Form.Select>
                                     </Col>
                                     <Col>
-                                        <DropdownButton ref="yearSelect" title={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } variant="control-grey" style={{height: '100%'}} disabled>
-                                            <Dropdown.Item key={2020} onClick={() => this.dateSelect()}>2020</Dropdown.Item>
-                                            <Dropdown.Item key={2021} onClick={() => this.dateSelect()}>2021</Dropdown.Item>
-                                        </DropdownButton>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                        </Form.Select>
                                     </Col>
                                     <Col xs="auto">
                                         <OverlayTrigger
