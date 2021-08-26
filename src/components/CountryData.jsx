@@ -6,7 +6,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Badge from 'react-bootstrap/Badge';
 import Form from 'react-bootstrap/Form';
 
 import ReactECharts from 'echarts-for-react';
@@ -15,7 +14,7 @@ import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faCaretDown, faCaretUp, faInfo, faExclamation, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import * as field_desc from '../data/owid-field-descriptions.json';
 
@@ -26,22 +25,32 @@ export class CountryData extends React.Component {
             selectedCountry: '',
             selectedMetric: '',
             options: {
-                grid: { bottom: 60},
+                grid: { top:20, bottom: 80, left: 60, right: 60},
                 dataZoom: [
                     {
+                        type: 'slider',
+                        xAxisIndex: [0],
                         show: true,
-                        start: 50,
+                        start: 0,
                         end: 100,
-                        
+                        bottom: 10,
+                        labelFormatter: function (value, valueStr) {
+                            return valueStr.split('T')[0];
+                        }
                     },
                   
                     
                 ],
                 xAxis: {
+                    offset: 10,
+                    axisLabel: {
+                        formatter: '{MMM} {yy}'
+                    },
                     data: [],
                 },
                 yAxis: [
                     {
+                        
                         type: 'value',
                         name: '',
                         position: 'left',
@@ -55,7 +64,19 @@ export class CountryData extends React.Component {
                         name: '',
                         position: 'right',
                         axisLabel: {
-                            formatter: '{value}'
+                            formatter: (function(value){
+                                let val = '';
+                                if(value >= 1000000) {
+                                    val = value / 1000000 + 'm';
+                                } else if(value >= 1000) {
+                                    val = value / 1000 + 'k';
+                                } else {
+                                    val = value;
+                                } 
+
+
+                                return val;
+                            })
                         }
                     }
                 ],
@@ -68,6 +89,15 @@ export class CountryData extends React.Component {
                 ],
                 tooltip: {
                     trigger: 'axis',
+                    formatter: function (params) {
+                        console.log(params);
+                        let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
+                        _.forEach(params, function(param) {
+                            label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + param.value + '<br/>'
+                        })
+
+                        return label
+                    }
                 }
             }
         }
@@ -86,6 +116,8 @@ export class CountryData extends React.Component {
             self.setState({ selectedCountry: this.props.selectedCountries[0] });
         }
 
+        
+
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
         .then(function(response) {
 
@@ -97,6 +129,7 @@ export class CountryData extends React.Component {
 
             let series = [
                 {
+                    name: 'New Cases Per Million',
                     data: data,
                     type: 'bar',
                     smooth: true,
@@ -110,6 +143,7 @@ export class CountryData extends React.Component {
                 overlay = _.map(response.data.result.records, self.state.selectedMetric);
                 series.push(
                     {
+                        name: self.state.selectedMetric,
                         data: overlay,
                         type: 'line',
                         smooth: true,
@@ -121,11 +155,13 @@ export class CountryData extends React.Component {
                         },
                     },
                 )
+            } else {
+                series.splice(1,1);
             }
 
             self.setState({
                 options: {
-                    grid: { top: 8, right: 8, bottom: 24, left: 36 },
+                    
                     xAxis: {
                         type: 'category', 
                         axisLabel: {
@@ -147,14 +183,8 @@ export class CountryData extends React.Component {
     }
 
     selectMetric = (e) => {
-
         this.setState({selectedMetric: e.target.value})
-
     }
-
-
-
-   
 
     render() {
         let self = this;
@@ -187,26 +217,6 @@ export class CountryData extends React.Component {
                             <Col>
                                 <div>{this.state.selectedCountry.location}</div>
                             </Col>
-                            <Col xs="auto" className="justify-content-between d-none d-lg-flex">
-                                {/* <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faExclamation} />
-                                </Badge> */}
-                                {/* <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Badge>
-                                <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Badge>
-                                <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Badge>
-                                <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Badge>
-                                <Badge bg="control-grey" className="badge-data-alert">
-                                    <FontAwesomeIcon icon={faInfo} />
-                                </Badge> */}
-                            </Col>
                         </Row>
                     </Card.Body>
                 </Card>
@@ -219,72 +229,74 @@ export class CountryData extends React.Component {
                             <Col xs="auto" className="position-relative"><div className="position-relative top-50 start-50 translate-middle"><strong>Overlay dataset:</strong></div></Col>
                             <Col>
                                 <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
-                                    <option>Add a comparison metric</option>
+                                    <option value="">Add a comparison metric</option>
+                                    <option value="new_cases">New Cases</option>
+                                    <option value="new_cases_smoothed">New Cases Smoothed</option>
+                                    <option value="new_cases_smoothed_per_million">New Cases Smoothed Per Million</option>
+                                    <option value="new_deaths">New Deaths</option>
+                                    <option value="new_deaths_per_million">New Deaths Per Million</option>
+                                    <option value="new_deaths_smoothed">New Deaths Smoothed</option>
+                                    <option value="new_deaths_smoothed_per_million">New Deaths Smoothed Per Million</option>
+                                    <option value="new_tests">New Tests</option>
+                                    <option value="new_tests_per_thousand">New Tests Per Thousand</option>
+                                    <option value="new_tests_smoothed">New Tests Smoothed</option>
+                                    <option value="new_tests_smoothed_per_thousand">New Tests Smoothed Per Thousand</option>
+                                    <option value="new_vaccinations">New Vaccinations</option>
+                                    <option value="new_vaccinations_smoothed">New Vaccinations Smoothed</option>
+                                    <option value="new_vaccinations_smoothed_per_million">New Vaccinations Smoothed Per Million</option>
+                                    <option value="people_fully_vaccinated">People Fully Vaccinated</option>
+                                    <option value="people_vaccinated">People Vaccinated</option>
+                                    <option value="positive_rate">Positive Rate</option>
+                                    <option value="reproduction_rate">Reproduction Rate</option>
+                                    <option value="stringency_index">Stringency Index</option>
+                                    <option value="tests_per_case">Tests Per Case</option>
+                                    <option value="total_cases">Total Cases</option>
+                                    <option value="total_cases_per_million">Total Cases Per Million</option>
+                                    <option value="total_deaths">Total Deaths</option>
+                                    <option value="total_deaths_per_million">Total Deaths Per Million</option>
+                                    <option value="total_tests">Total Tests</option>
+                                    <option value="total_tests_per_thousand">Total Tests Per Thousand</option>
+                                    <option value="total_vaccinations">Total Vaccinations</option>
                                     {/* <option value="hosp_patients">hosp_patients</option> */}
                                     {/* <option value="hosp_patients_per_million">hosp_patients_per_million</option> */}
                                     {/* <option value="hospital_beds_per_thousand">hospital_beds_per_thousand</option> */}
                                     {/* <option value="icu_patients">icu_patients</option> */}
                                     {/* <option value="icu_patients_per_million">icu_patients_per_million</option> */}
-                                    <option value="new_cases">new_cases</option>
-                                    <option value="new_cases_per_million">new_cases_per_million</option>
-                                    <option value="new_cases_smoothed">new_cases_smoothed</option>
-                                    <option value="new_cases_smoothed_per_million">new_cases_smoothed_per_million</option>
-                                    <option value="new_deaths">new_deaths</option>
-                                    <option value="new_deaths_per_million">new_deaths_per_million</option>
-                                    <option value="new_deaths_smoothed">new_deaths_smoothed</option>
-                                    <option value="new_deaths_smoothed_per_million">new_deaths_smoothed_per_million</option>
-                                    <option value="new_tests">new_tests</option>
-                                    <option value="new_tests_per_thousand">new_tests_per_thousand</option>
-                                    <option value="new_tests_smoothed">new_tests_smoothed</option>
-                                    <option value="new_tests_smoothed_per_thousand">new_tests_smoothed_per_thousand</option>
-                                    <option value="new_vaccinations">new_vaccinations</option>
-                                    <option value="new_vaccinations_smoothed">new_vaccinations_smoothed</option>
-                                    <option value="new_vaccinations_smoothed_per_million">new_vaccinations_smoothed_per_million</option>
-                                    <option value="people_fully_vaccinated">people_fully_vaccinated</option>
                                     {/* <option value="people_fully_vaccinated_per_hundred">people_fully_vaccinated_per_hundred</option> */}
-                                    <option value="people_vaccinated">people_vaccinated</option>
                                     {/* <option value="people_vaccinated_per_hundred">people_vaccinated_per_hundred</option> */}
-                                    <option value="positive_rate">positive_rate</option>
-                                    <option value="reproduction_rate">reproduction_rate</option>
-                                    <option value="stringency_index">stringency_index</option>
-                                    <option value="tests_per_case">tests_per_case</option>
                                     {/* <option value="tests_units">tests_units</option> */}
-                                    <option value="total_cases">total_cases</option>
-                                    <option value="total_cases_per_million">total_cases_per_million</option>
-                                    <option value="total_deaths">total_deaths</option>
-                                    <option value="total_deaths_per_million">total_deaths_per_million</option>
-                                    <option value="total_tests">total_tests</option>
-                                    <option value="total_tests_per_thousand">total_tests_per_thousand</option>
-                                    <option value="total_vaccinations">total_vaccinations</option>
                                     {/* <option value="total_vaccinations_per_hundred">total_vaccinations_per_hundred</option> */}
                                     {/* <option value="weekly_hosp_admissions">weekly_hosp_admissions</option> */}
                                     {/* <option value="weekly_hosp_admissions_per_million">weekly_hosp_admissions_per_million</option> */}
                                     {/* <option value="weekly_icu_admissions">weekly_icu_admissions</option> */}
-                                    {/* <option value="weekly_icu_admissions_per_million">weekly_icu_admissions_per_million</option> */}
+                                    {/* <option value="weekly_icu_admissions_per_million">weekly_icu_admissions_per_million</option> */}                                    
                                 </Form.Select>   
                             </Col>
                         </Row>
-                        <ReactECharts option={this.state.options} />
-                            <hr/>
-                            { this.state.selectedMetric != '' ?
-                                <>
-                                    <h6 className="mt-3">What is "{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column }" ?</h6>
-                                    <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].description }</p>
-                                    <hr/>
-                                    <Row className="align-items-center">
-                                        <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].source }</span></Col>
-                                    </Row>
-                                </>
-                                : 
-                                <>
-                                    <h6 className="mt-3">What is "new_cases_per_million" ?</h6>
-                                    <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].description }</p>
-                                    <hr/>
-                                    <Row className="align-items-center">
-                                        <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].source }</span></Col>
-                                    </Row>
-                                </>
-                            }
+                        <ReactECharts 
+                        option={this.state.options} 
+                        style={{height: '300px'}}
+                        />
+                        <hr/>
+                        { this.state.selectedMetric != '' ?
+                            <>
+                                <h6 className="mt-3">What is "{ (_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column).replaceAll('_',' ') }" ?</h6>
+                                <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].description }</p>
+                                <hr/>
+                                <Row className="align-items-center">
+                                    <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].source }</span></Col>
+                                </Row>
+                            </>
+                            : 
+                            <>
+                                <h6 className="mt-3">What is "New Cases Per Million" ?</h6>
+                                <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].description }</p>
+                                <hr/>
+                                <Row className="align-items-center">
+                                    <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].source }</span></Col>
+                                </Row>
+                            </>
+                        }
                     </Card.Body>
                 </Card>
 
