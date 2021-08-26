@@ -77,6 +77,7 @@ export class App extends React.Component {
           currentDateCount: parseInt(value[0]-1),
           selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[parseInt(value[0]-1)]; }),['change'],['desc'])
         });
+
     }
 
     dateSelect = (e) => {
@@ -107,20 +108,7 @@ export class App extends React.Component {
 
     playTimeline = () => {
         let self = this;
-        // self.setState({ playingTimeline: self.state.playingTimeline == true ? false : true });
-
-        // if(this.state.playingTimeline == true) {
-        //     if( self.state.currentDateCount < self.state.dates.length) {
-        //         setTimeout(function() { 
-        //             self.setState({ 
-        //                 currentDate: self.state.dates[self.state.currentDateCount],
-        //                 selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[self.state.currentDateCount]; }),['change'],['desc'])
-        //             }); 
-        //             self.setState({ currentDateCount: self.state.currentDateCount + 1 }); 
-        //         }, 2000);
-        //         self.playTimeline();
-        //     }
-        // }
+        
     }
 
     jumpToLatest = () => {
@@ -293,21 +281,21 @@ export class App extends React.Component {
                                         
                                         <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
                                             { Array.from({length: 31}, (x, i) => 
-                                                <option value={i+1}>{i+1}</option>
+                                                <option key={i+1} value={i+1}>{i+1}</option>
                                             )}
                                         </Form.Select>
                                     </Col>
                                     <Col>
                                         <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
                                             {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
-                                                <option value={month}>{month}</option>
+                                                <option key={index} value={month}>{month}</option>
                                             )}
                                         </Form.Select>
                                     </Col>
                                     <Col>
                                         <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
-                                            <option value="2020">2020</option>
-                                            <option value="2021">2021</option>
+                                            <option key="2020" value="2020">2020</option>
+                                            <option key="2021" value="2021">2021</option>
                                         </Form.Select>
                                     </Col>
                                     <Col xs="auto">
@@ -337,7 +325,7 @@ export class App extends React.Component {
                                 this.state.selectedCountries.length > 0 ? 
                                     <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
                                 :
-                                    <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect}/>
+                                   <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect}/>
                                     
                             }
                         </Col>

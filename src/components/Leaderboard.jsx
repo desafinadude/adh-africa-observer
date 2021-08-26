@@ -53,11 +53,11 @@ export class Leaderboard extends React.Component {
                         <h5>New cases per million (7 day average)</h5>
                         <hr/>
                         
-                            {self.props.data.map((country,index) => {
-                                if(index < self.state.limit) {
-                                    return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
-                                }
-                            })}
+                        {self.props.data.map((country,index) => {
+                            if(index < self.state.limit) {
+                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                            }
+                        })}
                         
 
                         <Button variant="control-grey" className="w-100 d-flex justify-content-between my-3" onClick={self.toggleList}>
@@ -69,7 +69,7 @@ export class Leaderboard extends React.Component {
                             (<>
                                 {self.props.data.map((country,index) => {
                                     if(index > 44) {
-                                        return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                                     }
                                 })}
                             </>) : ''

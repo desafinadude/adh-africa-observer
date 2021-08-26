@@ -126,7 +126,7 @@ export class LeaderboardItem extends React.Component {
                         </Col>
                         <Col xs="auto" className="d-grid">
                             <OverlayTrigger
-                            placement="bottom"
+                            placement="left"
                             overlay={this.props.country.change == null ? <Tooltip>No data available for this day.</Tooltip> : <Tooltip>Percentage change on this day compared to the previous week.</Tooltip>}>
                                 <Button style={{background: this.getColor(this.props.country.change), width: '80px'}} className="border-0 badge-inc-dec px-0 py-0">
                                     {this.props.country.change == null ?
@@ -142,17 +142,19 @@ export class LeaderboardItem extends React.Component {
                         </Col>
                         <Col xs={2}>
                             <OverlayTrigger
-                            placement="bottom"
+                            placement="left"
                             overlay={<Tooltip>New cases over the last 14 days.</Tooltip>}>
-                                <Sparklines data={this.props.country.case_history.split('|')}>
-                                    <SparklinesLine style={{ strokeWidth: 3, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
-                                </Sparklines>
+                                <div>
+                                    <Sparklines data={this.props.country.case_history.replaceAll('nan','0.0').split('|')}>
+                                        <SparklinesLine style={{ strokeWidth: 3, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
+                                    </Sparklines>
+                                </div>
                             </OverlayTrigger>
                         </Col>
                         <Col xs="auto" className="justify-content-between d-none d-lg-flex">
                             { this.props.country.data_gaps == 1 ?
                                 <OverlayTrigger
-                                placement="bottom"
+                                placement="left"
                                 overlay={<Tooltip>This data is incomplete. Data gaps are defined as successive blocks of the same number of daily cases.</Tooltip>}>
                                     <Badge bg="control-grey" className="badge-data-alert">
                                         <FontAwesomeIcon icon={faExclamation} />
