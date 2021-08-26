@@ -268,8 +268,8 @@ export class CountryData extends React.Component {
                             <hr/>
                             { this.state.selectedMetric != '' ?
                                 <>
-                                    <h6>What is "{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column }" ?</h6>
-                                    <p className="text-black-50 mt-4">{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].description }</p>
+                                    <h6 className="mt-3">What is "{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column }" ?</h6>
+                                    <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].description }</p>
                                     <hr/>
                                     <Row className="align-items-center">
                                         <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].source }</span></Col>
@@ -277,8 +277,8 @@ export class CountryData extends React.Component {
                                 </>
                                 : 
                                 <>
-                                    <h6>What is "new_cases_per_million" ?</h6>
-                                    <p className="text-black-50 mt-4">{_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].description }</p>
+                                    <h6 className="mt-3">What is "new_cases_per_million" ?</h6>
+                                    <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].description }</p>
                                     <hr/>
                                     <Row className="align-items-center">
                                         <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].source }</span></Col>

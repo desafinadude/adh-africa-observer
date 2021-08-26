@@ -83,8 +83,8 @@ export class Leaderboard extends React.Component {
                             </Col> */}
                         </Row>
                         <hr/>
-                        <h6>Understanding the table:</h6>
-                        <p className="text-black-50 mt-4">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic. The table ranks the change from highest increase to highest decrease. The alert badge (!) highlights problematic data.</p>
+                        <h6 className="mt-3">Understanding the table:</h6>
+                        <p className="text-black-50 mt-3">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic. The table ranks the change from highest increase to highest decrease. The alert badge (!) highlights problematic data.</p>
                     </Card.Body>
                 </Card>
                 

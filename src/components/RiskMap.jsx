@@ -238,8 +238,8 @@ export class RiskMap extends React.Component {
                             </Col> */}
                         </Row>
                         <hr/>
-                        <h6>How we calculate resurgance:</h6>
-                        <p className="text-black-50 mt-4">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic.
+                        <h6 className="mt-3">How we calculate resurgance:</h6>
+                        <p className="text-black-50 mt-3">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic.
                         </p>
                     </Card.Body>
                 </Card>

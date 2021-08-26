@@ -228,7 +228,8 @@ export class App extends React.Component {
                         <Row>
                             <Col md={3}>
                                 <h5 className="mt-1">Current date showing:</h5>
-                                <h1 style={{fontWeight: 500}}>
+                                
+                                <h1 style={{fontWeight: 500, fontSize: window.innerWidth < 1400 ? '2.2rem' : '2.5rem'}}>
                                     {
                                         new Date(this.state.currentDate).toLocaleDateString(
                                             'en-gb',
