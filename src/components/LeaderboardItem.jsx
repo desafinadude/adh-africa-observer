@@ -23,7 +23,7 @@ export class LeaderboardItem extends React.Component {
         this.state = {
             scale: [
                 {
-                    low: -5000,
+                    low: -50000,
                     high: -51,
                     color: '#2E9FF1'
                 },
@@ -64,7 +64,7 @@ export class LeaderboardItem extends React.Component {
                 },
                 {
                     low: 101,
-                    high: 5000,
+                    high: 50000,
                     color: '#FF5454'
                 },
             ]

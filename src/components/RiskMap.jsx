@@ -19,7 +19,7 @@ export class RiskMap extends React.Component {
             map: undefined,
             scale: [
                 {
-                    low: -100,
+                    low: -50000,
                     high: -51,
                     color: '#2E9FF1'
                 },
@@ -60,7 +60,7 @@ export class RiskMap extends React.Component {
                 },
                 {
                     low: 101,
-                    high: 500,
+                    high: 50000,
                     color: '#FF5454'
                 },
             ]
@@ -79,12 +79,16 @@ export class RiskMap extends React.Component {
         let self = this;
         let selectedColor = '';
 
-        _.forEach(self.state.scale, function(color) {
-            if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
-                selectedColor = color.color;
-            }
-            
-        })
+        if(amount == null) {
+            selectedColor = '#999';
+        } else {
+            _.forEach(self.state.scale, function(color) {
+                if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
+                    selectedColor = color.color;
+                }
+                
+            })
+        }
 
         return selectedColor;
 

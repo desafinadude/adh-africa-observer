@@ -48,6 +48,7 @@ export class App extends React.Component {
             yearSelect: React.createRef(),
             currentDateCount: undefined,
             selectedDateData: [],
+            selectedDateDataMap: [],
             playingTimeline: false,
             selectedCountries: [],
             ref: null
@@ -75,7 +76,8 @@ export class App extends React.Component {
         this.setState({
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
-          selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[parseInt(value[0]-1)]; }),['change'],['desc'])
+          selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
+          selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
         });
 
     }
@@ -96,7 +98,8 @@ export class App extends React.Component {
             self.setState({
                 currentDate: date,
                 currentDateCount: dateCount,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[dateCount]; }),['change'],['desc'])
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
             });
             const { ref } = this.state;
             if (ref && ref.noUiSlider) {
@@ -116,7 +119,8 @@ export class App extends React.Component {
         this.setState({
             currentDate: self.state.dates[self.state.dates.length],
             currentDateCount: self.state.dates.length,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return o.date == self.state.dates[self.state.dates.length-1]; }),['change'],['desc'])
+            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
+            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
         });
         const { ref } = this.state;
         if (ref && ref.noUiSlider) {
@@ -318,7 +322,7 @@ export class App extends React.Component {
                 <Container className="my-5">
                     <Row>
                         <Col md={6}>
-                            <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateData}/>
+                            <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap}/>
                         </Col>
                         <Col>
                             { 
