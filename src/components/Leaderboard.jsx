@@ -12,8 +12,6 @@ import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faArrowsAltV } from '@fortawesome/free-solid-svg-icons'
 
-import * as countriesList from '../data/countries.json'
-
 
 export class Leaderboard extends React.Component {
     constructor() {
@@ -53,17 +51,20 @@ export class Leaderboard extends React.Component {
                         <h5>% Change in new cases per million (7 day average) - Ranked</h5>
                         <hr/>
                         
+                        
                         {self.props.data.map((country,index) => {
                             if(index < self.state.limit) {
                                 return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                             }
                         })}
                         
+                        
 
-                        <Button variant="control-grey" className="w-100 d-flex justify-content-between my-3" onClick={self.toggleList}>
+                        <Button variant="control-grey" className="w-100 d-flex justify-content-between my-3" onClick={ () => self.toggleList() }>
                             <div>{ self.state.fullList == true ? 'Click to collapse' : 'Click to expand all countries' }</div>
                             <FontAwesomeIcon icon={faArrowsAltV} style={{position: 'relative', top: '4px'}}/>
                         </Button>
+                        
                         
                         {self.state.fullList == false ? 
                             (<>
@@ -74,6 +75,7 @@ export class Leaderboard extends React.Component {
                                 })}
                             </>) : ''
                         }
+                       
                         <hr/>
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>

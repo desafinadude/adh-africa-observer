@@ -50,9 +50,13 @@ export class App extends React.Component {
             selectedDateData: [],
             selectedDateDataMap: [],
             playingTimeline: false,
+            
             selectedCountries: [],
-            ref: null
-        }
+            ref: null,
+        },
+        this.playTimeline = this.playTimeline.bind(this);
+        this.timer = undefined;
+        
     }
 
     componentDidMount() {
@@ -60,11 +64,20 @@ export class App extends React.Component {
         axios.get(self.state.dataUrl)
         .then(function(response) {
             self.setState({data: response.data.result.records});
+
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-            self.setState({dates: dates});
-            self.setState({loading: false});
-            self.setState({currentDateCount: self.state.dates.length-1});
+            
+            self.setState({
+                dates: dates,
+                loading: false,
+                currentDate: dates[dates.length-1],
+                currentDateCount: dates.length-1,
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null) }),['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+            });
+
+
         }).catch(function(error) {
             self.setState({loading: false, error: true});
         })
@@ -79,6 +92,7 @@ export class App extends React.Component {
           selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
           selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
         });
+        
 
     }
 
@@ -101,16 +115,39 @@ export class App extends React.Component {
                 selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null) }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['change'],['desc'])
             });
-            const { ref } = this.state;
-            if (ref && ref.noUiSlider) {
-                ref.noUiSlider.set(dateCount);
-            }
+            self.state.ref.noUiSlider.set(dateCount);
+        }
+        
+    }
+
+    togglePlayTimeline = () => {
+        let self = this;
+        self.setState({playingTimeline: self.state.playingTimeline == true ? false : true });
+        if(self.state.playingTimeline == true) {
+            self.playTimeline();
+        } else {
+            window.clearTimeout(self.timer);
         }
         
     }
 
     playTimeline = () => {
         let self = this;
+
+        if (self.state.currentDateCount < self.state.dates.length) {
+            self.setState({ currentDateCount: self.state.currentDateCount + 1 });
+            self.setState({
+                currentDate: self.state.dates[self.state.currentDateCount],
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
+            });
+            self.state.ref.noUiSlider.set(self.state.currentDateCount);
+            self.timer = setTimeout( () => { self.playTimeline() }, 500 );
+        } else {
+            window.clearTimeout(self.timer);
+            self.setState({playingTimeline: false});
+        }
+
         
     }
 
@@ -122,10 +159,9 @@ export class App extends React.Component {
             selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
             selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
         });
-        const { ref } = this.state;
-        if (ref && ref.noUiSlider) {
-            ref.noUiSlider.set(self.state.dates.length);
-        }
+        
+        self.state.ref.noUiSlider.set(self.state.dates.length);
+        
     }
 
     countrySelect = (country) => {
@@ -249,7 +285,7 @@ export class App extends React.Component {
                                         <OverlayTrigger
                                         placement="bottom"
                                         overlay={<Tooltip>Play through entire timeline</Tooltip>}>
-                                            <Button variant="control-grey" onClick={this.playTimeline} disabled>
+                                            <Button variant="control-grey" onClick={() => this.togglePlayTimeline()}>
                                                 <FontAwesomeIcon icon={ this.state.playingTimeline ? faPause : faPlay} color="#094151"/>
                                             </Button>
                                         </OverlayTrigger>
@@ -263,7 +299,7 @@ export class App extends React.Component {
                                                     this.setState({ ref: instance });
                                                     }
                                                 }}
-                                                onUpdate={this.onUpdate}
+                                                onSlide={this.onUpdate}
                                                 range={{ min: 1, max: this.state.dates.length }}
                                                 start={[this.state.dates.length]}
                                                 pips= {{

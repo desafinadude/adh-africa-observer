@@ -97,6 +97,11 @@ export class CountryData extends React.Component {
 
                         return label
                     }
+                },
+                toolbox: {
+                    show: true,
+                    top: 0,
+                    left: 0
                 }
             }
         }
