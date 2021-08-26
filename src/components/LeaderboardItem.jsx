@@ -98,7 +98,7 @@ export class LeaderboardItem extends React.Component {
             <>
                 
                 <div className="my-2 cursor-pointer" onClick={() => this.props.onCountrySelect(this.props.country)}>
-                    <Row className="gx-2">
+                    <Row className="gx-2 align-items-center">
                         <Col xs="auto">
                             <div style={{width: '20px'}}>{this.props.index + 1}.</div>
                         </Col>
@@ -128,7 +128,7 @@ export class LeaderboardItem extends React.Component {
                             <OverlayTrigger
                             placement="left"
                             overlay={this.props.country.change == null ? <Tooltip>No data available for this day.</Tooltip> : <Tooltip>Percentage change on this day compared to the previous week.</Tooltip>}>
-                                <Button style={{background: this.getColor(this.props.country.change), width: '80px'}} className="border-0 badge-inc-dec px-0 py-0">
+                                <Button style={{background: this.getColor(this.props.country.change), width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
                                     {this.props.country.change == null ?
                                         <FontAwesomeIcon icon={ faMinus }/>
                                     :

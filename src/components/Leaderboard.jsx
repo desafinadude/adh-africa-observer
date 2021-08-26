@@ -50,7 +50,7 @@ export class Leaderboard extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <h5>New cases per million (7 day average)</h5>
+                        <h5>% Change in new cases per million (7 day average) - Ranked</h5>
                         <hr/>
                         
                         {self.props.data.map((country,index) => {
