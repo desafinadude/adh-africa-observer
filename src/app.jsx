@@ -255,7 +255,7 @@ export class App extends React.Component {
                                         </OverlayTrigger>
                                     </Col>
                                     <Col>
-                                        <div className="bg-control-grey px-4 h-100 rounded">
+                                        <div className="bg-control-grey px-4 h-100 rounded cursor-pointer">
                                             { this.state.dates.length > 0 ?
                                             <Nouislider
                                                 instanceRef={instance => {

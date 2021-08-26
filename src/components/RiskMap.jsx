@@ -99,7 +99,7 @@ export class RiskMap extends React.Component {
         let self = this;
         let color = 0;
 
-        if(feature.properties.adm0_a3 == 'SDS' || feature.properties.adm0_a3 == 'SOL' || feature.properties.adm0_a3 == 'SAH') {
+        if(feature.properties.adm0_a3 == 'SOL' || feature.properties.adm0_a3 == 'SAH') {
             color = null;
         } 
         else if(self.props.data != undefined && self.props.data.length > 0) {
@@ -125,7 +125,7 @@ export class RiskMap extends React.Component {
         let self = this;
 
         layer.on('click', function (e) {
-            if(feature.properties.adm0_a3 != 'SDS' && feature.properties.adm0_a3 != 'SOL' && feature.properties.adm0_a3 != 'SAH') {
+            if(feature.properties.adm0_a3 != 'SOL' && feature.properties.adm0_a3 != 'SAH') {
                 self.props.onCountrySelect(
                     { 
                         iso_code: e.target.feature.properties.adm0_a3,
@@ -137,7 +137,7 @@ export class RiskMap extends React.Component {
         });
 
         layer.on('mouseover', function (e) {
-            if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SDS' && e.target.feature.properties.adm0_a3 != 'SAH') {
+            if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
                         let change = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].change;
                         if(change != null) {
