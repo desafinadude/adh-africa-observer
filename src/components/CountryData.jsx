@@ -90,7 +90,6 @@ export class CountryData extends React.Component {
                 tooltip: {
                     trigger: 'axis',
                     formatter: function (params) {
-                        console.log(params);
                         let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
                         _.forEach(params, function(param) {
                             label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + param.value + '<br/>'
