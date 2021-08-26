@@ -97,7 +97,7 @@ export class LeaderboardItem extends React.Component {
         return (
             <>
                 
-                <div className="my-2">
+                <div className="my-2 cursor-pointer" onClick={() => this.props.onCountrySelect(this.props.country)}>
                     <Row className="gx-2">
                         <Col xs="auto">
                             <div style={{width: '20px'}}>{this.props.index + 1}.</div>

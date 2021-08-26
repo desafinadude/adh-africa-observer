@@ -171,7 +171,7 @@ export class RiskMap extends React.Component {
                             : '' }
                             <div className="position-absolute fw-bold" style={{bottom: 0}}>
                                 <div>
-                                    <Badge style={{background: '#FF5454',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 500% increase
+                                    <Badge style={{background: '#FF5454',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 100% increase
                                 </div>
                                 <div className="my-1">
                                     <Badge style={{background: '#FF8585',top: '-2px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%

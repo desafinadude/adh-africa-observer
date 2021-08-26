@@ -26,25 +26,11 @@ export class Leaderboard extends React.Component {
 
     componentDidMount() {
 
-        // let countriesData = []
-
-        // _.forEach(countriesList, (country) => {
-        //     countriesData.push(
-        //         {
-        //             location: country.location,
-        //             iso_code: country.iso_code,
-        //             change: Math.ceil(Math.random() * 100) * (Math.round(Math.random()) ? 1 : -1)
-        //         }
-        //     )
-        // })
-
-        // this.setState({countriesData: _.orderBy(countriesData, ['change', 'desc'])});
-
+        
     }
 
     componentDidUpdate() {
 
-        // console.log(this.props.data);
     }
 
     toggleList = () => {
@@ -56,24 +42,7 @@ export class Leaderboard extends React.Component {
         
     }
 
-  
-
-    shuffle = () => {
-
-        // let countriesData = []
-
-        // _.forEach(countriesList, (country) => {
-        //     countriesData.push(
-        //         {
-        //             location: country.location,
-        //             iso_code: country.iso_code,
-        //             change: Math.ceil(Math.random() * 100) * (Math.round(Math.random()) ? 1 : -1)
-        //         }
-        //     )
-        // })
-
-        // this.setState({countriesData: _.orderBy(countriesData, ['change','desc'])});
-    }
+   
 
     render() {
         let self = this;
@@ -86,7 +55,7 @@ export class Leaderboard extends React.Component {
                         
                             {self.props.data.map((country,index) => {
                                 if(index < self.state.limit) {
-                                    return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} />
+                                    return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                                 }
                             })}
                         
@@ -100,7 +69,7 @@ export class Leaderboard extends React.Component {
                             (<>
                                 {self.props.data.map((country,index) => {
                                     if(index > 44) {
-                                        return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} />
+                                        return <LeaderboardItem direction="increasing" index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                                     }
                                 })}
                             </>) : ''

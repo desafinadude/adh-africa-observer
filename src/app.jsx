@@ -144,14 +144,17 @@ export class App extends React.Component {
         }
     }
 
+    
+
     onDeselectCountry = () => {
         let self = this;
         self.setState({selectedCountries: []});
     }
 
+    
+
     countryRemove = (country) => {
         let self = this;
-
         let selectedCountries = self.state.selectedCountries;
         let keepCountries = _.filter(selectedCountries, function(o) { return o.iso_code != country; });
         self.setState({selectedCountries: keepCountries});
@@ -334,7 +337,7 @@ export class App extends React.Component {
                                 this.state.selectedCountries.length > 0 ? 
                                     <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
                                 :
-                                    <Leaderboard data={this.state.selectedDateData}/>
+                                    <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect}/>
                                     
                             }
                         </Col>
