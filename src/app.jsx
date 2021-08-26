@@ -98,8 +98,8 @@ export class App extends React.Component {
             self.setState({
                 currentDate: date,
                 currentDateCount: dateCount,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['change'],['desc'])
             });
             const { ref } = this.state;
             if (ref && ref.noUiSlider) {
