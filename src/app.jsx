@@ -126,7 +126,6 @@ export class App extends React.Component {
 
     togglePlayTimeline = () => {
         let self = this;
-        console.log('before',self.state.playingTimeline); 
         self.setState(({ playingTimeline }) => ({ playingTimeline: !playingTimeline }));
         setTimeout(function() {
             if(self.state.playingTimeline == true) {
@@ -180,11 +179,25 @@ export class App extends React.Component {
         }
     }
 
-    
-
     onDeselectCountry = () => {
         let self = this;
         self.setState({selectedCountries: []});
+    }
+
+    onModeSwitch = () => {
+        let self = this;
+        this.setState({
+            selectedDateData: [],
+            selectedDateDataMap: []
+        });
+        setTimeout(function() {
+            self.setState({
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
+            });
+        }, 500);
+        
+        self.state.ref.noUiSlider.set(self.state.currentDateCount);
     }
 
     
@@ -243,7 +256,7 @@ export class App extends React.Component {
                                 {this.state.selectedCountries.map((country) => (
                                     <Button variant="control-grey" key={country.iso_code} className="mx-1" onClick={() => this.countryRemove(country.iso_code)}>
                                         <Row>
-                                            <Col>
+                                            <Col xs="auto pe-0">
                                                 <div style={{width: '1.5em', height: '1.5em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
                                                     <ReactCountryFlag
                                                     svg
@@ -259,8 +272,8 @@ export class App extends React.Component {
                                                     }}/>
                                                 </div>
                                             </Col>
-                                            <Col xs="auto">{country.location}</Col>
-                                            <Col>
+                                            <Col className="text-start">{country.location}</Col>
+                                            <Col xs="auto">
                                                 <FontAwesomeIcon icon={faTimes} style={{ fontSize:"10px"}}/>
                                             </Col>
                                         </Row>
@@ -329,7 +342,7 @@ export class App extends React.Component {
                                 <Row className="gx-2">
                                     <Col xs="auto">
                                         
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
                                             { Array.from({length: 31}, (x, i) => 
                                                 <option key={i+1} value={i+1}>{i+1}</option>
                                             )}
@@ -368,14 +381,14 @@ export class App extends React.Component {
                 <Container className="my-5">
                     <Row>
                         <Col md={6}>
-                            <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap}/>
+                            <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch}/>
                         </Col>
                         <Col>
                             { 
                                 this.state.selectedCountries.length > 0 ? 
                                     <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
                                 :
-                                   <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline}/>
+                                    <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline}/>
                                     
                             }
                         </Col>

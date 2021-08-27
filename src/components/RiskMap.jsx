@@ -5,10 +5,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Badge from 'react-bootstrap/Badge'
+import Badge from 'react-bootstrap/Badge';
 
 import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartLine } from '@fortawesome/free-solid-svg-icons';
+
+import Gradient from 'javascript-color-gradient';
 
 import { countriesData } from '../data/geojson/africa.js';
 
@@ -17,6 +22,7 @@ export class RiskMap extends React.Component {
         super();
         this.state = {
             map: undefined,
+            mode: 'relative',
             scale: [
                 {
                     low: -50000,
@@ -63,34 +69,49 @@ export class RiskMap extends React.Component {
                     high: 50000,
                     color: '#FF5454'
                 },
-            ]
+            ],
+            absScale: new Gradient()
         }
     }
 
     componentDidMount() {
-       
-
+        let self = this;
+        self.state.absScale.setGradient('#FFECEC','#FF5454').setMidpoint(500);
     }
 
     componentDidUpdate() {
     }
 
+    switchMode() {
+        let self = this;
+        self.setState({mode: this.state.mode == 'relative' ? 'absolute' : 'relative'});
+        self.props.onModeSwitch();
+    }
+
     getColor = (amount) => {
         let self = this;
         let selectedColor = '';
+        let scale = self.state.scale;
 
-        if(amount == null) {
-            selectedColor = '#999';
+        if(self.state.mode == 'absolute') {
+            if(isNaN(amount) || amount < 1) amount = 1;
+            return self.state.absScale.getColor(amount);
         } else {
-            _.forEach(self.state.scale, function(color) {
-                if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
-                    selectedColor = color.color;
-                }
-                
-            })
-        }
 
-        return selectedColor;
+            if(amount == null) {
+                selectedColor = '#999';
+            } else {
+                _.forEach(scale, function(color) {
+                    if(Math.round(amount) <= color.high && Math.round(amount) >= color.low) {
+                        selectedColor = color.color;
+                    }
+                    
+                })
+            }
+
+            return selectedColor;
+
+        }
 
     }
 
@@ -105,7 +126,11 @@ export class RiskMap extends React.Component {
         else if(self.props.data != undefined && self.props.data.length > 0) {
             let country = _.filter(self.props.data, function(o) { return o.iso_code == feature.properties.adm0_a3; })[0];
             if(country != undefined) {
-                color = country.change;
+                if(self.state.mode == 'relative') {
+                    color = country.change;
+                } else {
+                    color = country.summed;
+                }
             }
         }
 
@@ -140,7 +165,7 @@ export class RiskMap extends React.Component {
             if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
                         let change = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].change;
-                        if(change != null) {
+                        if(change != null && change != undefined) {
                             change = Math.round(change) + '%';
                         } else {
                             change = '-';
@@ -196,46 +221,60 @@ export class RiskMap extends React.Component {
                                 data={countriesData}
                                 style={this.style}/>
                             : '' }
-                            <div className="position-absolute fw-bold" style={{bottom: 0}}>
-                                <div>
-                                    <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 100% increase
+                            { this.state.mode == 'relative' ?
+                                <div className="position-absolute fw-bold" style={{bottom: 0}}>
+                                    <div>
+                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 100% increase
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#FF8585',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#FFB7B7',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#FFD1D1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 10%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#E0F2FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 15%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#9DD6FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#70C3FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#2E9FF1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &lt; 100% decrease
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#999',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> No Data
+                                    </div>
                                 </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#FF8585',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
+                            :
+                                <div className="position-absolute fw-bold" style={{bottom: 0}}>
+                                    <div>
+                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 1000
+                                    </div>
+                                    <div className="my-1">
+                                        <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0
+                                    </div>
                                 </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#FFB7B7',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#FFD1D1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 10%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#E0F2FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 15%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#9DD6FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#70C3FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#2E9FF1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &lt; 100% decrease
-                                </div>
-                                <div className="my-1">
-                                    <Badge style={{background: '#999',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> No Data
-                                </div>
-                            </div>
+                            }
                         </MapContainer>
                         <hr/>
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>
-                            {/* <Col xs="auto">
-                                <Button variant="control-grey">Embed</Button>&nbsp;&nbsp;
-                                <Button variant="control-grey">Download Data</Button>
-                            </Col> */}
+                            <Col xs="auto">
+                                {/* <Button variant="control-grey">Embed</Button>&nbsp;&nbsp;
+                                <Button variant="control-grey">Download Data</Button> */}
+                                <Button size="sm" variant="control-grey" onClick={() => this.switchMode() }>
+                                    { this.state.mode == 'relative' ? 'RELATIVE' : 'ABSOLUTE' }
+                                </Button>
+                            </Col>
                         </Row>
                         <hr/>
                         <h6 className="mt-3">How we calculate resurgance:</h6>
