@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
-// import FlipMove from 'react-flip-move';
+import FlipMove from 'react-flip-move';
 import { LeaderboardItem } from './LeaderboardItem';
 import _ from 'lodash';
 
@@ -51,13 +51,23 @@ export class Leaderboard extends React.Component {
                         <h5>% Change in new cases per million (7 day average) - Ranked</h5>
                         <hr/>
                         
-                        
-                        {self.props.data.map((country,index) => {
-                            if(index < self.state.limit) {
-                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
-                            }
-                        })}
-                        
+                        {this.props.playingTimeline == true ?
+                            <FlipMove>
+                                {self.props.data.map((country,index) => {
+                                    if(index < self.state.limit) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                    }
+                                })}
+                            </FlipMove>
+                        :
+                            <>
+                                {self.props.data.map((country,index) => {
+                                    if(index < self.state.limit) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                    }
+                                })}
+                            </>
+                        }
                         
 
                         <Button variant="control-grey" className="w-100 d-flex justify-content-between my-3" onClick={ () => self.toggleList() }>
@@ -65,17 +75,31 @@ export class Leaderboard extends React.Component {
                             <FontAwesomeIcon icon={faArrowsAltV} style={{position: 'relative', top: '4px'}}/>
                         </Button>
                         
-                        
-                        {self.state.fullList == false ? 
-                            (<>
-                                {self.props.data.map((country,index) => {
-                                    if(index > 44) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
-                                    }
-                                })}
-                            </>) : ''
+                        {this.props.playingTimeline == true ?
+                            <>
+                                {self.state.fullList == false ? 
+                                    (<FlipMove>
+                                        {self.props.data.map((country,index) => {
+                                            if(index > 44) {
+                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                            }
+                                        })}
+                                    </FlipMove>) : ''
+                                }
+                            </>
+                        :
+                            <>    
+                                {self.state.fullList == false ? 
+                                    (<>
+                                        {self.props.data.map((country,index) => {
+                                            if(index > 44) {
+                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                            }
+                                        })}
+                                    </>) : ''
+                                }
+                            </>
                         }
-                       
                         <hr/>
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>

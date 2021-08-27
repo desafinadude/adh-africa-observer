@@ -77,11 +77,15 @@ export class App extends React.Component {
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
             });
 
-
         }).catch(function(error) {
             self.setState({loading: false, error: true});
         })
       
+    }
+
+    componentDidUpdate() {
+        let self = this;
+        
     }
 
     onUpdate = (render, handle, value, un, percent) => {
@@ -122,18 +126,22 @@ export class App extends React.Component {
 
     togglePlayTimeline = () => {
         let self = this;
-        self.setState({playingTimeline: self.state.playingTimeline == true ? false : true });
-        if(self.state.playingTimeline == true) {
-            self.playTimeline();
-        } else {
-            window.clearTimeout(self.timer);
-        }
+        console.log('before',self.state.playingTimeline); 
+        self.setState(({ playingTimeline }) => ({ playingTimeline: !playingTimeline }));
+        setTimeout(function() {
+            if(self.state.playingTimeline == true) {
+                self.playTimeline();
+            } else {
+                window.clearTimeout(self.timer);
+            }
+        },1000);
+        
+        
         
     }
 
     playTimeline = () => {
         let self = this;
-
         if (self.state.currentDateCount < self.state.dates.length) {
             self.setState({ currentDateCount: self.state.currentDateCount + 1 });
             self.setState({
@@ -141,7 +149,7 @@ export class App extends React.Component {
                 selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null) }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
             });
-            self.state.ref.noUiSlider.set(self.state.currentDateCount);
+            self.state.ref.noUiSlider.set(parseInt(self.state.currentDateCount));
             self.timer = setTimeout( () => { self.playTimeline() }, 500 );
         } else {
             window.clearTimeout(self.timer);
@@ -156,8 +164,8 @@ export class App extends React.Component {
         this.setState({
             currentDate: self.state.dates[self.state.dates.length],
             currentDateCount: self.state.dates.length,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
-            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
+            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length] && o.change != null) }),['change'],['desc']),
+            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length]) }),['change'],['desc'])
         });
         
         self.state.ref.noUiSlider.set(self.state.dates.length);
@@ -286,7 +294,7 @@ export class App extends React.Component {
                                         placement="bottom"
                                         overlay={<Tooltip>Play through entire timeline</Tooltip>}>
                                             <Button variant="control-grey" onClick={() => this.togglePlayTimeline()}>
-                                                <FontAwesomeIcon icon={ this.state.playingTimeline ? faPause : faPlay} color="#094151"/>
+                                                <FontAwesomeIcon icon={ this.state.playingTimeline == true ? faPause : faPlay} color="#094151"/>
                                             </Button>
                                         </OverlayTrigger>
                                     </Col>
@@ -301,6 +309,7 @@ export class App extends React.Component {
                                                 }}
                                                 onSlide={this.onUpdate}
                                                 range={{ min: 1, max: this.state.dates.length }}
+                                                step={1}
                                                 start={[this.state.dates.length]}
                                                 pips= {{
                                                     mode: 'count',
@@ -366,7 +375,7 @@ export class App extends React.Component {
                                 this.state.selectedCountries.length > 0 ? 
                                     <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
                                 :
-                                   <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect}/>
+                                   <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline}/>
                                     
                             }
                         </Col>
