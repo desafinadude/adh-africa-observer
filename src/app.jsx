@@ -342,7 +342,7 @@ export class App extends React.Component {
                                 <Row className="gx-2">
                                     <Col xs="auto">
                                         
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
+                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
                                             { Array.from({length: 31}, (x, i) => 
                                                 <option key={i+1} value={i+1}>{i+1}</option>
                                             )}
