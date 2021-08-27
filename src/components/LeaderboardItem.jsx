@@ -97,7 +97,7 @@ export class LeaderboardItem extends React.Component {
         return (
             <>
                 
-                <div className="my-2 cursor-pointer" onClick={() => this.props.onCountrySelect(this.props.country)}>
+                <div className="my-2 cursor-pointer">
                     <Row className="gx-2 align-items-center">
                         <Col xs="auto">
                             <div style={{width: '20px'}}>{this.props.index + 1}.</div>
@@ -118,7 +118,7 @@ export class LeaderboardItem extends React.Component {
                                 }}/>
                             </div>
                         </Col>
-                        <Col>
+                        <Col onClick={() => this.props.onCountrySelect(this.props.country)}>
                             <div className="rounded position-relative" style={{height: '2em', background: '#f6f6f6'}}>
                                 <div className="rounded" style={{background: this.getColor(this.props.country.change), width: Math.abs(this.props.country.change) + '%', maxWidth: '100%', height: '100%'}}></div>
                                 <div className="position-absolute text-truncate" style={{top: '50%', transform: 'translateY(-50%)', left: '0.5em'}}>{_.filter(countriesList, (o) => { return o.iso_code == this.props.country.iso_code })[0].location}</div>

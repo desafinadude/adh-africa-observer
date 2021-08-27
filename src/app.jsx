@@ -36,8 +36,8 @@ export class App extends React.Component {
     constructor(){
         super();
         this.state = {
-            // dataUrl:'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=210404fe-e864-4aec-94a2-89764b7ba4b3&limit=100000',
-            dataUrl: 'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=fd38833f-6482-4772-b2d1-8859ea7726f8&limit=100000',
+            dataUrl:'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=7e58603e-0b06-47cf-8e77-54b0d567d6eb&limit=100000',
+            // dataUrl: 'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=fd38833f-6482-4772-b2d1-8859ea7726f8&limit=100000',
             error: false,
             loading: true,
             data: [],
@@ -162,10 +162,10 @@ export class App extends React.Component {
     jumpToLatest = () => {
         let self = this;
         this.setState({
-            currentDate: self.state.dates[self.state.dates.length],
+            currentDate: self.state.dates[self.state.dates.length-1],
             currentDateCount: self.state.dates.length,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length] && o.change != null) }),['change'],['desc']),
-            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length]) }),['change'],['desc'])
+            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1] && o.change != null) }),['change'],['desc']),
+            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1]) }),['change'],['desc'])
         });
         
         self.state.ref.noUiSlider.set(self.state.dates.length);
