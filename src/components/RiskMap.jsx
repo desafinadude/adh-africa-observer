@@ -94,8 +94,12 @@ export class RiskMap extends React.Component {
         let scale = self.state.scale;
 
         if(self.state.mode == 'absolute') {
-            if(isNaN(amount) || amount < 1) amount = 1;
-            return self.state.absScale.getColor(amount);
+            if(amount == null) {
+                return '#999'
+            } else {
+                if(amount < 1) amount = 1;
+                return self.state.absScale.getColor(amount);
+            }
         } else {
 
             if(amount == null) {
@@ -200,7 +204,7 @@ export class RiskMap extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <h5>% Change in new cases per million (7 day average)</h5>
+                        <h5>{ this.state.mode == 'relative' ? '% Change in new cases per million (7 day average)' : 'Change in cases per million (7 day average)'}</h5>
                         <hr/>
                         <MapContainer 
                             center={[-0, 20]}
@@ -257,7 +261,7 @@ export class RiskMap extends React.Component {
                             :
                                 <div className="position-absolute fw-bold" style={{bottom: 0}}>
                                     <div>
-                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 1000
+                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 1000 per million
                                     </div>
                                     <div className="my-1">
                                         <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0
