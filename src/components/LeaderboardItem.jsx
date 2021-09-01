@@ -121,7 +121,7 @@ export class LeaderboardItem extends React.Component {
                         <Col onClick={() => this.props.onCountrySelect(this.props.country)}>
                             <div className="rounded position-relative" style={{height: '2em', background: '#f6f6f6'}}>
                                 <div className="rounded" style={{background: this.getColor(this.props.country.change), width: Math.abs(this.props.country.change) + '%', maxWidth: '100%', height: '100%'}}></div>
-                                <div className="position-absolute text-truncate" style={{top: '50%', transform: 'translateY(-50%)', left: '0.5em'}}>{_.filter(countriesList, (o) => { return o.iso_code == this.props.country.iso_code })[0].location}</div>
+                                <div className="position-absolute text-truncate display-block" style={{top: '50%', transform: 'translateY(-50%)', left: '0.5em'}}>{_.filter(countriesList, (o) => { return o.iso_code == this.props.country.iso_code })[0].location}</div>
                             </div>
                         </Col>
                         <Col xs="auto" className="d-grid">
@@ -140,7 +140,7 @@ export class LeaderboardItem extends React.Component {
                                 </Button>
                             </OverlayTrigger>
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={2} className="d-none d-lg-block">
                             <OverlayTrigger
                             placement="left"
                             overlay={<Tooltip>New cases over the last 14 days.</Tooltip>}>

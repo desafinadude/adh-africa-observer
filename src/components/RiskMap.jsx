@@ -170,16 +170,16 @@ export class RiskMap extends React.Component {
                 layer.bindTooltip(function (layer) {
                         let change = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].change;
                         if(change != null && change != undefined) {
-                            change = Math.round(change) + '%';
+                            change = (change > 0 ? '+' : '') + Math.round(change) + '%';
                         } else {
                             change = '-';
                         }
-                        return ('<strong>' + e.target.feature.properties.name + '</strong><br/><strong>' + change + '</strong>'); 
+                        return ('<strong>' + e.target.feature.properties.name + '<br/>' + change + '</strong>'); 
                     }, {permanent: true, opacity: 1}  
                 );
             } else {
                 layer.bindTooltip(function (layer) {
-                    return ('<strong>' + e.target.feature.properties.name + '</strong>'); 
+                    return ('<strong>' + e.target.feature.properties.name + '<br/>-</strong>'); 
                 }, {permanent: true, opacity: 1}  
             ); 
             }
@@ -213,6 +213,7 @@ export class RiskMap extends React.Component {
                             zoomControl={false}
                             attributionControl={false}
                             style={{background: '#fff'}}
+                            dragging={false}
                             >
                             {/* <TileLayer
                                 attribution='Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
@@ -268,20 +269,17 @@ export class RiskMap extends React.Component {
                                     </div>
                                 </div>
                             }
+                            <div className="position-absolute bottom-0 end-0 mb-1 me-1">
+                                <Button className="me-1" size="sm" variant={this.state.mode == 'relative' ? 'primary' : 'control-grey'} onClick={() => this.switchMode() }>RELATIVE</Button>
+                                <Button size="sm" variant={this.state.mode == 'absolute' ? 'primary' : 'control-grey'} onClick={() => this.switchMode() }>ABSOLUTE</Button>
+                            </div>
                         </MapContainer>
                         <hr/>
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>
-                            <Col xs="auto">
-                                {/* <Button variant="control-grey">Embed</Button>&nbsp;&nbsp;
-                                <Button variant="control-grey">Download Data</Button> */}
-                                <Button size="sm" variant="control-grey" onClick={() => this.switchMode() }>
-                                    { this.state.mode == 'relative' ? 'RELATIVE' : 'ABSOLUTE' }
-                                </Button>
-                            </Col>
                         </Row>
                         <hr/>
-                        <h6 className="mt-3">How we calculate resurgance:</h6>
+                        <h6 className="mt-3">How we calculate resurgence:</h6>
                         <p className="text-black-50 mt-3">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic.
                         </p>
                     </Card.Body>

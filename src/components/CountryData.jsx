@@ -98,11 +98,15 @@ export class CountryData extends React.Component {
                         return label
                     }
                 },
-                toolbox: {
-                    show: true,
-                    top: 0,
-                    left: 0
-                }
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {
+                //             show: true
+                //         }
+                //     },
+                //     top: -10,
+                //     right: 100
+                // }
             }
         }
     }
@@ -190,6 +194,16 @@ export class CountryData extends React.Component {
         this.setState({selectedMetric: e.target.value})
     }
 
+    downloadChart = () => {
+        const echartInstance = this.echartRef.getEchartsInstance();
+
+        var a = document.createElement("a");
+        a.href = echartInstance.getDataURL();
+        a.download = this.state.selectedCountry.location;
+        a.click();
+        
+    }
+
     render() {
         let self = this;
         return (
@@ -234,33 +248,39 @@ export class CountryData extends React.Component {
                             <Col>
                                 <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
                                     <option value="">Add a comparison metric</option>
-                                    <option value="new_cases">New Cases</option>
-                                    <option value="new_cases_smoothed">New Cases Smoothed</option>
-                                    <option value="new_cases_smoothed_per_million">New Cases Smoothed Per Million</option>
-                                    <option value="new_deaths">New Deaths</option>
-                                    <option value="new_deaths_per_million">New Deaths Per Million</option>
-                                    <option value="new_deaths_smoothed">New Deaths Smoothed</option>
-                                    <option value="new_deaths_smoothed_per_million">New Deaths Smoothed Per Million</option>
-                                    <option value="new_tests">New Tests</option>
-                                    <option value="new_tests_per_thousand">New Tests Per Thousand</option>
-                                    <option value="new_tests_smoothed">New Tests Smoothed</option>
-                                    <option value="new_tests_smoothed_per_thousand">New Tests Smoothed Per Thousand</option>
+
                                     <option value="new_vaccinations">New Vaccinations</option>
                                     <option value="new_vaccinations_smoothed">New Vaccinations Smoothed</option>
                                     <option value="new_vaccinations_smoothed_per_million">New Vaccinations Smoothed Per Million</option>
                                     <option value="people_fully_vaccinated">People Fully Vaccinated</option>
                                     <option value="people_vaccinated">People Vaccinated</option>
+                                    <option value="total_vaccinations">Total Vaccinations</option>
+
+                                    <option value="new_deaths">New Deaths</option>
+                                    <option value="new_deaths_smoothed">New Deaths Smoothed</option>
+                                    <option value="new_deaths_smoothed_per_million">New Deaths Smoothed Per Million</option>
+                                    <option value="total_deaths">Total Deaths</option>
+
+                                    <option value="new_tests">New Tests</option>
+                                    <option value="new_tests_smoothed_per_thousand">New Tests Smoothed Per Thousand</option>
+                                    <option value="total_tests">Total Tests</option>
                                     <option value="positive_rate">Positive Rate</option>
+
                                     <option value="reproduction_rate">Reproduction Rate</option>
                                     <option value="stringency_index">Stringency Index</option>
-                                    <option value="tests_per_case">Tests Per Case</option>
-                                    <option value="total_cases">Total Cases</option>
-                                    <option value="total_cases_per_million">Total Cases Per Million</option>
-                                    <option value="total_deaths">Total Deaths</option>
-                                    <option value="total_deaths_per_million">Total Deaths Per Million</option>
-                                    <option value="total_tests">Total Tests</option>
-                                    <option value="total_tests_per_thousand">Total Tests Per Thousand</option>
-                                    <option value="total_vaccinations">Total Vaccinations</option>
+
+                                    {/* <option value="tests_per_case">Tests Per Case</option> */}
+                                    {/* <option value="new_cases">New Cases</option> */}
+                                    {/* <option value="new_cases_smoothed">New Cases Smoothed</option> */}
+                                    {/* <option value="new_cases_smoothed_per_million">New Cases Smoothed Per Million</option> */}
+                                    {/* <option value="new_deaths_per_million">New Deaths Per Million</option> */}
+                                   
+                                    {/* <option value="new_tests_per_thousand">New Tests Per Thousand</option> */}
+                                    {/* <option value="new_tests_smoothed">New Tests Smoothed</option> */}
+                                    {/* <option value="total_cases">Total Cases</option> */}
+                                    {/* <option value="total_cases_per_million">Total Cases Per Million</option> */}
+                                    {/* <option value="total_deaths_per_million">Total Deaths Per Million</option> */}
+                                    {/* <option value="total_tests_per_thousand">Total Tests Per Thousand</option> */}
                                     {/* <option value="hosp_patients">hosp_patients</option> */}
                                     {/* <option value="hosp_patients_per_million">hosp_patients_per_million</option> */}
                                     {/* <option value="hospital_beds_per_thousand">hospital_beds_per_thousand</option> */}
@@ -277,11 +297,13 @@ export class CountryData extends React.Component {
                                 </Form.Select>   
                             </Col>
                         </Row>
-                        <ReactECharts 
+                        <ReactECharts
+                        ref={(e) => { this.echartRef = e; }}
                         option={this.state.options} 
                         style={{height: '300px'}}
                         />
                         <hr/>
+                        
                         { this.state.selectedMetric != '' ?
                             <>
                                 <h6 className="mt-3">What is "{ (_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column).replaceAll('_',' ') }" ?</h6>
@@ -301,6 +323,12 @@ export class CountryData extends React.Component {
                                 </Row>
                             </>
                         }
+                        <hr/>
+                        <Row className="justify-content-end">
+                            <Col xs="auto"><Button size="sm" onClick={() => this.downloadChart()} variant="control-grey">DOWNLOAD IMAGE</Button></Col>
+                        </Row>
+                        
+                        
                     </Card.Body>
                 </Card>
 

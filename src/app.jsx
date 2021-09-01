@@ -282,107 +282,113 @@ export class App extends React.Component {
                             </Col>
                         </Row>
 
-                        <Row>
-                            <Col md={3}>
-                                <h5 className="mt-1">Current date showing:</h5>
-                                
-                                <h1 style={{fontWeight: 500, fontSize: window.innerWidth < 1400 ? '2.2rem' : '2.5rem'}}>
-                                    {
-                                        new Date(this.state.currentDate).toLocaleDateString(
-                                            'en-gb',
-                                            {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                            }
-                                        )
-                                    }
-                                </h1>
-                            </Col>
-                            <Col md={6}>
-                                <h5 className="mt-1">Scrub the timeline to change date:</h5>
-                                <Row>
-                                    <Col xs={1}>
-                                        <OverlayTrigger
-                                        placement="bottom"
-                                        overlay={<Tooltip>Play through entire timeline</Tooltip>}>
-                                            <Button variant="control-grey" onClick={() => this.togglePlayTimeline()}>
-                                                <FontAwesomeIcon icon={ this.state.playingTimeline == true ? faPause : faPlay} color="#094151"/>
-                                            </Button>
-                                        </OverlayTrigger>
-                                    </Col>
-                                    <Col>
-                                        <div className="bg-control-grey px-4 h-100 rounded cursor-pointer">
-                                            { this.state.dates.length > 0 ?
-                                            <Nouislider
-                                                instanceRef={instance => {
-                                                    if (instance && !this.state.ref) {
-                                                    this.setState({ ref: instance });
-                                                    }
-                                                }}
-                                                onSlide={this.onUpdate}
-                                                range={{ min: 1, max: this.state.dates.length }}
-                                                step={1}
-                                                start={[this.state.dates.length]}
-                                                pips= {{
-                                                    mode: 'count',
-                                                    values: 6,
-                                                    density: 4,
-                                                    stepped: true
-                                                }}
-                                            />
-                                            : ''}
-                                        </div>
-                                    </Col>
-                                </Row>
-                                
-                            </Col>
-                            <Col md={3} className="timeline-date-select">
-                                <h5 className="mt-1">Or select a specific date:</h5>
-                                <Row className="gx-2">
-                                    <Col xs="auto">
-                                        
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
-                                            { Array.from({length: 31}, (x, i) => 
-                                                <option key={i+1} value={i+1}>{i+1}</option>
-                                            )}
-                                        </Form.Select>
-                                    </Col>
-                                    <Col>
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
-                                            {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
-                                                <option key={index} value={month}>{month}</option>
-                                            )}
-                                        </Form.Select>
-                                    </Col>
-                                    <Col>
-                                        <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
-                                            <option key="2020" value="2020">2020</option>
-                                            <option key="2021" value="2021">2021</option>
-                                        </Form.Select>
-                                    </Col>
-                                    <Col xs="auto">
-                                        <OverlayTrigger
-                                        placement="top"
-                                        overlay={<Tooltip>Jump to most recent</Tooltip>}>
-                                            <Button variant="control-grey" style={{height: '100%'}} onClick={this.jumpToLatest}>
-                                                <FontAwesomeIcon icon={faRedo} color="#094151"/>
-                                            </Button>
-                                        </OverlayTrigger>
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                        
+                        {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
+                            <Row>
+                                <Col xs="auto" lg={3}>
+                                    <h5 className="mt-1">Current date showing:</h5>
+                                    
+                                    <h1 style={{fontWeight: 500, fontSize: window.innerWidth < 1400 ? '2.2rem' : '2.5rem'}}>
+                                        {
+                                            new Date(this.state.currentDate).toLocaleDateString(
+                                                'en-gb',
+                                                {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                                }
+                                            )
+                                        }
+                                    </h1>
+                                </Col>
+                                <Col lg={6}>
+                                    <h5 className="mt-1">Scrub the timeline to change date:</h5>
+                                    <Row>
+                                        <Col xs="auto">
+                                            <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip>Play through entire timeline from current position.</Tooltip>}>
+                                                <div>
+                                                <Button variant="control-grey" onClick={() => this.togglePlayTimeline()} disabled={this.state.currentDateCount == this.state.dates.length-1 ? true : false}>
+                                                    <FontAwesomeIcon icon={ this.state.playingTimeline == true ? faPause : faPlay} color="#094151"/>
+                                                </Button>
+                                                </div>
+                                            </OverlayTrigger>
+                                        </Col>
+                                        <Col>
+                                            <div className="bg-control-grey px-4 h-100 rounded cursor-pointer">
+                                                { this.state.dates.length > 0 ?
+                                                <Nouislider
+                                                    instanceRef={instance => {
+                                                        if (instance && !this.state.ref) {
+                                                        this.setState({ ref: instance });
+                                                        }
+                                                    }}
+                                                    onSlide={this.onUpdate}
+                                                    range={{ min: 1, max: this.state.dates.length }}
+                                                    step={1}
+                                                    start={[this.state.dates.length]}
+                                                    pips= {{
+                                                        mode: 'count',
+                                                        values: 6,
+                                                        density: 4,
+                                                        stepped: true
+                                                    }}
+                                                />
+                                                : ''}
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                    
+                                    
+                                </Col>
+                                <Col lg={3} className="timeline-date-select">
+                                    <h5 className="mt-1">Or select a specific date:</h5>
+                                    <Row className="gx-2">
+                                        <Col xs="auto">
+                                            
+                                            <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { day: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.daySelect}>
+                                                { Array.from({length: 31}, (x, i) => 
+                                                    <option key={i+1} value={i+1}>{i+1}</option>
+                                                )}
+                                            </Form.Select>
+                                        </Col>
+                                        <Col>
+                                            <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
+                                                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
+                                                    <option key={index} value={month}>{month}</option>
+                                                )}
+                                            </Form.Select>
+                                        </Col>
+                                        <Col>
+                                            <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
+                                                <option key="2020" value="2020">2020</option>
+                                                <option key="2021" value="2021">2021</option>
+                                            </Form.Select>
+                                        </Col>
+                                        <Col xs="auto">
+                                            <OverlayTrigger
+                                            placement="top"
+                                            overlay={<Tooltip>Jump to most recent</Tooltip>}>
+                                                <Button variant="control-grey" style={{height: '100%'}} onClick={this.jumpToLatest}>
+                                                    <FontAwesomeIcon icon={faRedo} color="#094151"/>
+                                                </Button>
+                                            </OverlayTrigger>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                            </Row>
+                        }
 
                     </Container>
                 </div>
 
-                <Container className="my-5">
+                <Container className="my-4">
                     <Row>
-                        <Col md={6}>
-                            <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch}/>
-                        </Col>
+                        {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
+                            <Col lg={6} className="mb-4">
+                                    <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch}/>
+                            </Col>
+                        }
                         <Col>
                             { 
                                 this.state.selectedCountries.length > 0 ? 
