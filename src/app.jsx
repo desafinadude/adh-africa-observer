@@ -365,7 +365,7 @@ export class App extends React.Component {
                                         </Col>
                                         <Col>
                                             <Form.Select value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { month: 'short' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.monthSelect}>
-                                                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((month,index) =>
+                                                {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'].map((month,index) =>
                                                     <option key={index} value={month}>{month}</option>
                                                 )}
                                             </Form.Select>
