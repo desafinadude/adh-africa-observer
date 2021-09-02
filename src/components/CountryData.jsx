@@ -7,6 +7,8 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 import ReactECharts from 'echarts-for-react';
 
@@ -14,7 +16,7 @@ import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 
 import * as field_desc from '../data/owid-field-descriptions.json';
 
@@ -241,7 +243,17 @@ export class CountryData extends React.Component {
 
                 <Card className="border-0 rounded mt-4">
                     <Card.Body>
-                        <h5>Compare data to new cases per million</h5>
+                        <Row className="align-items-center">
+                            <Col><h5 className="my-0">Compare data to new cases per million</h5></Col>
+                            <Col xs="auto">
+                                <OverlayTrigger
+                                placement="top"
+                                overlay={<Tooltip>Download an image of the current chart.</Tooltip>}>
+                                    <Button onClick={() => this.downloadChart()} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Image</Button>
+                                </OverlayTrigger>
+                            </Col>
+                        </Row>
+                        
                         <hr/>
                         <Row className="mb-5">
                             <Col xs="auto" className="position-relative"><div className="position-relative top-50 start-50 translate-middle"><strong>Overlay dataset:</strong></div></Col>
@@ -332,10 +344,7 @@ export class CountryData extends React.Component {
                                 <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].text }</p>
                             </>
                         }
-                        <hr/>
-                        <Row className="justify-content-end">
-                            <Col xs="auto"><Button size="sm" onClick={() => this.downloadChart()} variant="control-grey">DOWNLOAD IMAGE</Button></Col>
-                        </Row>
+                       
                         
                         
                     </Card.Body>
