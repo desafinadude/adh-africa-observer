@@ -70,7 +70,6 @@ export class App extends React.Component {
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=100000')
         .then(function(response) {
             self.setState({definitions: response.data.result.records });
-            console.log(self.state.definitions);
         })
 
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=100000')
@@ -406,7 +405,7 @@ export class App extends React.Component {
                                 this.state.selectedCountries.length > 0 ? 
                                     <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}/> 
                                 :
-                                    <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline}/>
+                                    <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline} definitions={this.state.definitions}/>
                                     
                             }
                         </Col>

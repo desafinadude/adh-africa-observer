@@ -277,11 +277,11 @@ export class RiskMap extends React.Component {
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>
                         </Row>
                         <hr/>
-                        <h6 className="mt-3">How we calculate resurgence:</h6>
-                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.metric == 'introductory_paragraph'})[0].text}</p>
+                        <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
+                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
                         <hr/>
                         <h6 className="mt-3 text-capitalize">{this.state.mode} View</h6>
-                        <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.metric == self.state.mode + '_view'})[0].text}</p>
+                        <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].text}</p>
                     </Card.Body>
                 </Card>
             </>

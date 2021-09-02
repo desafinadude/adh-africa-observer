@@ -155,7 +155,7 @@ export class LeaderboardItem extends React.Component {
                             { this.props.country.data_gaps == 1 ?
                                 <OverlayTrigger
                                 placement="left"
-                                overlay={<Tooltip>This data is incomplete. Data gaps are defined as successive blocks of the same number of daily cases.</Tooltip>}>
+                                overlay={<Tooltip>{_.filter(this.props.definitions, function(def) { return def.name == 'problematic_data'})[0].text}</Tooltip>}>
                                     <Badge bg="control-grey" className="badge-data-alert">
                                         <FontAwesomeIcon icon={faExclamation} />
                                     </Badge>

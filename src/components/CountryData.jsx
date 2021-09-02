@@ -309,24 +309,24 @@ export class CountryData extends React.Component {
                             <>
 
 
-                                <h6 className="mt-3">What is "{_.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].metric.replaceAll('_',' ') }" ?</h6>
-                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].owid_definition }</p>
+                                <h6 className="mt-3">What is "{_.filter(self.props.definitions, function(def) { return def.name == self.state.selectedMetric})[0].name.replaceAll('_',' ') }" ?</h6>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == self.state.selectedMetric})[0].owid_definition }</p>
                                 <hr/>
                                 <Row className="align-items-center">
-                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].source }</span></Col>
+                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.name == self.state.selectedMetric})[0].source }</span></Col>
                                 </Row>
                                 <hr/>
-                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].text }</p>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == self.state.selectedMetric})[0].text }</p>
                             </>
                             : 
                             <>
                                 <h6 className="mt-3">What is "New Cases Smoothed Per Million" ?</h6>
-                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].owid_definition }</p>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].owid_definition }</p>
                                 <hr/>
                                 <Row className="align-items-center">
-                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].source }</span></Col>
+                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].source }</span></Col>
                                 </Row>
-                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].text }</p>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].text }</p>
                             </>
                         }
                         <hr/>

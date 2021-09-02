@@ -55,7 +55,7 @@ export class Leaderboard extends React.Component {
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
                                     if(index < self.state.limit) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
                             </FlipMove>
@@ -63,7 +63,7 @@ export class Leaderboard extends React.Component {
                             <>
                                 {self.props.data.map((country,index) => {
                                     if(index < self.state.limit) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
                             </>
@@ -81,7 +81,7 @@ export class Leaderboard extends React.Component {
                                     (<FlipMove>
                                         {self.props.data.map((country,index) => {
                                             if(index > 44) {
-                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                             }
                                         })}
                                     </FlipMove>) : ''
@@ -93,7 +93,7 @@ export class Leaderboard extends React.Component {
                                     (<>
                                         {self.props.data.map((country,index) => {
                                             if(index > 44) {
-                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
+                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                             }
                                         })}
                                     </>) : ''
@@ -109,8 +109,8 @@ export class Leaderboard extends React.Component {
                             </Col> */}
                         </Row>
                         <hr/>
-                        <h6 className="mt-3">Understanding the table:</h6>
-                        <p className="text-black-50 mt-3">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic. The table ranks the change from highest increase to highest decrease. The alert badge (!) highlights problematic data.</p>
+                        <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].title}</h6>
+                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].text}</p>
                     </Card.Body>
                 </Card>
                 
