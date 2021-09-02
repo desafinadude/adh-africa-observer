@@ -249,37 +249,38 @@ export class CountryData extends React.Component {
                                 <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
                                     <option value="">Add a comparison metric</option>
 
-                                    <option value="new_vaccinations">New Vaccinations</option>
-                                    <option value="new_vaccinations_smoothed">New Vaccinations Smoothed</option>
-                                    <option value="new_vaccinations_smoothed_per_million">New Vaccinations Smoothed Per Million</option>
-                                    <option value="people_fully_vaccinated">People Fully Vaccinated</option>
-                                    <option value="people_vaccinated">People Vaccinated</option>
-                                    <option value="total_vaccinations">Total Vaccinations</option>
+                                    <option value="new_cases">Confirmed Cases: New Cases</option>
+                                    <option value="new_cases_smoothed">Confirmed Cases: New Cases Smoothed</option>
+                                    <option value="new_cases_smoothed_per_million">Confirmed Cases: New Cases Smoothed Per Million</option>
+                                    <option value="total_cases">Confirmed Cases: Total Cases</option>
+                                    <option value="total_cases_per_million">Confirmed Cases: Total Cases Per Million</option>
 
-                                    <option value="new_deaths">New Deaths</option>
-                                    <option value="new_deaths_smoothed">New Deaths Smoothed</option>
-                                    <option value="new_deaths_smoothed_per_million">New Deaths Smoothed Per Million</option>
-                                    <option value="total_deaths">Total Deaths</option>
+                                    <option value="new_deaths">Confirmed Deaths: New Deaths</option>
+                                    {/* <option value="new_deaths_smoothed">Confirmed Deaths: New Deaths Smoothed</option> */}
+                                    <option value="new_deaths_smoothed_per_million">Confirmed Deaths: New Deaths Smoothed Per Million</option>
+                                    <option value="total_deaths">Confirmed Deaths: Total Deaths</option>
+                                    <option value="total_deaths_per_million">Confirmed Deaths: Total Deaths Per Million</option>
 
-                                    <option value="new_tests">New Tests</option>
-                                    <option value="new_tests_smoothed_per_thousand">New Tests Smoothed Per Thousand</option>
-                                    <option value="total_tests">Total Tests</option>
-                                    <option value="positive_rate">Positive Rate</option>
+                                    <option value="reproduction_rate">Policy responses: Reproduction Rate</option>
+                                    <option value="stringency_index">Policy responses: Stringency Index</option>
 
-                                    <option value="reproduction_rate">Reproduction Rate</option>
-                                    <option value="stringency_index">Stringency Index</option>
+                                    <option value="new_tests">Tests &amp; Positivity: New Tests</option>
+                                    <option value="new_tests_smoothed">Tests &amp; Positivity: New Tests Smoothed Per Thousand</option>
+                                    <option value="total_tests">Tests &amp; Positivity: Total Tests</option>
+                                    <option value="positive_rate">Tests &amp; Positivity: Positive Rate</option>
+
+
+                                    <option value="new_vaccinations">Vaccinations: New Vaccinations</option>
+                                    {/* <option value="new_vaccinations_smoothed">Vaccinations: New Vaccinations Smoothed</option> */}
+                                    <option value="new_vaccinations_smoothed_per_million">Vaccinations: New Vaccinations Smoothed Per Million</option>
+                                    <option value="people_fully_vaccinated">Vaccinations: People Fully Vaccinated</option>
+                                    <option value="people_vaccinated">Vaccinations: People Vaccinated</option>
+                                    <option value="total_vaccinations">Vaccinations: Total Vaccinations</option>
 
                                     {/* <option value="tests_per_case">Tests Per Case</option> */}
-                                    {/* <option value="new_cases">New Cases</option> */}
-                                    {/* <option value="new_cases_smoothed">New Cases Smoothed</option> */}
-                                    {/* <option value="new_cases_smoothed_per_million">New Cases Smoothed Per Million</option> */}
                                     {/* <option value="new_deaths_per_million">New Deaths Per Million</option> */}
-                                   
                                     {/* <option value="new_tests_per_thousand">New Tests Per Thousand</option> */}
-                                    {/* <option value="new_tests_smoothed">New Tests Smoothed</option> */}
-                                    {/* <option value="total_cases">Total Cases</option> */}
-                                    {/* <option value="total_cases_per_million">Total Cases Per Million</option> */}
-                                    {/* <option value="total_deaths_per_million">Total Deaths Per Million</option> */}
+                                    {/* <option value="new_tests_smoothed_per_thousand">New Tests Smoothed Per Thousand</option> */}
                                     {/* <option value="total_tests_per_thousand">Total Tests Per Thousand</option> */}
                                     {/* <option value="hosp_patients">hosp_patients</option> */}
                                     {/* <option value="hosp_patients_per_million">hosp_patients_per_million</option> */}
@@ -306,21 +307,26 @@ export class CountryData extends React.Component {
                         
                         { this.state.selectedMetric != '' ?
                             <>
-                                <h6 className="mt-3">What is "{ (_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].column).replaceAll('_',' ') }" ?</h6>
-                                <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].description }</p>
+
+
+                                <h6 className="mt-3">What is "{_.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].metric.replaceAll('_',' ') }" ?</h6>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].owid_definition }</p>
                                 <hr/>
                                 <Row className="align-items-center">
-                                    <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == this.state.selectedMetric; })[0].source }</span></Col>
+                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].source }</span></Col>
                                 </Row>
+                                <hr/>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == self.state.selectedMetric})[0].text }</p>
                             </>
                             : 
                             <>
-                                <h6 className="mt-3">What is "New Cases Per Million" ?</h6>
-                                <p className="text-black-50 mt-3">{_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].description }</p>
+                                <h6 className="mt-3">What is "New Cases Smoothed Per Million" ?</h6>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].owid_definition }</p>
                                 <hr/>
                                 <Row className="align-items-center">
-                                    <Col><span className="text-black-50">Source: {_.filter(field_desc,(o) => { return o.column == 'new_cases_per_million'; })[0].source }</span></Col>
+                                    <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].source }</span></Col>
                                 </Row>
+                                <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.metric == 'new_cases_smoothed_per_million'})[0].text }</p>
                             </>
                         }
                         <hr/>

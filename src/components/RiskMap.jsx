@@ -10,9 +10,6 @@ import Badge from 'react-bootstrap/Badge';
 import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine } from '@fortawesome/free-solid-svg-icons';
-
 import Gradient from 'javascript-color-gradient';
 
 import { countriesData } from '../data/geojson/africa.js';
@@ -200,6 +197,7 @@ export class RiskMap extends React.Component {
 
 
     render() {
+        let self = this;
         return (
             <>
                 <Card className="border-0 rounded">
@@ -280,8 +278,10 @@ export class RiskMap extends React.Component {
                         </Row>
                         <hr/>
                         <h6 className="mt-3">How we calculate resurgence:</h6>
-                        <p className="text-black-50 mt-3">Using data from Our World In Data, the resurgence map uses a 7-day rolling window to measure the percentage change in the number of new confirmed cases in that period relative to the previous 7 days over the course of the pandemic.
-                        </p>
+                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.metric == 'introductory_paragraph'})[0].text}</p>
+                        <hr/>
+                        <h6 className="mt-3 text-capitalize">{this.state.mode} View</h6>
+                        <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.metric == self.state.mode + '_view'})[0].text}</p>
                     </Card.Body>
                 </Card>
             </>

@@ -36,8 +36,13 @@ export class App extends React.Component {
     constructor(){
         super();
         this.state = {
-            dataUrl:'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=7e58603e-0b06-47cf-8e77-54b0d567d6eb&limit=100000',
-            // dataUrl: 'https://adhtest.opencitieslab.org/api/3/action/datastore_search?resource_id=fd38833f-6482-4772-b2d1-8859ea7726f8&limit=100000',
+            api: {
+                baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
+                resurgenceData: '7e58603e-0b06-47cf-8e77-54b0d567d6eb',
+                definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
+                countryData: 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
+            },
+            definitions: [],
             error: false,
             loading: true,
             data: [],
@@ -61,7 +66,14 @@ export class App extends React.Component {
 
     componentDidMount() {
         let self = this;
-        axios.get(self.state.dataUrl)
+
+        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=100000')
+        .then(function(response) {
+            self.setState({definitions: response.data.result.records });
+            console.log(self.state.definitions);
+        })
+
+        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=100000')
         .then(function(response) {
             self.setState({data: response.data.result.records});
 
@@ -386,13 +398,13 @@ export class App extends React.Component {
                     <Row>
                         {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
                             <Col lg={6} className="mb-4">
-                                    <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch}/>
+                                    <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch} definitions={this.state.definitions}/>
                             </Col>
                         }
                         <Col>
                             { 
                                 this.state.selectedCountries.length > 0 ? 
-                                    <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry}/> 
+                                    <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}/> 
                                 :
                                     <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline}/>
                                     
