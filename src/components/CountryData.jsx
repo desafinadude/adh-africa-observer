@@ -200,7 +200,10 @@ export class CountryData extends React.Component {
         const echartInstance = this.echartRef.getEchartsInstance();
 
         var a = document.createElement("a");
-        a.href = echartInstance.getDataURL();
+        a.href = echartInstance.getDataURL({
+            pixelRatio: 2,
+            backgroundColor: '#fff'
+        });
         a.download = this.state.selectedCountry.location;
         a.click();
         
