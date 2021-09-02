@@ -328,7 +328,7 @@ export class CountryData extends React.Component {
                                     <Col><span className="text-black-50">Source: { _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].source }</span></Col>
                                 </Row>
                                 <hr/>
-                                <h6 className="mt-3">About this data:</h6>
+                                <h6 className="mt-3">About this data</h6>
                                 <p className="text-black-50 mt-3">{ _.filter(self.props.definitions, function(def) { return def.name == 'new_cases_smoothed_per_million'})[0].text }</p>
                             </>
                         }
