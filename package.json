@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "copyfiles --flat ./src/resurgence-map.png ./dist && parcel build ./src/index.html"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "bootstrap": "5.0.2",
     "classnames": "^2.3.1",
+    "copyfiles": "^2.4.1",
     "country-iso-3-to-2": "^1.1.0",
     "echarts": "^5.1.2",
     "echarts-for-react": "^3.0.1",
