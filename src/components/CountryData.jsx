@@ -26,90 +26,7 @@ export class CountryData extends React.Component {
         this.state = {
             selectedCountry: '',
             selectedMetric: '',
-            options: {
-                grid: { top:20, bottom: 80, left: 60, right: 60},
-                dataZoom: [
-                    {
-                        type: 'slider',
-                        xAxisIndex: [0],
-                        show: true,
-                        start: 0,
-                        end: 100,
-                        bottom: 10,
-                        labelFormatter: function (value, valueStr) {
-                            return valueStr.split('T')[0];
-                        }
-                    },
-                  
-                    
-                ],
-                xAxis: {
-                    offset: 10,
-                    axisLabel: {
-                        formatter: '{MMM} {yy}'
-                    },
-                    data: [],
-                },
-                yAxis: [
-                    {
-                        
-                        type: 'value',
-                        name: '',
-                        position: 'left',
-                        offset: 0,
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    },
-                    {
-                        type: 'value',
-                        name: '',
-                        position: 'right',
-                        axisLabel: {
-                            formatter: (function(value){
-                                let val = '';
-                                if(value >= 1000000) {
-                                    val = value / 1000000 + 'm';
-                                } else if(value >= 1000) {
-                                    val = value / 1000 + 'k';
-                                } else {
-                                    val = value;
-                                } 
-
-
-                                return val;
-                            })
-                        }
-                    }
-                ],
-                series: [
-                    {
-                        data: [],
-                        type: 'bar',
-                        smooth: true
-                    },
-                ],
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function (params) {
-                        let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
-                        _.forEach(params, function(param) {
-                            label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + param.value + '<br/>'
-                        })
-
-                        return label
-                    }
-                },
-                // toolbox: {
-                //     feature: {
-                //         saveAsImage: {
-                //             show: true
-                //         }
-                //     },
-                //     top: -10,
-                //     right: 100
-                // }
-            }
+            options: {}
         }
     }
 
@@ -125,9 +42,10 @@ export class CountryData extends React.Component {
         if(self.state.selectedCountry.iso_code != this.props.selectedCountries[0].iso_code) {
             self.setState({ selectedCountry: this.props.selectedCountries[0] });
         }
-
         
-
+        const echartInstance = this.echartRef.getEchartsInstance();
+        // echartInstance.clear();
+        
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
         .then(function(response) {
 
@@ -169,9 +87,54 @@ export class CountryData extends React.Component {
                 series.splice(1,1);
             }
 
-            self.setState({
-                options: {
-                    
+            echartInstance.setOption(
+                {
+                    grid: { top:20, bottom: 80, left: 60, right: 60},
+                    dataZoom: [
+                        {
+                            type: 'slider',
+                            xAxisIndex: [0],
+                            show: true,
+                            start: 0,
+                            end: 100,
+                            bottom: 10,
+                            labelFormatter: function (value, valueStr) {
+                                return valueStr.split('T')[0];
+                            }
+                        },
+                    ],
+                    yAxis: [
+                        {
+                            
+                            type: 'value',
+                            name: '',
+                            position: 'left',
+                            offset: 0,
+                            axisLabel: {
+                                formatter: '{value}'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '',
+                            position: 'right',
+                            axisLabel: {
+                                formatter: (function(value){
+                                    let val = '';
+                                    if(value >= 1000000) {
+                                        val = value / 1000000 + 'm';
+                                    } else if(value >= 1000) {
+                                        val = value / 1000 + 'k';
+                                    } else {
+                                        val = value;
+                                    } 
+        
+        
+                                    return val;
+                                })
+                            }
+                        }
+                    ],
                     xAxis: {
                         type: 'category', 
                         axisLabel: {
@@ -181,15 +144,21 @@ export class CountryData extends React.Component {
                         },
                         data: dates,
                     },
-                    yAxis: {
-                        type: 'value',
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: function (params) {
+                            let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
+                            _.forEach(params, function(param) {
+                                label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + param.value + '<br/>'
+                            })
+        
+                            return label
+                        }
                     },
                     series: series,
-                }
-            })
+                }, true
+            )
         })
-        
-
     }
 
     selectMetric = (e) => {
@@ -313,11 +282,13 @@ export class CountryData extends React.Component {
                                 </Form.Select>   
                             </Col>
                         </Row>
+                        
                         <ReactECharts
                         ref={(e) => { this.echartRef = e; }}
-                        option={this.state.options} 
+                        option={{}}
                         style={{height: '300px'}}
                         />
+                       
                         <hr/>
                         
                         { this.state.selectedMetric != '' ?
