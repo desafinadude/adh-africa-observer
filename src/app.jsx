@@ -152,7 +152,7 @@ export class App extends React.Component {
 
     playTimeline = () => {
         let self = this;
-        if (self.state.currentDateCount < self.state.dates.length) {
+        if (self.state.currentDateCount < self.state.dates.length-1) {
             self.setState({ currentDateCount: self.state.currentDateCount + 1 });
             self.setState({
                 currentDate: self.state.dates[self.state.currentDateCount],
