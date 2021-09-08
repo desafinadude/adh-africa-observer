@@ -84,7 +84,7 @@ export class App extends React.Component {
                 loading: false,
                 currentDate: dates[dates.length-1],
                 currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null) }),['change'],['desc']),
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
             });
 
@@ -104,7 +104,7 @@ export class App extends React.Component {
         this.setState({
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
-          selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null) }),['change'],['desc']),
+          selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
           selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
         });
         
@@ -127,7 +127,7 @@ export class App extends React.Component {
             self.setState({
                 currentDate: date,
                 currentDateCount: dateCount,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['change'],['desc'])
             });
             self.state.ref.noUiSlider.set(dateCount);
@@ -156,7 +156,7 @@ export class App extends React.Component {
             self.setState({ currentDateCount: self.state.currentDateCount + 1 });
             self.setState({
                 currentDate: self.state.dates[self.state.currentDateCount],
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
             });
             self.state.ref.noUiSlider.set(parseInt(self.state.currentDateCount));
@@ -174,7 +174,7 @@ export class App extends React.Component {
         this.setState({
             currentDate: self.state.dates[self.state.dates.length-1],
             currentDateCount: self.state.dates.length,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1] && o.change != null) }),['change'],['desc']),
+            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
             selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1]) }),['change'],['desc'])
         });
         
@@ -203,7 +203,7 @@ export class App extends React.Component {
         });
         setTimeout(function() {
             self.setState({
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null) }),['change'],['desc']),
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
             });
         }, 500);

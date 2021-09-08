@@ -86,12 +86,13 @@ export class RiskMap extends React.Component {
     }
 
     getColor = (amount) => {
+
         let self = this;
         let selectedColor = '';
         let scale = self.state.scale;
 
         if(self.state.mode == 'absolute') {
-            if(amount == null) {
+            if(amount == null || amount == 'NaN') {
                 return '#999'
             } else {
                 if(amount < 1) amount = 1;
@@ -99,7 +100,7 @@ export class RiskMap extends React.Component {
             }
         } else {
 
-            if(amount == null) {
+            if(amount == null || amount == 'NaN') {
                 selectedColor = '#999';
             } else {
                 _.forEach(scale, function(color) {
