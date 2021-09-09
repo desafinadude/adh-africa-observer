@@ -46,7 +46,7 @@ export class CountryData extends React.Component {
         const echartInstance = this.echartRef.getEchartsInstance();
         // echartInstance.clear();
         
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
+        axios.get('https://ckan.africadatahub.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"8bf9f7fe-ec0d-468d-bc7e-be9a1130dd3a"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27')
         .then(function(response) {
 
 
