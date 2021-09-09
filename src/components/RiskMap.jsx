@@ -281,7 +281,7 @@ export class RiskMap extends React.Component {
                         <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
                         <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
                         <hr/>
-                        <h6 className="mt-3 text-capitalize">{this.state.mode} View</h6>
+                        <h6 className="mt-3 text-capitalize">{_.filter(this.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].title}</h6>
                         <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].text}</p>
                     </Card.Body>
                 </Card>
