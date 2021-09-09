@@ -37,10 +37,10 @@ export class App extends React.Component {
         super();
         this.state = {
             api: {
-                baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
-                resurgenceData: '7e58603e-0b06-47cf-8e77-54b0d567d6eb',
-                definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
-                countryData: 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
+                baseUrl: 'https://ckan.africadatahub.org/api/3/',
+                resurgenceData: 'e6489086-6e9a-4e3b-94c5-5236809db053',
+                definitions: '0ac414ef-1c30-47b4-bcca-6e95d1a9b498',
+                countryData: '8bf9f7fe-ec0d-468d-bc7e-be9a1130dd3a'
             },
             definitions: [],
             error: false,
