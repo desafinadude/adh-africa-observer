@@ -23,8 +23,9 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
+import { Header } from './components/Header';
 import { RiskMap } from './components/RiskMap';
 import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
@@ -243,11 +244,16 @@ export class App extends React.Component {
                 </div>
             </> :
             <>
-                <div className="header py-5">
-                    <Container>
+                <div className="header pb-5">
+                    <Header />
+
+                    <Container style={{paddingTop: '100px'}} className="justify-content-between">
                         <Row>
                             <Col>
                                 <h1>COVID-19 Resurgence Map</h1>
+                            </Col>
+                            <Col xs="auto">
+                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
                             </Col>
                         </Row>
 
