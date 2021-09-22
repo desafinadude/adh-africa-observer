@@ -23,7 +23,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import { Header } from './components/Header';
 import { RiskMap } from './components/RiskMap';
