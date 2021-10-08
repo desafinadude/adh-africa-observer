@@ -166,13 +166,18 @@ export class RiskMap extends React.Component {
         layer.on('mouseover', function (e) {
             if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
-                        let change = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].change;
-                        if(change != null && change != undefined) {
-                            change = (change > 0 ? '+' : '') + Math.round(change) + '%';
+                        if(self.state.mode == 'relative') {
+                            let change = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].change;
+                            if(change != null && change != undefined) {
+                                change = (change > 0 ? '+' : '') + Math.round(change) + '%';
+                            } else {
+                                change = '-';
+                            }
+                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + change + '</strong>'); 
                         } else {
-                            change = '-';
+                            let summed = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].summed;
+                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + Math.round(summed) + '</strong>'); 
                         }
-                        return ('<strong>' + e.target.feature.properties.name + '<br/>' + change + '</strong>'); 
                     }, {permanent: true, opacity: 1}  
                 );
             } else {
@@ -211,6 +216,8 @@ export class RiskMap extends React.Component {
                             scrollWheelZoom={false}
                             zoomControl={false}
                             attributionControl={false}
+                            doubleClickZoom={false}
+                            touchZoom={false}
                             style={{background: '#fff'}}
                             dragging={false}
                             >
@@ -226,45 +233,45 @@ export class RiskMap extends React.Component {
                                 style={this.style}/>
                             : '' }
                             { this.state.mode == 'relative' ?
-                                <div className="position-absolute fw-bold" style={{bottom: 0}}>
+                                <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
                                     <div>
-                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 100% increase
+                                        <Badge style={{backgroundColor: '#FF5454',top: '-4px'}} className="scale100 chart-scale position-relative">&nbsp;</Badge> &gt; 100% increase
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#FF8585',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
+                                        <Badge style={{backgroundColor: '#FF8585',top: '-4px'}} className="scale50 chart-scale position-relative">&nbsp;</Badge> 50%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#FFB7B7',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
+                                        <Badge style={{backgroundColor: '#FFB7B7',top: '-4px'}} className="scale25 chart-scale position-relative">&nbsp;</Badge> 25%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#FFD1D1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 10%
+                                        <Badge style={{backgroundColor: '#FFD1D1',top: '-4px'}} className="scale10 chart-scale position-relative">&nbsp;</Badge> 10%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0%
+                                        <Badge style={{backgroundColor: '#FFECEC',top: '-4px'}} className="scale0 chart-scale position-relative">&nbsp;</Badge> 0%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#E0F2FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 15%
+                                        <Badge style={{backgroundColor: '#E0F2FF',top: '-4px'}} className="scale-10 chart-scale position-relative">&nbsp;</Badge> 10%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#9DD6FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 25%
+                                        <Badge style={{backgroundColor: '#9DD6FF',top: '-4px'}} className="scale-25 chart-scale position-relative">&nbsp;</Badge> 25%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#70C3FF',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 50%
+                                        <Badge style={{backgroundColor: '#70C3FF',top: '-4px'}} className="scale-50 chart-scale position-relative">&nbsp;</Badge> 50%
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#2E9FF1',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &lt; 100% decrease
+                                        <Badge style={{backgroundColor: '#2E9FF1',top: '-4px'}} className="scale-100 chart-scale position-relative">&nbsp;</Badge> &lt; 100% decrease
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#999',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> No Data
+                                        <Badge style={{backgroundColor: '#999',top: '-4px'}} className="scale-none chart-scale position-relative">&nbsp;</Badge> No Data
                                     </div>
                                 </div>
                             :
-                                <div className="position-absolute fw-bold" style={{bottom: 0}}>
+                                <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
                                     <div>
-                                        <Badge style={{background: '#FF5454',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> &gt; 1000 per million
+                                        <Badge style={{backgroundColor: '#FF5454',top: '-4px'}} className="scale100 chart-scale position-relative">&nbsp;</Badge> &gt; 1000 per million
                                     </div>
                                     <div className="my-1">
-                                        <Badge style={{background: '#FFECEC',top: '-4px'}} className="chart-scale position-relative">&nbsp;</Badge> 0
+                                        <Badge style={{backgroundColor: '#FFECEC',top: '-4px'}} className="scale0 chart-scale position-relative">&nbsp;</Badge> 0
                                     </div>
                                 </div>
                             }
