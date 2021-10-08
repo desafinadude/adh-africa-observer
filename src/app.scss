@@ -177,3 +177,43 @@ hr {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.map-legend .scale100 {
+    background-color: #FF5454 !important;
+}
+
+.map-legend .scale50 {
+    background-color: #FF8585 !important;
+}
+
+.map-legend .scale25 {
+    background-color: #FFB7B7 !important;
+}
+
+.map-legend .scale10 {
+    background-color: #FFD1D1 !important;
+}
+
+.map-legend .scale0 {
+    background-color: #FFECEC !important;
+}
+
+.map-legend .scale-10 {
+    background-color: #E0F2FF !important;
+}
+
+.map-legend .scale-25 {
+    background-color: #9DD6FF !important;
+}
+
+.map-legend .scale-50 {
+    background-color: #70C3FF !important;
+}
+
+.map-legend .scale-100 {
+    background-color: #2E9FF1 !important;
+}
+
+.map-legend .scale-none {
+    background-color: #999 !important;
+}

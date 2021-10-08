@@ -153,7 +153,7 @@ export class CountryData extends React.Component {
                         formatter: function (params) {
                             let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
                             _.forEach(params, function(param) {
-                                label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + param.value + '<br/>'
+                                label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + Math.round(param.value) + '<br/>'
                             })
         
                             return label
