@@ -282,7 +282,7 @@ export class App extends React.Component {
                                 <h1>COVID-19 Resurgence Map</h1>
                             </Col>
                             <Col xs="auto">
-                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
+                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
                             </Col>
                         </Row>
 
