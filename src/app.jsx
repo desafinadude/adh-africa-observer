@@ -51,6 +51,9 @@ export class App extends React.Component {
                 countryData: 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
             },
             definitions: [],
+            no_embed_style: {
+                paddingTop: '20px'
+            },
             error: false,
             loading: true,
             loadingComplete: false,
@@ -67,6 +70,7 @@ export class App extends React.Component {
             
             selectedCountries: [],
             ref: null,
+            
         },
         this.playTimeline = this.playTimeline.bind(this);
         this.timer = undefined;
@@ -76,6 +80,10 @@ export class App extends React.Component {
     componentDidMount() {
         let self = this;
 
+        if(window.location.search != '?embed') {
+            self.setState({no_embed_style: { paddingTop: '100px' }})
+        }
+
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=100000')
         .then(function(response) {
             self.setState({definitions: response.data.result.records });
@@ -84,7 +92,6 @@ export class App extends React.Component {
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")')
         .then(function(response) {
 
-            console.log(response);
 
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
@@ -274,15 +281,17 @@ export class App extends React.Component {
             </> :
             <>
                 <div className="header pb-5">
-                    <Header />
 
-                    <Container style={{paddingTop: '100px'}} className="justify-content-between">
+                    { window.location.search != '?embed' ? <Header /> : '' }
+
+                    <Container style={this.state.no_embed_style} className="justify-content-between">
                         <Row>
                             <Col>
                                 <h1>COVID-19 Resurgence Map</h1>
                             </Col>
                             <Col xs="auto">
-                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
+                                {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
+                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> }
                             </Col>
                         </Row>
 
