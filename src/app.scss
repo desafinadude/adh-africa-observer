@@ -98,6 +98,10 @@ h1 {
    border-top-color: $primary !important;
 }
 
+.tooltip-inner {
+    white-space: pre-line;
+}
+
 .badge-data-alert {
     height: 25px !important;
     width: 25px !important;
