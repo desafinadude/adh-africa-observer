@@ -73,7 +73,8 @@ export class RiskMap extends React.Component {
 
     componentDidMount() {
         let self = this;
-        self.state.absScale.setGradient('#FFECEC','#FF5454').setMidpoint(500);
+
+        self.state.absScale.setGradient('#FFECEC','#FF5454').setMidpoint(1000);
     }
 
     componentDidUpdate() {
