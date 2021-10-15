@@ -73,7 +73,8 @@ export class RiskMap extends React.Component {
 
     componentDidMount() {
         let self = this;
-        self.state.absScale.setGradient('#FFECEC','#FF5454').setMidpoint(500);
+
+        self.state.absScale.setGradient('#FFECEC','#F4A460','#FF5454').setMidpoint(1000);
     }
 
     componentDidUpdate() {
@@ -269,6 +270,9 @@ export class RiskMap extends React.Component {
                                 <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
                                     <div>
                                         <Badge style={{backgroundColor: '#FF5454',top: '-4px'}} className="scale100 chart-scale position-relative">&nbsp;</Badge> &gt; 1000 per million
+                                    </div>
+                                    <div>
+                                        <Badge style={{backgroundColor: '#F4A460',top: '-4px'}} className="scale50abs chart-scale position-relative">&nbsp;</Badge> 500 per million
                                     </div>
                                     <div className="my-1">
                                         <Badge style={{backgroundColor: '#FFECEC',top: '-4px'}} className="scale0 chart-scale position-relative">&nbsp;</Badge> 0

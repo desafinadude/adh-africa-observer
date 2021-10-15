@@ -98,6 +98,10 @@ h1 {
    border-top-color: $primary !important;
 }
 
+.tooltip-inner {
+    white-space: pre-line;
+}
+
 .badge-data-alert {
     height: 25px !important;
     width: 25px !important;
@@ -186,6 +190,10 @@ hr {
     background-color: #FF8585 !important;
 }
 
+.map-legend .scale50abs {
+    background-color: #F4A460 !important;
+}
+
 .map-legend .scale25 {
     background-color: #FFB7B7 !important;
 }
@@ -209,6 +217,7 @@ hr {
 .map-legend .scale-50 {
     background-color: #70C3FF !important;
 }
+
 
 .map-legend .scale-100 {
     background-color: #2E9FF1 !important;

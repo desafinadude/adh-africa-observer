@@ -260,7 +260,7 @@ export class CountryData extends React.Component {
                                     <option value="stringency_index">Policy responses: Stringency Index</option>
 
                                     <option value="new_tests">Tests &amp; Positivity: New Tests</option>
-                                    <option value="new_tests_smoothed">Tests &amp; Positivity: New Tests Smoothed Per Thousand</option>
+                                    <option value="new_tests_smoothed">Tests &amp; Positivity: New Tests Smoothed</option>
                                     <option value="total_tests">Tests &amp; Positivity: Total Tests</option>
                                     <option value="positive_rate">Tests &amp; Positivity: Positive Rate</option>
 

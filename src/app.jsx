@@ -24,7 +24,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft, faStepForward, faStepBackward } from '@fortawesome/free-solid-svg-icons';
 
 import { Header } from './components/Header';
 import { RiskMap } from './components/RiskMap';
@@ -212,6 +212,18 @@ export class App extends React.Component {
         
     }
 
+    stepTimeline = (direction) => {
+        let self = this;
+        this.setState({
+            currentDate: self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1],
+            currentDateCount: direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1,
+            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
+            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1]) }),['change'],['desc'])
+        });
+        
+        self.state.ref.noUiSlider.set(self.state.currentDateCount);
+    }
+
     jumpToLatest = () => {
         let self = this;
         this.setState({
@@ -378,27 +390,41 @@ export class App extends React.Component {
                                                 </OverlayTrigger>
                                             </Col>
                                             <Col>
-                                                <div className="bg-control-grey px-4 h-100 rounded cursor-pointer"> 
-                                                    { this.state.dates.length > 0 ?
-                                                    <Nouislider
-                                                        instanceRef={instance => {
-                                                            if (instance && !this.state.ref) {
-                                                            this.setState({ ref: instance });
-                                                            }
-                                                        }}
-                                                        onSlide={this.onUpdate}
-                                                        range={{ min: 1, max: this.state.dates.length > 1 ? this.state.dates.length : 10 }}
-                                                        step={1}
-                                                        start={[this.state.dates.length]}
-                                                        pips= {{
-                                                            mode: 'count',
-                                                            values: 6,
-                                                            density: 4,
-                                                            stepped: true
-                                                        }}
-                                                    />
-                                                    : ''}
-                                                </div>
+                                                <Row className="gx-2">
+                                                    <Col xs="auto">
+                                                        <Button variant="control-grey" onClick={() => this.stepTimeline('back')} disabled={(this.state.currentDateCount == 0 || !this.state.loadingComplete) ? true : false}>
+                                                            <FontAwesomeIcon icon={faStepBackward} color="#094151"/>
+                                                        </Button>
+                                                    </Col>
+                                                    <Col>
+                                                        <div className="bg-control-grey px-4 h-100 rounded cursor-pointer"> 
+                                                            { this.state.dates.length > 0 ?
+                                                            <Nouislider
+                                                                instanceRef={instance => {
+                                                                    if (instance && !this.state.ref) {
+                                                                    this.setState({ ref: instance });
+                                                                    }
+                                                                }}
+                                                                onSlide={this.onUpdate}
+                                                                range={{ min: 1, max: this.state.dates.length > 1 ? this.state.dates.length : 10 }}
+                                                                step={1}
+                                                                start={[this.state.dates.length]}
+                                                                pips= {{
+                                                                    mode: 'count',
+                                                                    values: 6,
+                                                                    density: 4,
+                                                                    stepped: true
+                                                                }}
+                                                            />
+                                                            : ''}
+                                                        </div>
+                                                    </Col>
+                                                    <Col xs="auto">
+                                                        <Button variant="control-grey" onClick={() => this.stepTimeline('forward')} disabled={(this.state.currentDateCount == this.state.dates.length-1 || !this.state.loadingComplete) ? true : false}>
+                                                            <FontAwesomeIcon icon={faStepForward} color="#094151"/>
+                                                        </Button>
+                                                    </Col>
+                                                </Row>
                                             </Col>
                                         </Row>
                                     </>

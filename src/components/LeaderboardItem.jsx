@@ -152,10 +152,20 @@ export class LeaderboardItem extends React.Component {
                             </OverlayTrigger>
                         </Col>
                         <Col xs="auto" className="justify-content-between d-none d-lg-flex">
-                            { this.props.country.data_gaps == 1 ?
+                            { (this.props.country.data_gaps == 1 || this.props.country.change > 200) ?
                                 <OverlayTrigger
                                 placement="left"
-                                overlay={<Tooltip>{_.filter(this.props.definitions, function(def) { return def.name == 'problematic_data'})[0].text}</Tooltip>}>
+                                overlay={
+                                    <Tooltip>
+                                        { this.props.country.change > 200 ? "A change of more than 200% could indicate a delayed data dump and might not reflect the specific day's increase or decrease" : '' }
+                                        
+                                        {this.props.country.data_gaps == 1 && this.props.country.change > 200 ? '\n\n' : ''}
+                                        
+                                        {this.props.country.data_gaps == 1 ?
+                                         _.filter(this.props.definitions, function(def) { return def.name == 'problematic_data'})[0].text : ''
+                                        }
+                                    </Tooltip>
+                                }>
                                     <Badge bg="control-grey" className="badge-data-alert">
                                         <FontAwesomeIcon icon={faExclamation} />
                                     </Badge>
