@@ -166,19 +166,8 @@ export class CountryData extends React.Component {
                             return label
                         }
                     },
-                    series: series,
-                    graphic: [
-                        { 
-                            type: 'image',
-                            left: 'center', 
-                            top: '0%',  
-                            style: {
-                                image: 'https://resurgence.africadatahub.org/adh-logo.svg',
-                                width: 150,
-                                opacity: 0.3
-                            }
-                        }
-                    ]
+                    series: series
+                    
                 }, true
             )
         })
@@ -191,20 +180,20 @@ export class CountryData extends React.Component {
     downloadChart = () => {
         const echartInstance = this.echartRef.getEchartsInstance();
 
-        // echartInstance.setOption({
-        //     graphic: [
-        //         { 
-        //             type: 'image',
-        //             left: 'center', 
-        //             top: '0%',  
-        //             style: {
-        //                 image: 'https://resurgence.africadatahub.org/adh-logo.svg',
-        //                 width: 150,
-        //                 opacity: 0.3
-        //             }
-        //         }
-        //     ]    
-        // })
+        echartInstance.setOption({
+            graphic: [
+                { 
+                    type: 'image',
+                    left: 'center', 
+                    top: '0%',  
+                    style: {
+                        image: '/adh-logo.svg',
+                        width: 150,
+                        opacity: 0.3
+                    }
+                }
+            ]    
+        })
         
         var a = document.createElement("a");
         a.href = echartInstance.getDataURL({
