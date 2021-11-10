@@ -32,6 +32,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
+import { CovidDataTable } from './components/CovidDataTable';
 
 export class App extends React.Component {
 
@@ -510,6 +511,14 @@ export class App extends React.Component {
                                         : '' }
                                     </>
                             }
+                        </Col>
+                    </Row>
+                </Container>
+
+                <Container className="mb-5">
+                    <Row>
+                        <Col>
+                            <CovidDataTable currentDate={this.state.currentDate}/>
                         </Col>
                     </Row>
                 </Container>
