@@ -3,6 +3,7 @@ export var owid_fields = [
     // 'continent',
     'location',
     // 'date',
+    'case_history',
     'total_cases',
     'new_cases',
     'new_cases_smoothed',

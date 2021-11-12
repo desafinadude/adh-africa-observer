@@ -17,9 +17,13 @@ import DataTable, { defaultThemes } from 'react-data-table-component';
 
 import { MultiSelect } from "react-multi-select-component";
 
+import { Sparklines, SparklinesLine } from 'react-sparklines';
+
+
 import * as countriesList from '../data/countries.json';
 
 import { owid_fields } from '../data/owid_fields.js';
+
 
 export class CovidDataTable extends React.Component {
     constructor() {
@@ -32,19 +36,12 @@ export class CovidDataTable extends React.Component {
             columns_selected: [],
             countries_select: [],
             countries_selected: [],
-            conditionalRowStyles: [
-                {
-                    when: row => row > 2,
-                    style: {
-                        backgroundColor: 'rgba(63, 195, 128, 0.9)',
-                        color: 'white',
-                        '&:hover': {
-                            cursor: 'pointer',
-                        },
-                    },
-                }
-            ],
             customStyles: {
+                table: {
+                    style: {
+                        maxHeight: 'calc(100vh - 300px)'
+                    },
+                },
                 header: {
                     style: {
                         minHeight: '56px',
@@ -75,7 +72,8 @@ export class CovidDataTable extends React.Component {
                         },
                     },
                 }
-            }
+            },
+            loading: false
         }
     }
 
@@ -86,9 +84,13 @@ export class CovidDataTable extends React.Component {
         let columns_select = [];
         let countries_select = [];
 
+        
+        
+
         for (let i = 0; i < owid_fields.length; i++) {
-            
+
             let cell = row => row[owid_fields[i]];
+            let cellStyles = [];
 
             if(owid_fields[i] == 'location') {
                 cell = row => 
@@ -110,14 +112,29 @@ export class CovidDataTable extends React.Component {
                         <div className="text-truncate">{ row.location }</div>
                     </>
             }
+
+            if(owid_fields[i] == 'case_history') {
+                cell = row =>
+                    row.case_history != undefined ? 
+                    <Sparklines data={row.case_history.replaceAll('nan','0.0').split('|')}>
+                        <SparklinesLine style={{ strokeWidth: 2, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
+                    </Sparklines>
+                    : '';
+                cellStyles = {
+                    // padding: 0,
+                    // maxWidth: '150px'
+                }
+                
+            }
             
             columns.push(
                 {
                     name: <span className="text-uppercase text-truncate">{owid_fields[i].replaceAll('_', ' ')}</span>,
                     selector: row => row[owid_fields[i]],
                     cell: cell,
-                    sortable: true,
-                    field: owid_fields[i]
+                    sortable: owid_fields[i] == 'case_history' ? false : true,
+                    field: owid_fields[i],
+                    style: cellStyles
                 }
             )
 
@@ -151,7 +168,7 @@ export class CovidDataTable extends React.Component {
             }
         );
 
-        self.get_data();
+        self.get_data_debounce();
        
     }
 
@@ -159,25 +176,66 @@ export class CovidDataTable extends React.Component {
         let self = this;
         
         if(prevProps.currentDate != self.props.currentDate) {
-            self.get_data();
+            self.get_data_debounce();
         }
         
     }
 
+    debounce(func, timeout = 1000){
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
+    get_data_debounce = this.debounce(() => this.get_data());
+
     get_data() {
         let self = this;
 
-        console.log('here');
+        self.setState({loading:true})
 
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20where%20date%20%3D%20%27' + this.props.currentDate + '%27')
         .then(function(response) {
+
+            let incoming_data = response.data.result.records;
+
+            for(let i=0; i < incoming_data.length; i++) {
+                for (const key in incoming_data[i]) {
+                    if (incoming_data[i].hasOwnProperty(key)) {
+                        if (key != 'location' && key != 'iso_code') {
+                            if(key != 'stringency_index') {
+                                incoming_data[i][key] = incoming_data[i][key] == 'NaN' ? '-' : parseInt(incoming_data[i][key]);
+                            } else {
+                                incoming_data[i][key] = incoming_data[i][key] == 'NaN' ? '-' : parseFloat(incoming_data[i][key]);
+                            }
+                            
+                            if(incoming_data[i][key] == NaN) {
+                                incoming_data[i][key] = ''
+                            }
+
+                        }
+                    }
+                }
+
+                _.merge(incoming_data[i], _.find(self.props.resurgenceData, function(o) { return o.iso_code == incoming_data[i].iso_code; }))
+
+            }
+
+
             self.setState(
                 {
-                    data: response.data.result.records,
-                    visible_data: response.data.result.records
+                    data: incoming_data,
+                    visible_data: incoming_data
                 }
             );
+
+            self.setState({loading:false})
         })
+
+
+
     }
 
     select_countries = (e) => {
@@ -215,6 +273,12 @@ export class CovidDataTable extends React.Component {
 
     
 
+    customSort = (rows, selector, direction) => {
+        return _.orderBy(rows, selector, direction);
+    }
+
+    
+
    
 
     render() {
@@ -226,18 +290,7 @@ export class CovidDataTable extends React.Component {
 
                     <Row className="mb-4" style={{'position': 'relative', 'zIndex': 2}}>
                         <Col className="d-flex align-items-center">
-                            <h3 className="mb-0" style={{fontWeight: 500 }}>
-                                {
-                                    new Date(this.props.currentDate).toLocaleDateString(
-                                        'en-gb',
-                                        {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                        }
-                                    )
-                                }
-                            </h3>
+                           
                         </Col>
                         <Col xs="4">
                             <MultiSelect
@@ -282,11 +335,13 @@ export class CovidDataTable extends React.Component {
                     <DataTable 
                     columns={this.state.visible_columns}
                     data={this.state.visible_data}
-                    dense={false}
+                    dense={true}
                     striped={true}
                     fixedHeader={true}
                     conditionalRowStyles={this.state.conditionalRowStyles}
                     customStyles={this.state.customStyles}
+                    sortFunction={this.customSort}
+                    progressPending={false}
                     />
                 </Card.Body>
             </Card>
