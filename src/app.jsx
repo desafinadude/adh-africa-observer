@@ -310,11 +310,11 @@ export class App extends React.Component {
                             <Col>
                                 <h1>COVID-19 Resurgence Map</h1>
                             </Col>
-                            <Col xs="auto">
-                                <Button className="me-1" size="sm" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
-                                <Button size="sm" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
+                            <Col xs="auto" className="align-self-center">
+                                <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
                                 {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
-                                <Button size="sm" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> }
+                                <Button size="md" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> }
                             </Col>
                         </Row>
 
