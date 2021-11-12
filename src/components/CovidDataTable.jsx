@@ -19,6 +19,10 @@ import { MultiSelect } from "react-multi-select-component";
 
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
+
 
 import * as countriesList from '../data/countries.json';
 
@@ -223,11 +227,21 @@ export class CovidDataTable extends React.Component {
 
             }
 
+            let countries = [];
+
+            for (let i = 0; i < self.state.countries_selected.length; i++) {
+                countries.push(self.state.countries_selected[i].value);
+            }
+
+            let visible_data = _.filter(incoming_data, function(o) { return _.find(countries, function(c) { return c == o.iso_code; }) != undefined });
+
+        self.setState({visible_data: visible_data});
+
 
             self.setState(
                 {
                     data: incoming_data,
-                    visible_data: incoming_data
+                    visible_data: visible_data
                 }
             );
 
@@ -277,6 +291,50 @@ export class CovidDataTable extends React.Component {
         return _.orderBy(rows, selector, direction);
     }
 
+    convertArrayOfObjectsToCSV(array) {
+        let result;
+    
+        const columnDelimiter = ',';
+        const lineDelimiter = '\n';
+        const keys = Object.keys(array[0]);
+    
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+    
+        array.forEach(item => {
+            let ctr = 0;
+            keys.forEach(key => {
+                if (ctr > 0) result += columnDelimiter;
+    
+                result += item[key];
+                
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+    
+        return result;
+    }
+    
+    
+    downloadCSV(array) {
+
+        const link = document.createElement('a');
+        let csv = this.convertArrayOfObjectsToCSV(array);
+        if (csv == null) return;
+    
+        const filename = 'export.csv';
+    
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = `data:text/csv;charset=utf-8,${csv}`;
+        }
+    
+        link.setAttribute('href', encodeURI(csv));
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
     
 
    
@@ -289,10 +347,7 @@ export class CovidDataTable extends React.Component {
                 <Card.Body>
 
                     <Row className="mb-4" style={{'position': 'relative', 'zIndex': 2}}>
-                        <Col className="d-flex align-items-center">
-                           
-                        </Col>
-                        <Col xs="4">
+                        <Col xs="3">
                             <MultiSelect
                                 options={this.state.countries_select}
                                 value={this.state.countries_selected}
@@ -310,7 +365,7 @@ export class CovidDataTable extends React.Component {
                                 }
                             />
                         </Col>
-                        <Col xs="4">
+                        <Col xs="3">
                             
                             <MultiSelect
                                 options={this.state.columns_select}
@@ -328,6 +383,10 @@ export class CovidDataTable extends React.Component {
                                     }
                                 }
                             />
+                        </Col>
+                        <Col></Col>
+                        <Col xs="auto" className="align-self-center">
+                            <Button onClick={e => this.downloadCSV(this.state.visible_data)} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Table Data</Button>
                         </Col>
                     </Row>
 
