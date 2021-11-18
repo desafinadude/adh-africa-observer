@@ -32,6 +32,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
+import { CovidDataTable } from './components/CovidDataTable';
 
 export class App extends React.Component {
 
@@ -57,6 +58,9 @@ export class App extends React.Component {
             error: false,
             loading: true,
             loadingComplete: false,
+
+            tab: 'map',
+
             data: [],
             dates: [],
             currentDate: '',
@@ -266,6 +270,11 @@ export class App extends React.Component {
         self.state.ref.noUiSlider.set(self.state.currentDateCount);
     }
 
+    switchTab() {
+        let self = this;
+        self.setState({tab: this.state.tab == 'map' ? 'datatable' : 'map'});
+    }
+
     
 
     countryRemove = (country) => {
@@ -292,68 +301,87 @@ export class App extends React.Component {
                 </div>
             </> :
             <>
-                <div className="header pb-5">
+                <div className="header pb-3">
 
                     { window.location.search != '?embed' ? <Header /> : '' }
 
                     <Container style={this.state.no_embed_style} className="justify-content-between">
-                        <Row>
+                        {/* <Row>
                             <Col>
                                 <h1>COVID-19 Resurgence Map</h1>
                             </Col>
-                            <Col xs="auto">
-                                {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
-                                <Button size="lg" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> }
-                            </Col>
-                        </Row>
+                            
+                        </Row> */}
 
-                        <Row className="mt-4">
-                            <Col><h5>Select a country:</h5></Col>
-                        </Row>
+                        { this.state.tab == 'map' ? 
+                            <>
+                                <Row className="mt-4">
+                                    <Col><h5>Select a country:</h5></Col>
+                                </Row>
 
-                        <Row className="mt-2 mb-4">
-                            <Col xs="auto">
-                                {/* <Form.Select className="border-0 text-white" style={{backgroundColor: '#094151' }}>
-                                    <option>Choose Countries</option>
-                                    {countriesList.map((country,index) => (
-                                        <option value={country.iso_code}>{country.location}</option>
-                                    ))}
-                                </Form.Select> */}
-                                <DropdownButton title="Choose Countries" className="country-select">
-                                    {countriesList.map((country,index) => (
-                                        <Dropdown.Item key={country.iso_code} onClick={() => this.countrySelect({iso_code: country.iso_code, location: country.location})}>{country.location}</Dropdown.Item>
-                                    ))}
-                                </DropdownButton>
-                            </Col>
-                            <Col>
-                                {this.state.selectedCountries.map((country) => (
-                                    <Button variant="control-grey" key={country.iso_code} className="mx-1" onClick={() => this.countryRemove(country.iso_code)}>
-                                        <Row>
-                                            <Col xs="auto pe-0">
-                                                <div style={{width: '1.5em', height: '1.5em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
-                                                    <ReactCountryFlag
-                                                    svg
-                                                    countryCode={getCountryISO2(country.iso_code)}
-                                                    style={{
-                                                        position: 'absolute', 
-                                                        top: '30%',
-                                                        left: '30%',
-                                                        marginTop: '-50%',
-                                                        marginLeft: '-50%',
-                                                        fontSize: '2em',
-                                                        lineHeight: '2em',
-                                                    }}/>
-                                                </div>
-                                            </Col>
-                                            <Col className="text-start">{country.location}</Col>
-                                            <Col xs="auto">
-                                                <FontAwesomeIcon icon={faTimes} style={{ fontSize:"10px"}}/>
-                                            </Col>
-                                        </Row>
-                                    </Button>
-                                ))}
-                            </Col>
-                        </Row>
+                                <Row className="mt-2 mb-4">
+                                    <Col xs="auto">
+                                        {/* <Form.Select className="border-0 text-white" style={{backgroundColor: '#094151' }}>
+                                            <option>Choose Countries</option>
+                                            {countriesList.map((country,index) => (
+                                                <option value={country.iso_code}>{country.location}</option>
+                                            ))}
+                                        </Form.Select> */}
+                                        <DropdownButton title="Choose Countries" className="country-select">
+                                            {countriesList.map((country,index) => (
+                                                <Dropdown.Item key={country.iso_code} onClick={() => this.countrySelect({iso_code: country.iso_code, location: country.location})}>{country.location}</Dropdown.Item>
+                                            ))}
+                                        </DropdownButton>
+                                    </Col>
+                                    <Col>
+                                        {this.state.selectedCountries.map((country) => (
+                                            <Button variant="control-grey" key={country.iso_code} className="mx-1" onClick={() => this.countryRemove(country.iso_code)}>
+                                                <Row>
+                                                    <Col xs="auto pe-0">
+                                                        <div style={{width: '1.5em', height: '1.5em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
+                                                            <ReactCountryFlag
+                                                            svg
+                                                            countryCode={getCountryISO2(country.iso_code)}
+                                                            style={{
+                                                                position: 'absolute', 
+                                                                top: '30%',
+                                                                left: '30%',
+                                                                marginTop: '-50%',
+                                                                marginLeft: '-50%',
+                                                                fontSize: '2em',
+                                                                lineHeight: '2em',
+                                                            }}/>
+                                                        </div>
+                                                    </Col>
+                                                    <Col className="text-start">{country.location}</Col>
+                                                    <Col xs="auto">
+                                                        <FontAwesomeIcon icon={faTimes} style={{ fontSize:"10px"}}/>
+                                                    </Col>
+                                                </Row>
+                                            </Button>
+                                        ))}
+                                    </Col>
+                                    {/* <Col xs="auto" className="align-self-center"> */}
+                                        
+                                        {/* <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                        <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button> */}
+                                        {/* {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
+                                        <Button size="md" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> } */}
+                                    {/* </Col> */}
+                                </Row>
+                            </>
+                        : <div className="py-2">&nbsp;
+                            {/* <Row>
+                                <Col></Col>
+                                <Col xs="auto" className="align-self-center">
+                                    <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                    <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
+                                   
+                                </Col>
+                            </Row>     */}
+                        
+                        </div>}
+
 
                         {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
                             <Row>
@@ -409,6 +437,7 @@ export class App extends React.Component {
                                                                 range={{ min: 1, max: this.state.dates.length > 1 ? this.state.dates.length : 10 }}
                                                                 step={1}
                                                                 start={[this.state.dates.length]}
+                                                                connect={false}
                                                                 pips= {{
                                                                     mode: 'count',
                                                                     values: 6,
@@ -488,31 +517,46 @@ export class App extends React.Component {
                         }
 
                     </Container>
+                    
+                 
+
                 </div>
 
-                <Container className="my-4">
-                    <Row>
-                        {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
-                            <Col lg={6} className="mb-4">
-                                {this.state.definitions.length > 0 ?
-                                    <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch} definitions={this.state.definitions}/>
-                                : '' }
-                            </Col>
-                        }
-                        <Col>
-                            { 
-                                this.state.selectedCountries.length > 0 ? 
-                                    <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}/> 
-                                :
-                                    <>
-                                        {this.state.definitions.length > 0 ?
-                                            <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline} definitions={this.state.definitions}/>
-                                        : '' }
-                                    </>
+                
+
+                { this.state.tab == 'map' ? 
+                    <Container className="my-4">
+                        <Row>
+                            {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
+                                <Col lg={6} className="mb-4">
+                                    {this.state.definitions.length > 0 ?
+                                        <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch} definitions={this.state.definitions}/>
+                                    : '' }
+                                </Col>
                             }
-                        </Col>
-                    </Row>
-                </Container>
+                            <Col>
+                                { 
+                                    this.state.selectedCountries.length > 0 ? 
+                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}/> 
+                                    :
+                                        <>
+                                            {this.state.definitions.length > 0 ?
+                                                <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline} definitions={this.state.definitions}/>
+                                            : '' }
+                                        </>
+                                }
+                            </Col>
+                        </Row>
+                    </Container>
+                :
+                    <Container className="mb-5" fluid>
+                        <Row>
+                            <Col>
+                                <CovidDataTable currentDate={this.state.currentDate} resurgenceData={this.state.selectedDateData}/>
+                            </Col>
+                        </Row>
+                    </Container>
+                }
             </>)
         
     }
