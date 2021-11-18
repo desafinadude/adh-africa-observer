@@ -306,17 +306,12 @@ export class App extends React.Component {
                     { window.location.search != '?embed' ? <Header /> : '' }
 
                     <Container style={this.state.no_embed_style} className="justify-content-between">
-                        <Row>
+                        {/* <Row>
                             <Col>
                                 <h1>COVID-19 Resurgence Map</h1>
                             </Col>
-                            <Col xs="auto" className="align-self-center">
-                                <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
-                                <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
-                                {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
-                                <Button size="md" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> }
-                            </Col>
-                        </Row>
+                            
+                        </Row> */}
 
                         { this.state.tab == 'map' ? 
                             <>
@@ -366,9 +361,26 @@ export class App extends React.Component {
                                             </Button>
                                         ))}
                                     </Col>
+                                    {/* <Col xs="auto" className="align-self-center"> */}
+                                        
+                                        {/* <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                        <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button> */}
+                                        {/* {window.location.search == '?embed' ? <a href="https://www.africadatahub.org" target="_blank"><img src="https://assets.website-files.com/6017e7ecb14082cec5d531af/605dc8591d244b03000f013c_adh-logo.svg"/></a> :
+                                        <Button size="md" variant="outline-control-grey" style={{color: "#094151"}} href="https://www.africadatahub.org/data-resources"><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button> } */}
+                                    {/* </Col> */}
                                 </Row>
                             </>
-                        : <div className="py-2">&nbsp;</div>}
+                        : <div className="py-2">&nbsp;
+                            {/* <Row>
+                                <Col></Col>
+                                <Col xs="auto" className="align-self-center">
+                                    <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                    <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
+                                   
+                                </Col>
+                            </Row>     */}
+                        
+                        </div>}
 
 
                         {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
