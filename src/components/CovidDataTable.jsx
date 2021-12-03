@@ -21,8 +21,9 @@ import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
+import { faFileDownload,faTimes, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
+import Spinner from 'react-bootstrap/Spinner';
 
 import * as countriesList from '../data/countries.json';
 
@@ -73,11 +74,12 @@ export class CovidDataTable extends React.Component {
                             borderRightStyle: 'solid',
                             borderRightWidth: '1px',
                             borderRightColor: defaultThemes.default.divider.default,
+                            
                         },
                     },
                 }
             },
-            loading: false
+            loading: true
         }
     }
 
@@ -125,7 +127,7 @@ export class CovidDataTable extends React.Component {
                     </Sparklines>
                     : '';
                 cellStyles = {
-                    // padding: 0,
+                    padding: 0,
                     // maxWidth: '150px'
                 }
                 
@@ -138,6 +140,7 @@ export class CovidDataTable extends React.Component {
                     cell: cell,
                     sortable: owid_fields[i] == 'case_history' ? false : true,
                     field: owid_fields[i],
+                    width: owid_fields[i] == 'location' ? '200px' : owid_fields[i] == 'case_history' ? '150px' : '110px',
                     style: cellStyles
                 }
             )
@@ -346,7 +349,7 @@ export class CovidDataTable extends React.Component {
             <Card>
                 <Card.Body>
 
-                    <Row className="mb-4" style={{'position': 'relative', 'zIndex': 2}}>
+                    <Row className="mb-4">
                         <Col xs="3">
                             <MultiSelect
                                 options={this.state.countries_select}
@@ -386,6 +389,9 @@ export class CovidDataTable extends React.Component {
                         </Col>
                         <Col></Col>
                         <Col xs="auto" className="align-self-center">
+                            <span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span>
+                        </Col>
+                        <Col xs="auto" className="align-self-center">
                             <Button onClick={e => this.downloadCSV(this.state.visible_data)} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Table Data</Button>
                         </Col>
                     </Row>
@@ -400,7 +406,14 @@ export class CovidDataTable extends React.Component {
                     conditionalRowStyles={this.state.conditionalRowStyles}
                     customStyles={this.state.customStyles}
                     sortFunction={this.customSort}
-                    progressPending={false}
+                    progressPending={this.state.loading}
+                    progressComponent={
+                        <div className="text-center">
+                            <Spinner animation="grow" />
+                            <h3 className="mt-4">Loading</h3>
+                        </div>
+                    }
+                    highlightOnHover={false}
                     />
                 </Card.Body>
             </Card>
