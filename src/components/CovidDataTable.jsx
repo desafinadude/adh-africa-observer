@@ -99,6 +99,7 @@ export class CovidDataTable extends React.Component {
             let cellStyles = [];
 
             if(owid_fields[i] == 'location') {
+                
                 cell = row => 
                     <>
                         <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
@@ -140,8 +141,8 @@ export class CovidDataTable extends React.Component {
                     cell: cell,
                     sortable: owid_fields[i] == 'case_history' ? false : true,
                     field: owid_fields[i],
-                    width: owid_fields[i] == 'location' ? '200px' : owid_fields[i] == 'case_history' ? '150px' : '110px',
-                    style: cellStyles
+                    width: owid_fields[i] == 'location' ? '200px' : owid_fields[i] == 'case_history' ? '150px' : '',
+                    style: cellStyles,
                 }
             )
 
@@ -238,7 +239,7 @@ export class CovidDataTable extends React.Component {
 
             let visible_data = _.filter(incoming_data, function(o) { return _.find(countries, function(c) { return c == o.iso_code; }) != undefined });
 
-        self.setState({visible_data: visible_data});
+            self.setState({visible_data: visible_data});
 
 
             self.setState(
@@ -249,6 +250,7 @@ export class CovidDataTable extends React.Component {
             );
 
             self.setState({loading:false})
+
         })
 
 
