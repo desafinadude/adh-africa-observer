@@ -35,7 +35,8 @@ html {
 body{
     font-family: 'Work Sans', sans-serif;
     background: #eceff0;
-    color: $primary
+    color: $primary;
+    padding-bottom: 2em;
 }
 
 .card {
@@ -226,3 +227,68 @@ hr {
 .map-legend .scale-none {
     background-color: #999 !important;
 }
+
+
+/* Data Table */
+
+.rdt_TableRow, .rdt_TableHeadRow {
+    position: relative;
+}
+
+.rdt_TableHeadRow {
+    z-index: 14;
+}
+
+.rdt_TableCell:first-child {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.rdt_TableHead {
+    z-index: 100 !important;
+}
+
+.rdt_TableCol:first-child {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: #fff;
+    z-index: 10;
+}
+
+.rdt_TableRow:nth-child(odd) .rdt_TableCell:first-child {
+    background: #FAFAFA;
+}
+
+.rdt_TableRow:nth-child(even) .rdt_TableCell:first-child {
+    background: #FFF;
+}
+
+/* Data Table Dropdowns */
+
+.rmsc {
+    border-radius: 6px;
+    height: 30px;
+    position: relative;
+    z-index: 999;
+}
+
+.rmsc .dropdown-container {
+    background-color: $control-grey !important;
+    border: none !important;
+    height: 30px;
+}
+
+.rmsc .dropdown-container:focus-within {
+    border-color: #84a0a8 !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.25rem rgb(9 65 81 / 25%) !important;
+}
+
+.rmsc .dropdown-heading {
+    height: 30px !important;
+}
+
+
