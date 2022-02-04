@@ -129,8 +129,6 @@ export class App extends React.Component {
                 queries.push(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=32000' + offset);
             }
 
-            console.log(queries);
-
             axios.all([axios.get(queries[0]), axios.get(queries[1])]).then(axios.spread((...responses) => {
 
                 let data = [];
@@ -144,7 +142,10 @@ export class App extends React.Component {
                     data: data
                 });
 
-                let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
+
+               
+
+                let dates = _.map(_.uniqBy(data, 'date'),'date');
                 dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
 
 
@@ -156,9 +157,13 @@ export class App extends React.Component {
                     selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                     selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
                 });
+
+
     
     
                 self.setState({loadingComplete: true});
+
+                
 
 
                 
