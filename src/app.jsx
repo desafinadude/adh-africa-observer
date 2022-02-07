@@ -122,6 +122,8 @@ export class App extends React.Component {
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&include_total=true')
         .then(function(response) {
 
+            console.log(response.data.result.total);
+
             let queries = [];
 
             for (let count = 0; count < Math.ceil(response.data.result.total / 32000); count++) {
@@ -135,14 +137,13 @@ export class App extends React.Component {
 
                 for (let count = 0; count < responses.length; count++) {
                     let response = responses[count];
+                    console.log(responses[count]);
                     data = data.concat(response.data.result.records);
                 }
 
                 self.setState({
                     data: data
                 });
-
-
                
 
                 let dates = _.map(_.uniqBy(data, 'date'),'date');
