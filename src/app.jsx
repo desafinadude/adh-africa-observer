@@ -185,6 +185,9 @@ export class App extends React.Component {
 
     onUpdate = (render, handle, value, un, percent) => {
         let self = this;
+
+        // console.log('onUpdate()', this.state.dates[parseInt(value[0]-1)]);
+
         this.setState({
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
@@ -197,13 +200,13 @@ export class App extends React.Component {
     }
 
     dateSelect = (e) => {
-
-
         let self = this;
-        
-        let day = this.state.daySelect.current.value;
+
+        let day = parseInt(this.state.daySelect.current.value) == 31 ? 31 : parseInt(this.state.daySelect.current.value) + 1;
         let month = this.state.monthSelect.current.value;
         let year = this.state.yearSelect.current.value;
+
+        // console.log('dateSelect()', day,month,year);
 
         let date = new Date(day + ' ' + month + ' ' + year).toISOString().split('T')[0];
         date = date + 'T00:00:00';
@@ -217,7 +220,6 @@ export class App extends React.Component {
                 selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
                 selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['change'],['desc'])
             });
-            self.state.ref.noUiSlider.set(dateCount);
         }
 
         
@@ -233,9 +235,6 @@ export class App extends React.Component {
                 window.clearTimeout(self.timer);
             }
         },1000);
-        
-        
-        
     }
 
     playTimeline = () => {
