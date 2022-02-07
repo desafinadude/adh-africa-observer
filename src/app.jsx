@@ -39,6 +39,7 @@ export class App extends React.Component {
     // https://adhtest.opencitieslab.org/dataset/resurgence-map-data/resource/3af0fe8f-2671-41e8-b55c-636fcf2270e1
     // https://adhtest.opencitieslab.org/dataset/owid-countries
 
+
     constructor(){
         super();
         this.state = {
@@ -51,6 +52,7 @@ export class App extends React.Component {
             api: {
                 baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
                 resurgenceData: '7e58603e-0b06-47cf-8e77-54b0d567d6eb',
+                // resurgenceData: '3af0fe8f-2671-41e8-b55c-636fcf2270e1',
                 definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
                 countryData: 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
             },
@@ -91,15 +93,14 @@ export class App extends React.Component {
             self.setState({no_embed_style: { paddingTop: '100px' }})
         }
 
-        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=100000')
+       
+        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=200000')
         .then(function(response) {
             self.setState({definitions: response.data.result.records });
         })
 
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")')
         .then(function(response) {
-
-
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -112,35 +113,66 @@ export class App extends React.Component {
             });
 
             // self.state.ref.noUiSlider.set(10);
-
         }).catch(function(error) {
             console.log(error);
             self.setState({loading: false, error: true});
         })
 
 
-        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=100000')
+        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&include_total=true')
         .then(function(response) {
-            self.setState({data: response.data.result.records});
 
-            let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
-            dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-            
-            self.setState({
-                dates: dates,
-                loading: false,
-                currentDate: dates[dates.length-1],
-                currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
-            });
 
-            self.setState({loadingComplete: true});
+            let queries = [];
 
-        }).catch(function(error) {
-            console.log(error);
-            self.setState({loading: false, error: true});
+            for (let count = 0; count < Math.ceil(response.data.result.total / 32000); count++) {
+                let offset = count > 0 ? '&offset=' + (count * 32000) : '';
+                queries.push(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=32000' + offset);
+            }
+
+            axios.all([axios.get(queries[0]), axios.get(queries[1])]).then(axios.spread((...responses) => {
+
+                let data = [];
+
+                for (let count = 0; count < responses.length; count++) {
+                    let response = responses[count];
+                    data = data.concat(response.data.result.records);
+                }
+
+                self.setState({
+                    data: data
+                });
+               
+
+                let dates = _.map(_.uniqBy(data, 'date'),'date');
+                dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
+
+
+                self.setState({
+                    dates: dates,
+                    loading: false,
+                    currentDate: dates[dates.length-1],
+                    currentDateCount: dates.length-1,
+                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
+                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+                });
+
+
+    
+    
+                self.setState({loadingComplete: true});
+
+                
+
+
+                
+            })).catch(error => {
+                console.log(error);
+                self.setState({loading: false, error: true});
+            })
+
         })
+
       
     }
 
@@ -148,6 +180,8 @@ export class App extends React.Component {
         let self = this;
         
     }
+
+    
 
     onUpdate = (render, handle, value, un, percent) => {
         let self = this;
@@ -159,9 +193,12 @@ export class App extends React.Component {
         });
         
 
+
     }
 
     dateSelect = (e) => {
+
+
         let self = this;
         
         let day = this.state.daySelect.current.value;
@@ -182,6 +219,7 @@ export class App extends React.Component {
             });
             self.state.ref.noUiSlider.set(dateCount);
         }
+
         
     }
 
@@ -227,6 +265,7 @@ export class App extends React.Component {
             selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
             selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1]) }),['change'],['desc'])
         });
+
         
         self.state.ref.noUiSlider.set(self.state.currentDateCount);
     }
@@ -240,6 +279,7 @@ export class App extends React.Component {
             selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1]) }),['change'],['desc'])
         });
         
+
         self.state.ref.noUiSlider.set(self.state.dates.length);
         
     }
@@ -497,6 +537,7 @@ export class App extends React.Component {
                                                 <Form.Select disabled={!this.state.loadingComplete} value={ new Date(this.state.currentDate).toLocaleDateString('en-gb', { year: 'numeric' }) } className="h-100 border-0 text-black bg-control-grey" onChange={this.dateSelect.bind(this)} ref={this.state.yearSelect}>
                                                     <option key="2020" value="2020">2020</option>
                                                     <option key="2021" value="2021">2021</option>
+                                                    <option key="2022" value="2022">2022</option>
                                                 </Form.Select>
                                             </Col>
                                             <Col xs="auto">
