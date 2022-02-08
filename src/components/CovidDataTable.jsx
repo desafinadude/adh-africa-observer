@@ -204,8 +204,13 @@ export class CovidDataTable extends React.Component {
 
         self.setState({loading:true})
 
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20where%20date%20%3D%20%27' + this.props.currentDate + '%27')
-        .then(function(response) {
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"fc2a18a1-0c76-4afe-8934-2b9a9dacfef4"%20where%20date%20%3D%20%27' + this.props.currentDate + '%27',
+            { 
+                headers: {
+                authorization: process.env.REACT_API_KEY
+                }
+            }
+        ).then(function(response) {
 
             let incoming_data = response.data.result.records;
 
