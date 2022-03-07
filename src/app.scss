@@ -47,6 +47,79 @@ body{
     background: #F8F8F8
 }
 
+.offcanvas-backdrop.show {
+    opacity: 0 !important;
+}
+
+.offcanvas-top {
+    border-bottom: none !important;
+    height: 230px;
+}
+
+.headerMenu {
+    transition: transform 0.25s ease-in-out;
+}
+
+.header-unpin {
+    display: none;
+    transform: translateY(-65px);
+}
+
+.header-pin {
+    display: block;
+    transform: translateY(0);
+}
+
+.mobile_menu_links {
+    text-align: left;
+    padding: 6em 1em 1em;
+    
+}
+
+.mobile_menu_links button,
+.mobile_menu_social button {
+    color: $primary;
+    display: block;
+    font-size: 15px !important;
+    font-weight: 600;
+}
+
+.mobile_menu_social {
+    border-top: 1px solid #ccc;
+    padding: 1em 1em 2em;
+}
+
+.mobile_menu_social button {
+    display: inline-block;
+}
+
+.dropdown-menu {
+    height: 200px;
+    overflow-y: scroll;
+    z-index: 2000 !important;
+}
+
+.DateInput {
+    display: none !important;
+}
+
+.SingleDatePicker_picker {
+    // z-index: 2000 !important;
+    position: unset !important;
+}
+
+.SingleDatePickerInput__withBorder {
+    border: none !important;
+    
+}
+
+.DayPicker__withBorder {
+    box-shadow: unset !important;
+}
+
+.SingleDatePicker > div {
+}
+
 h1 {
     font-weight: 600
 }
@@ -226,6 +299,10 @@ hr {
 
 .map-legend .scale-none {
     background-color: #999 !important;
+}
+
+.accordion-item {
+    border: none !important;
 }
 
 

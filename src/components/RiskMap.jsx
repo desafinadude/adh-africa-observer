@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
+import Accordion from 'react-bootstrap/Accordion';
 
 import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -288,12 +289,26 @@ export class RiskMap extends React.Component {
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>
                         </Row>
-                        <hr/>
-                        <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
-                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
-                        <hr/>
-                        <h6 className="mt-3 text-capitalize">{_.filter(this.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].title}</h6>
-                        <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].text}</p>
+                        <hr className="d-none d-md-block"/>
+                        <div className="d-none d-md-block">
+                            <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
+                            <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
+                        </div>
+                        <hr />
+                        <div className="d-none d-md-block">
+                            <h6 className="mt-3 text-capitalize">{_.filter(this.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].title}</h6>
+                            <p className="text-black-50 mt-3">{_.filter(self.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].text}</p>
+                        </div>
+                    
+                        <Accordion className="d-md-none mt-2">
+                            <Accordion.Item eventKey="0">
+                                <Accordion.Header>{_.filter(this.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].title}</Accordion.Header>
+                                <Accordion.Body>
+                                    {_.filter(self.props.definitions, function(def) { return def.name == self.state.mode + '_view'})[0].text}
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+                    
                     </Card.Body>
                 </Card>
             </>

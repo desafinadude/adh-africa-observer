@@ -108,9 +108,11 @@ export class Leaderboard extends React.Component {
                                 <Button variant="control-grey">Download Data</Button>
                             </Col> */}
                         </Row>
-                        <hr/>
-                        <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].title}</h6>
-                        <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].text}</p>
+                        <div className="d-none d-md-block">
+                            <hr/>
+                            <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].title}</h6>
+                            <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].text}</p>
+                        </div>
                     </Card.Body>
                 </Card>
                 
