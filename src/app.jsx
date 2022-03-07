@@ -240,7 +240,7 @@ export class App extends React.Component {
         }
 
         self.state.ref.noUiSlider.set(self.state.currentDateCount);
-        self.setState({focused: true});
+        self.setState({focused: false});
 
         
     }
