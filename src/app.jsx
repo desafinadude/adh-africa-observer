@@ -112,7 +112,7 @@ export class App extends React.Component {
        
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=200000')
         .then(function(response) {
-            self.setState({definitions: response.data.result.records });
+            self.setState({definitions: response.data.result.records }); 
         })
 
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")')
