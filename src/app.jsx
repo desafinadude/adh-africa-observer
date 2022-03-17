@@ -61,10 +61,9 @@ export class App extends React.Component {
             // },
             api: {
                 baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
-                resurgenceData: '7e58603e-0b06-47cf-8e77-54b0d567d6eb',  // '77149a76-e01c-483e-9617-050dc9c704e0'
-                // resurgenceData: '3af0fe8f-2671-41e8-b55c-636fcf2270e1',
+                resurgenceData: 'e8a1d3a5-f644-4f69-bd9c-bcc73e20c817', // '7e58603e-0b06-47cf-8e77-54b0d567d6eb',  // '77149a76-e01c-483e-9617-050dc9c704e0'
                 definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
-                countryData: 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
+                countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118' // 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
             },
             definitions: [],
             no_embed_style: {
@@ -512,7 +511,7 @@ export class App extends React.Component {
                                         <Col xs="auto" lg={3}>
                                             <h5 className="mt-1">Current date showing:</h5>
                                             
-                                            <h1 style={{fontWeight: 500, fontSize: window.innerWidth < 1400 ? '2.2rem' : '2.5rem'}} >
+                                            <h1 className="cursor-pointer" style={{fontWeight: 500, fontSize: window.innerWidth < 1400 ? '2.2rem' : '2.2rem'}} onClick={() => this.setState({focused: true})}>
                                                 {
                                                     new Date(this.state.currentDate).toLocaleDateString(
                                                         'en-gb',
@@ -522,7 +521,7 @@ export class App extends React.Component {
                                                         day: 'numeric'
                                                         }
                                                     )
-                                                } <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize:"14px"}} color="#094151" onClick={() => this.setState({focused: true})} className="cursor-pointer"/>
+                                                } <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize:"14px"}} color="#094151" className="cursor-pointer"/>
                                             </h1>
 
                                             <Modal show={this.state.focused} onHide={() => this.setState({focused: false})} centered>
