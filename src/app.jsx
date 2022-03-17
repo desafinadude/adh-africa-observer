@@ -383,7 +383,7 @@ export class App extends React.Component {
                                 { this.state.tab == 'map' ? 
                                     <>
                                         <Row className="mt-4 d-none d-md-block">
-                                            <Col><h5>Select a country:</h5></Col>
+                                            <Col><h5>Select a country: </h5></Col>
                                         </Row>
                                         
                                             <>
