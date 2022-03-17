@@ -95,7 +95,7 @@ export class CountryData extends React.Component {
 
             echartInstance.setOption(
                 {
-                    grid: { top:20, bottom: 80, left: 60, right: 60},
+                    grid: { top:20, bottom: 80, left: window.innerWidth < 800 ? 30 : 60, right: window.innerWidth < 800 ? 0 : 60},
                     dataZoom: [
                         {
                             type: 'slider',
@@ -211,7 +211,7 @@ export class CountryData extends React.Component {
         let self = this;
         return (
             <>
-                <Card className="border-0 rounded">
+                <Card className={ window.innerWidth < 800 ? 'mt-5 border-0 rounded' : 'border-0 rounded' }>
                     <Card.Body>
                         <Row className="gx-2 align-items-center">
                             <Col xs="auto">
@@ -244,9 +244,9 @@ export class CountryData extends React.Component {
 
                 <Card className="border-0 rounded mt-4">
                     <Card.Body>
-                        <Row className="align-items-center">
-                            <Col><h5 className="my-0">Compare data to new cases per million</h5></Col>
-                            <Col xs="auto">
+                        <Row className="justify-content-between">
+                            <Col xs={12} md="auto"><h5 className={window.innerWidth < 800 ? 'text-center my-3' : 'my-0'}>Compare data to new cases per million</h5></Col>
+                            <Col xs={12} md="auto" className={window.innerWidth < 800 ? 'text-center my-3' : 'my-0'}>
                                 <OverlayTrigger
                                 placement="top"
                                 overlay={<Tooltip>Download an image of the current chart.</Tooltip>}>
@@ -258,7 +258,7 @@ export class CountryData extends React.Component {
                         <hr/>
                         <Row className="mb-5">
                             <Col xs="auto" className="position-relative"><div className="position-relative top-50 start-50 translate-middle"><strong>Overlay dataset:</strong></div></Col>
-                            <Col>
+                            <Col className="px-0">
                                 <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
                                     <option value="">Add a comparison metric</option>
 
