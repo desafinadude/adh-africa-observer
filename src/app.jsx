@@ -46,24 +46,17 @@ import { faThemeisle } from '@fortawesome/free-brands-svg-icons';
 
 export class App extends React.Component {
 
-    // https://adhtest.opencitieslab.org/dataset/resurgence-map-data/resource/3af0fe8f-2671-41e8-b55c-636fcf2270e1
-    // https://adhtest.opencitieslab.org/dataset/owid-countries
-
 
     constructor(){
         super();
         this.state = {
-            // api: {
-            //     baseUrl: 'https://ckan.africadatahub.org/api/3/',
-            //     resurgenceData: 'e6489086-6e9a-4e3b-94c5-5236809db053',
-            //     definitions: '0ac414ef-1c30-47b4-bcca-6e95d1a9b498',
-            //     countryData: '8bf9f7fe-ec0d-468d-bc7e-be9a1130dd3a'
-            // },
+           
             api: {
                 baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
-                resurgenceData: 'e8a1d3a5-f644-4f69-bd9c-bcc73e20c817', // '7e58603e-0b06-47cf-8e77-54b0d567d6eb',  // '77149a76-e01c-483e-9617-050dc9c704e0'
+                resurgenceData: 'e8a1d3a5-f644-4f69-bd9c-bcc73e20c817',
                 definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
-                countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118' // 'fc2a18a1-0c76-4afe-8934-2b9a9dacfef4'
+                countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118' 
+
             },
             definitions: [],
             no_embed_style: {
@@ -114,8 +107,11 @@ export class App extends React.Component {
             self.setState({definitions: response.data.result.records }); 
         })
 
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")')
-        .then(function(response) {
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")',
+        { headers: {
+                authorization: process.env.REACT_API_KEY
+            }
+        }).then(function(response) {
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -700,7 +696,7 @@ export class App extends React.Component {
                             <Col>
                                 { 
                                     this.state.selectedCountries.length > 0 ? 
-                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}/> 
+                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}api={this.state.api}/> 
                                     :
                                         <>
                                             {this.state.definitions.length > 0 ?
