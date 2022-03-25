@@ -43,6 +43,8 @@ export class CovidDataTable extends React.Component {
             metric_selected: '',
             countries_select: [],
             countries_selected: [],
+            maxDate: null,
+            minDate: null,
             startDate: null,
             endDate: null,
             focusedInput: null,
@@ -108,9 +110,7 @@ export class CovidDataTable extends React.Component {
             )
         }
 
-        let query = 'SELECT%20max%28date%29%20FROM%20"' + this.props.api.countryData + '"';
-
-
+        let query = 'SELECT%20max%28date%29%2Cmin%28date%29%20FROM%20"' + this.props.api.countryData + '"';
 
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=' + query,
             { headers: {
@@ -118,13 +118,18 @@ export class CovidDataTable extends React.Component {
             }
         }).then((response) => {
 
+            console.log(response);
+
             this.setState(
                 {
                     countries_select: countries_select,
                     countries_selected: countries_select,
                     metric_selected: 'total_cases',
                     startDate: moment(response.data.result.records[0].max).add(-1,'months'),
-                    endDate: moment(response.data.result.records[0].max)
+                    endDate: moment(response.data.result.records[0].max),
+                    maxDate: moment(response.data.result.records[0].max),
+                    minDate: moment(response.data.result.records[0].min)
+                    
     
                 }
             );
@@ -373,7 +378,10 @@ export class CovidDataTable extends React.Component {
                             startDatePlaceholderText='START'
                             endDatePlaceholderText='END'
                             small={true}
+                            minDate={this.state.minDate}
+                            maxDate={this.state.maxDate}
                             isOutsideRange={() => false}
+                            displayFormat='DD/MM/YYYY'
                         />                                
                         </Col>
                         <Col xs="auto" className="align-self-center">
