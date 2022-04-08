@@ -366,7 +366,7 @@ export class App extends React.Component {
                 
                 <div className="header pb-3">
 
-                    { window.location.search != '?embed' ? <Header /> : '' }
+                    { document.URL.indexOf('?embed') == -1 ? <Header /> : '' }
 
                     { (window.innerWidth > 800) || (this.state.selectedCountries.length == 0 && window.innerWidth < 800) ? 
                        
