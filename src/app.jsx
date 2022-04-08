@@ -94,7 +94,7 @@ export class App extends React.Component {
     componentDidMount() {
         let self = this;
 
-        if(document.URL.indexOf('?embed') > -1) {
+        if(document.URL.indexOf('?embed') == -1) {
 
             let paddingTop = window.innerWidth >= 768 ? '100px' : '70px';
 
