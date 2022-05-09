@@ -19,7 +19,6 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Modal from 'react-bootstrap/Modal';
 import Accordion from 'react-bootstrap/Accordion';
 
-
 import moment from 'moment';
 
 import 'react-dates/initialize';
@@ -54,6 +53,7 @@ export class App extends React.Component {
             api: {
                 baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
                 resurgenceData: 'e8a1d3a5-f644-4f69-bd9c-bcc73e20c817',
+                resurgenceDataThreshold: '15962769-1185-4816-9719-bee78b14f3f7', // TEMP DATA SET
                 definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
                 countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118' 
 
@@ -101,13 +101,19 @@ export class App extends React.Component {
             self.setState({no_embed_style: { paddingTop: paddingTop }})
         }
 
+        let resurgenceData = self.state.api.resurgenceData;
+
+        if(document.URL.indexOf('limit') > -1) {
+            resurgenceData = self.state.api.resurgenceDataThreshold;
+        }
+
        
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=200000')
         .then(function(response) {
             self.setState({definitions: response.data.result.records }); 
         })
 
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.resurgenceData +'")',
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + resurgenceData +'")',
             { headers: {
                 authorization: process.env.REACT_API_KEY
             }
@@ -129,15 +135,38 @@ export class App extends React.Component {
             self.setState({loading: false, error: true});
         })
 
+        
+       
 
-        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&include_total=true')
+        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + resurgenceData +'")',
+            { headers: {
+                authorization: process.env.REACT_API_KEY
+            }
+        }).then(function(response) {
+            self.setState({data: response.data.result.records});
+            let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
+            self.setState({
+                dates: dates,
+                loading: false,
+                currentDate: dates[dates.length-1],
+                currentDateCount: dates.length-1,
+                selectedDateData: _.orderBy(self.state.data,['change'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+            });
+        }).catch(function(error) {
+            console.log(error);
+            self.setState({loading: false, error: true});
+        })
+
+
+        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + resurgenceData + '&include_total=true')
         .then(function(response) {
 
             let queries = [];
 
             for (let count = 0; count < Math.ceil(response.data.result.total / 32000); count++) {
                 let offset = count > 0 ? '&offset=' + (count * 32000) : '';
-                queries.push(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.resurgenceData + '&limit=32000' + offset);
+                queries.push(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + resurgenceData + '&limit=32000' + offset);
             }
 
             axios.all([axios.get(queries[0]), axios.get(queries[1])]).then(axios.spread((...responses) => {
@@ -190,6 +219,18 @@ export class App extends React.Component {
         let self = this;
         
     }
+
+    CSVToJSON = csv => {
+        const lines = csv.split('\n');
+        const keys = lines[0].split(',');
+        return lines.slice(1).map(line => {
+            return line.split(',').reduce((acc, cur, i) => {
+                const toAdd = {};
+                toAdd[keys[i]] = cur;
+                return { ...acc, ...toAdd };
+            }, {});
+        });
+    };
 
     
 
