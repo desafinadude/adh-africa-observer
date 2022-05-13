@@ -1,4 +1,4 @@
-# ADH ResurgencekMap
+# ADH ResurgenceMap
 
 ## Local development
 
