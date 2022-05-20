@@ -50,11 +50,13 @@ export class Leaderboard extends React.Component {
                     <Card.Body>
                         <h5>% Change in new cases per million (7 day average) - Ranked</h5>
                         <hr/>
+
+                        <h6 className="my-4">INCREASING</h6>
                         
                         {this.props.playingTimeline == true ?
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
-                                    if(index < self.state.limit) {
+                                    if(country.change > 0) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
@@ -62,7 +64,27 @@ export class Leaderboard extends React.Component {
                         :
                             <>
                                 {self.props.data.map((country,index) => {
-                                    if(index < self.state.limit) {
+                                    if(country.change > 0) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
+                                    }
+                                })}
+                            </>
+                        }
+
+                        <h6 className="my-4">DECREASING</h6>
+
+                        {this.props.playingTimeline == true ?
+                            <FlipMove>
+                                {self.props.data.map((country,index) => {
+                                    if(country.change < 0) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
+                                    }
+                                })}
+                            </FlipMove>
+                        :
+                            <>
+                                {self.props.data.map((country,index) => {
+                                    if(country.change < 0) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
@@ -70,36 +92,7 @@ export class Leaderboard extends React.Component {
                         }
                         
 
-                        <Button variant="control-grey" className="w-100 d-flex justify-content-between my-3" onClick={ () => self.toggleList() }>
-                            <div>{ self.state.fullList == true ? 'Click to collapse' : 'Click to expand all countries' }</div>
-                            <FontAwesomeIcon icon={faArrowsAltV} style={{position: 'relative', top: '4px'}}/>
-                        </Button>
-                        
-                        {this.props.playingTimeline == true ?
-                            <>
-                                {self.state.fullList == false ? 
-                                    (<FlipMove>
-                                        {self.props.data.map((country,index) => {
-                                            if(index > 44) {
-                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
-                                            }
-                                        })}
-                                    </FlipMove>) : ''
-                                }
-                            </>
-                        :
-                            <>    
-                                {self.state.fullList == false ? 
-                                    (<>
-                                        {self.props.data.map((country,index) => {
-                                            if(index > 44) {
-                                                return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
-                                            }
-                                        })}
-                                    </>) : ''
-                                }
-                            </>
-                        }
+                       
                         <hr/>
                         <Row className="align-items-center">
                             <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>

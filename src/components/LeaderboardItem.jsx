@@ -100,9 +100,6 @@ export class LeaderboardItem extends React.Component {
                 <div className="my-2 cursor-pointer">
                     <Row className="gx-2 align-items-center">
                         <Col xs="auto">
-                            <div style={{width: '20px'}}>{this.props.index + 1}.</div>
-                        </Col>
-                        <Col xs="auto">
                             <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
                                 <ReactCountryFlag
                                 svg
