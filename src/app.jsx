@@ -103,10 +103,12 @@ export class App extends React.Component {
 
         let resurgenceData = self.state.api.resurgenceData;
 
-        if(document.URL.indexOf('limit') > -1) {
-            resurgenceData = self.state.api.resurgenceDataThreshold;
-        }
+        // if(document.URL.indexOf('limit') > -1) {
+        //     resurgenceData = self.state.api.resurgenceDataThreshold;
+        // }
 
+
+        
        
         axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=200000')
         .then(function(response) {
@@ -118,6 +120,7 @@ export class App extends React.Component {
                 authorization: process.env.REACT_API_KEY
             }
         }).then(function(response) {
+
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -125,8 +128,8 @@ export class App extends React.Component {
                 loading: false,
                 currentDate: dates[dates.length-1],
                 currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(self.state.data,['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+                selectedDateData: _.orderBy(self.state.data,['summed'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
             });
 
             // self.state.ref.noUiSlider.set(10);
@@ -143,6 +146,7 @@ export class App extends React.Component {
                 authorization: process.env.REACT_API_KEY
             }
         }).then(function(response) {
+
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -150,8 +154,8 @@ export class App extends React.Component {
                 loading: false,
                 currentDate: dates[dates.length-1],
                 currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(self.state.data,['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+                selectedDateData: _.orderBy(self.state.data,['summed'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
             });
         }).catch(function(error) {
             console.log(error);
@@ -181,29 +185,20 @@ export class App extends React.Component {
                 self.setState({
                     data: data
                 });
-               
 
                 let dates = _.map(_.uniqBy(data, 'date'),'date');
                 dates = _.orderBy(dates, [(date) => new Date(date)], ['asc']);
-
 
                 self.setState({
                     dates: dates,
                     loading: false,
                     currentDate: dates[dates.length-1],
                     currentDateCount: dates.length-1,
-                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['change'],['desc'])
+                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['summed'],['desc']),
+                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
                 });
-
-
-    
     
                 self.setState({loadingComplete: true});
-
-                
-
-
                 
             })).catch(error => {
                 console.log(error);
@@ -217,7 +212,6 @@ export class App extends React.Component {
 
     componentDidUpdate() {
         let self = this;
-        
     }
 
     CSVToJSON = csv => {
@@ -232,34 +226,32 @@ export class App extends React.Component {
         });
     };
 
+    orderData = (dateCount) => {
+        let self = this;
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.summed != null && o.summed != 'NaN') }),['summed'],['desc']);
+    }
+
+    orderMapData = (dateCount) => {
+        let self = this;
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['summed'],['desc']);
+    }
+
     
 
     onUpdate = (render, handle, value, un, percent) => {
         let self = this;
 
-        // console.log('onUpdate()', this.state.dates[parseInt(value[0]-1)]);
-
         this.setState({
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
-          selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-          selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[parseInt(value[0]-1)]) }),['change'],['desc'])
+          selectedDateData: this.orderData(parseInt(value[0]-1)),
+          selectedDateDataMap: this.orderMapData(parseInt(value[0]-1))
         });
-        
-
 
     }
 
     dateSelect = (e) => {
         let self = this;
-
-        // let day = parseInt(this.state.daySelect.current.value) == 31 ? 31 : parseInt(this.state.daySelect.current.value) + 1;
-        // let month = this.state.monthSelect.current.value;
-        // let year = this.state.yearSelect.current.value;
-
-        // console.log('dateSelect()', day,month,year);
-        // let date = new Date(day + ' ' + month + ' ' + year).toISOString().split('T')[0];
-        // date = date + 'T00:00:00';
 
         let date = moment(e._d).format("YYYY-MM-DD").toString() + 'T00:00:00';
 
@@ -269,14 +261,13 @@ export class App extends React.Component {
             self.setState({
                 currentDate: date,
                 currentDateCount: dateCount,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['change'],['desc'])
+                selectedDateData: this.orderData(dateCount),
+                selectedDateDataMap: this.orderMapData(dateCount)
             });
         }
 
         self.state.ref.noUiSlider.set(self.state.currentDateCount);
         self.setState({focused: false});
-
         
     }
 
@@ -298,8 +289,8 @@ export class App extends React.Component {
             self.setState({ currentDateCount: self.state.currentDateCount + 1 });
             self.setState({
                 currentDate: self.state.dates[self.state.currentDateCount],
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
+                selectedDateData: this.orderData(self.state.currentDateCount),
+                selectedDateDataMap: this.orderMapData(self.state.currentDateCount)
             });
             self.state.ref.noUiSlider.set(parseInt(self.state.currentDateCount));
             self.timer = setTimeout( () => { self.playTimeline() }, 500 );
@@ -307,8 +298,6 @@ export class App extends React.Component {
             window.clearTimeout(self.timer);
             self.setState({playingTimeline: false});
         }
-
-        
     }
 
     stepTimeline = (direction) => {
@@ -316,10 +305,9 @@ export class App extends React.Component {
         this.setState({
             currentDate: self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1],
             currentDateCount: direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1]) }),['change'],['desc'])
+            selectedDateData: this.orderData(direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1),
+            selectedDateDataMap: this.orderMapData(direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1)
         });
-
         
         self.state.ref.noUiSlider.set(self.state.currentDateCount);
     }
@@ -329,13 +317,11 @@ export class App extends React.Component {
         this.setState({
             currentDate: self.state.dates[self.state.dates.length-1],
             currentDateCount: self.state.dates.length,
-            selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-            selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.dates.length-1]) }),['change'],['desc'])
+            selectedDateData: this.orderData(self.state.dates.length-1),
+            selectedDateDataMap: this.orderMapData(self.state.dates.length-1)
         });
-        
 
         self.state.ref.noUiSlider.set(self.state.dates.length);
-        
     }
 
     countrySelect = (country) => {
@@ -365,8 +351,8 @@ export class App extends React.Component {
         });
         setTimeout(function() {
             self.setState({
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount] && o.change != null && o.change != 'NaN') }),['change'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[self.state.currentDateCount]) }),['change'],['desc'])
+                selectedDateData: this.orderData(self.state.currentDateCount),
+                selectedDateDataMap: this.orderMapData(self.state.currentDateCount)
             });
         }, 500);
         
@@ -480,7 +466,6 @@ export class App extends React.Component {
                                                             ))}
                                                         </div> */}
                                                     </Col>
-
                                                 
                                                 
                                                     <Col xs="auto" className="align-self-center">
@@ -519,14 +504,9 @@ export class App extends React.Component {
                                                             </>
                                                             : ''}
                                                         </Accordion>
-
-
-
                                                     </Modal.Body>
                                                 </Modal>
-                                            
                                             </>
-                                        
                                     </>
                                 :  
                                 <div className="py-2">
@@ -575,7 +555,6 @@ export class App extends React.Component {
                                                                     id="datepicker" 
                                                                     isOutsideRange = {() => false}
                                                                     numberOfMonths={1}
-                                                                    // withFullScreenPortal={window.innerWIdth < 800 ? true : false }
                                                                     keepOpenOnDateSelect
                                                                 />
                                                             </div>
@@ -666,17 +645,10 @@ export class App extends React.Component {
                                     
 
                             </Container>
-                        
-                        
-
-                        
                     
                     : '' }
                  
-
                 </div>
-            
-                
 
                 { this.state.tab == 'map' ? 
                     <Container className="my-4">
@@ -691,7 +663,7 @@ export class App extends React.Component {
                             <Col>
                                 { 
                                     this.state.selectedCountries.length > 0 ? 
-                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions}api={this.state.api}/> 
+                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions} api={this.state.api}/> 
                                     :
                                         <>
                                             {this.state.definitions.length > 0 ?

@@ -9,11 +9,14 @@
     "build": "copyfiles --flat ./src/resurgence-map.png ./dist && copyfiles --flat ./src/adh-logo.svg ./dist && copyfiles --flat ./src/adh-favicon.png ./dist && parcel build ./src/index.html"
   },
   "dependencies": {
+    "@elsdoerfer/react-arrow": "^1.0.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-brands-svg-icons": "^5.15.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
+    "@mdi/js": "^6.7.96",
+    "@mdi/react": "^1.6.0",
     "axios": "^0.21.1",
     "bootstrap": "5.1.1",
     "classnames": "^2.3.1",

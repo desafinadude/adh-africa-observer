@@ -48,15 +48,13 @@ export class Leaderboard extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <h5>% Change in new cases per million (7 day average) - Ranked</h5>
+                        <h5>New cases per million (7 day average) - Ranked</h5>
                         <hr/>
-
-                        <h6 className="my-4">INCREASING</h6>
                         
                         {this.props.playingTimeline == true ?
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
-                                    if(country.change > 0) {
+                                    if(country.summed > 50) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
@@ -64,14 +62,14 @@ export class Leaderboard extends React.Component {
                         :
                             <>
                                 {self.props.data.map((country,index) => {
-                                    if(country.change > 0) {
+                                    if(country.summed > 50) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
                                     }
                                 })}
                             </>
                         }
 
-                        <h6 className="my-4">DECREASING</h6>
+                        {/* <h6 className="my-4">DECREASING</h6>
 
                         {this.props.playingTimeline == true ?
                             <FlipMove>
@@ -89,7 +87,7 @@ export class Leaderboard extends React.Component {
                                     }
                                 })}
                             </>
-                        }
+                        } */}
                         
 
                        

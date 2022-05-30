@@ -26,7 +26,8 @@ export class CountryData extends React.Component {
         this.state = {
             selectedCountry: '',
             selectedMetric: '',
-            options: {}
+            options: {},
+            loading: true
         }
     }
 
@@ -40,11 +41,10 @@ export class CountryData extends React.Component {
         let self = this;
 
         if(self.state.selectedCountry.iso_code != this.props.selectedCountries[0].iso_code) {
-            self.setState({ selectedCountry: this.props.selectedCountries[0] });
+            self.setState({ selectedCountry: this.props.selectedCountries[0], loading: true });
         }
         
         const echartInstance = this.echartRef.getEchartsInstance();
-        // echartInstance.clear();
 
         axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountries[0].iso_code + '%27',
             { headers: {
@@ -170,6 +170,9 @@ export class CountryData extends React.Component {
                     
                 }, true
             )
+
+            self.setState({loading: false});
+
         })
     }
 
@@ -314,6 +317,7 @@ export class CountryData extends React.Component {
                         ref={(e) => { this.echartRef = e; }}
                         option={{}}
                         style={{height: '300px'}}
+                        showLoading={this.state.loading}
                         />
                        
                         <hr/>
