@@ -18,7 +18,6 @@ import ReactCountryFlag from 'react-country-flag';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 
-import * as field_desc from '../data/owid-field-descriptions.json';
 
 export class CountryData extends React.Component {
     constructor() {
