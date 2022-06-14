@@ -3,14 +3,12 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
 
 import FlipMove from 'react-flip-move';
 import { LeaderboardItem } from './LeaderboardItem';
 import _ from 'lodash';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faArrowsAltV } from '@fortawesome/free-solid-svg-icons'
+import * as texts from '../data/texts.json';
 
 
 export class Leaderboard extends React.Component {
@@ -48,62 +46,33 @@ export class Leaderboard extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <h5>New cases per million (7 day average) - Ranked</h5>
-                        <hr/>
-                        
                         {this.props.playingTimeline == true ?
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
-                                    if(country.summed > 50) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
+                                    if(country.new_cases_smoothed_per_million > 1) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                                     }
                                 })}
                             </FlipMove>
                         :
                             <>
                                 {self.props.data.map((country,index) => {
-                                    if(country.summed > 50) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
+                                    if(country.new_cases_smoothed_per_million > 1) {
+                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect}/>
                                     }
                                 })}
                             </>
                         }
-
-                        {/* <h6 className="my-4">DECREASING</h6>
-
-                        {this.props.playingTimeline == true ?
-                            <FlipMove>
-                                {self.props.data.map((country,index) => {
-                                    if(country.change < 0) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
-                                    }
-                                })}
-                            </FlipMove>
-                        :
-                            <>
-                                {self.props.data.map((country,index) => {
-                                    if(country.change < 0) {
-                                        return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} definitions={this.props.definitions}/>
-                                    }
-                                })}
-                            </>
-                        } */}
-                        
-
                        
                         <hr/>
                         <Row className="align-items-center">
-                            <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span></Col>
-                            {/* <Col xs="auto">
-                                <Button variant="control-grey">Embed</Button>&nbsp;&nbsp;
-                                <Button variant="control-grey">Download Data</Button>
-                            </Col> */}
+                            <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span></Col>
                         </Row>
-                        <div className="d-none d-md-block">
+                        {/* <div className="d-none d-md-block">
                             <hr/>
-                            <h6 className="mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].title}</h6>
-                            <p className="text-black-50 mt-3">{_.filter(this.props.definitions, function(def) { return def.name == 'table_description'})[0].text}</p>
-                        </div>
+                            <h6 className="mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'table_description'})[0].title}</h6>
+                            <p className="text-black-50 mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'table_description'})[0].text}</p>
+                        </div> */}
                     </Card.Body>
                 </Card>
                 

@@ -1,4 +1,4 @@
-# ADH ResurgenceMap
+# ADH CaseTracker
 
 ## Local development
 

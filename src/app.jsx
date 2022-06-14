@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import _ from 'lodash';
-import * as URI from 'uri.js';
 import './app.scss';
 
 import Container from 'react-bootstrap/Container';
@@ -13,7 +12,6 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Modal from 'react-bootstrap/Modal';
@@ -35,13 +33,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft, faStepForward, faStepBackward, faInfo, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 
 import { Header } from './components/Header';
-import { RiskMap } from './components/RiskMap';
+import { CaseMap } from './components/CaseMap';
 import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
-import { CovidDataTable } from './components/CovidDataTable2';
-import { faThemeisle } from '@fortawesome/free-brands-svg-icons';
+import { CovidDataTable } from './components/CovidDataTable';
+
+import * as definitions from './data/definitions.json';
+import * as texts from './data/texts.json';
+
 
 export class App extends React.Component {
 
@@ -51,13 +52,42 @@ export class App extends React.Component {
         this.state = {
            
             api: {
-                baseUrl: 'https://adhtest.opencitieslab.org/api/3/',
-                resurgenceData: 'e8a1d3a5-f644-4f69-bd9c-bcc73e20c817',
-                resurgenceDataThreshold: '15962769-1185-4816-9719-bee78b14f3f7', // TEMP DATA SET
-                definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe',
-                countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118' 
-
+                url: {
+                    dev: 'https://adhtest.opencitieslab.org/api/3/',
+                    prod: 'https://ckan.africadatahub.org/api/3/'
+                },
+                data: {
+                    owid: {
+                        dev: {
+                            caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
+                            countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118'
+                        },
+                        // prod: {
+                        //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
+                        //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118',
+                        //     definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe'
+                        // },
+                        prod: {
+                            caseData: '72da1306-e970-4398-9f1a-2a65beeb960e',
+                            countryData: '0509abb8-fb51-4b4d-a9e9-90eb33cf2cdc'
+                        }
+                    },
+                    acdc: {
+                        dev: {
+                            caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
+                            countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
+                        },
+                        prod: {
+                            caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
+                            countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
+                        }
+                        
+                    }
+                },
+                dataset: 'owid',
+                env: 'prod'
             },
+
             definitions: [],
             no_embed_style: {
                 paddingTop: '20px'
@@ -83,6 +113,8 @@ export class App extends React.Component {
             selectedCountries: [],
             ref: null,
 
+            selectedBaseMetric: 'new_cases_smoothed_per_million',
+
             focused: false
             
         },
@@ -101,21 +133,10 @@ export class App extends React.Component {
             self.setState({no_embed_style: { paddingTop: paddingTop }})
         }
 
-        let resurgenceData = self.state.api.resurgenceData;
 
-        // if(document.URL.indexOf('limit') > -1) {
-        //     resurgenceData = self.state.api.resurgenceDataThreshold;
-        // }
+        // Fetch data for the latest date...
 
-
-        
-       
-        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + self.state.api.definitions + '&limit=200000')
-        .then(function(response) {
-            self.setState({definitions: response.data.result.records }); 
-        })
-
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + resurgenceData +'")',
+        axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'")',
             { headers: {
                 authorization: process.env.REACT_API_KEY
             }
@@ -128,8 +149,8 @@ export class App extends React.Component {
                 loading: false,
                 currentDate: dates[dates.length-1],
                 currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(self.state.data,['summed'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc'])
             });
 
             // self.state.ref.noUiSlider.set(10);
@@ -137,43 +158,29 @@ export class App extends React.Component {
             console.log(error);
             self.setState({loading: false, error: true});
         })
-
-        
        
+        //  CKAN returns a max of 32000 rows. Find out how many row there are in the entire set.
 
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + resurgenceData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + resurgenceData +'")',
+        axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&include_total=true',
             { headers: {
                 authorization: process.env.REACT_API_KEY
-            }
+                }
         }).then(function(response) {
 
-            self.setState({data: response.data.result.records});
-            let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
-            self.setState({
-                dates: dates,
-                loading: false,
-                currentDate: dates[dates.length-1],
-                currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(self.state.data,['summed'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
-            });
-        }).catch(function(error) {
-            console.log(error);
-            self.setState({loading: false, error: true});
-        })
-
-
-        axios.get(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + resurgenceData + '&include_total=true')
-        .then(function(response) {
+            // Do queries in increments of 32000
 
             let queries = [];
 
             for (let count = 0; count < Math.ceil(response.data.result.total / 32000); count++) {
                 let offset = count > 0 ? '&offset=' + (count * 32000) : '';
-                queries.push(self.state.api.baseUrl + 'action/datastore_search?resource_id=' + resurgenceData + '&limit=32000' + offset);
+                queries.push(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&limit=32000' + offset);
             }
 
-            axios.all([axios.get(queries[0]), axios.get(queries[1])]).then(axios.spread((...responses) => {
+            // axios.get(queries[1])
+
+            // We're manually setting this now - this is not good and needs to be reworked.
+
+            axios.all([axios.get(queries[0])]).then(axios.spread((...responses) => {
 
                 let data = [];
 
@@ -194,8 +201,8 @@ export class App extends React.Component {
                     loading: false,
                     currentDate: dates[dates.length-1],
                     currentDateCount: dates.length-1,
-                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1] && o.change != null && o.change != 'NaN') }),['summed'],['desc']),
-                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['summed'],['desc'])
+                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc']),
+                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc'])
                 });
     
                 self.setState({loadingComplete: true});
@@ -228,12 +235,12 @@ export class App extends React.Component {
 
     orderData = (dateCount) => {
         let self = this;
-        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.summed != null && o.summed != 'NaN') }),['summed'],['desc']);
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.new_cases_smoothed_per_million != null && o.new_cases_smoothed_per_million != 'NaN') }),['new_cases_smoothed_per_million'],['desc']);
     }
 
     orderMapData = (dateCount) => {
         let self = this;
-        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['summed'],['desc']);
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['new_cases_smoothed_per_million'],['desc']);
     }
 
     
@@ -343,28 +350,10 @@ export class App extends React.Component {
 
     }
 
-    onModeSwitch = () => {
-        let self = this;
-        this.setState({
-            selectedDateData: [],
-            selectedDateDataMap: []
-        });
-        setTimeout(function() {
-            self.setState({
-                selectedDateData: this.orderData(self.state.currentDateCount),
-                selectedDateDataMap: this.orderMapData(self.state.currentDateCount)
-            });
-        }, 500);
-        
-        self.state.ref.noUiSlider.set(self.state.currentDateCount);
-    }
-
     switchTab() {
         let self = this;
         self.setState({tab: this.state.tab == 'map' ? 'datatable' : 'map'});
     }
-
-    
 
     countryRemove = (country) => {
         let self = this;
@@ -436,36 +425,7 @@ export class App extends React.Component {
                                                     </Col>
                                                     
 
-                                                    <Col>
-                                                        {/* <div className="d-none d-md-block">
-                                                            {this.state.selectedCountries.map((country) => (
-                                                                <Button variant="control-grey" key={country.iso_code} className="mx-1" onClick={() => this.countryRemove(country.iso_code)}>
-                                                                    <Row>
-                                                                        <Col xs="auto pe-0">
-                                                                            <div style={{width: '1.5em', height: '1.5em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
-                                                                                <ReactCountryFlag
-                                                                                svg
-                                                                                countryCode={getCountryISO2(country.iso_code)}
-                                                                                style={{
-                                                                                    position: 'absolute', 
-                                                                                    top: '30%',
-                                                                                    left: '30%',
-                                                                                    marginTop: '-50%',
-                                                                                    marginLeft: '-50%',
-                                                                                    fontSize: '2em',
-                                                                                    lineHeight: '2em',
-                                                                                }}/>
-                                                                            </div>
-                                                                        </Col>
-                                                                        <Col className="text-start">{country.location}</Col>
-                                                                        <Col xs="auto">
-                                                                            <FontAwesomeIcon icon={faTimes} style={{ fontSize:"10px"}}/>
-                                                                        </Col>
-                                                                    </Row>
-                                                                </Button>
-                                                            ))}
-                                                        </div> */}
-                                                    </Col>
+                                                    <Col></Col>
                                                 
                                                 
                                                     <Col xs="auto" className="align-self-center">
@@ -487,22 +447,18 @@ export class App extends React.Component {
                                                         
 
                                                         <Accordion className="d-md-none mt-2">
-                                                            {this.state.definitions.length > 0 ? 
-                                                            <>
-                                                                <Accordion.Item eventKey="0">
-                                                                    <Accordion.Header>{_.filter(this.state.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].title}</Accordion.Header>
-                                                                    <Accordion.Body>
-                                                                        <p className="text-black-50 mt-3">{_.filter(this.state.definitions, function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
-                                                                    </Accordion.Body>
-                                                                </Accordion.Item>
-                                                                <Accordion.Item eventKey="1">
-                                                                    <Accordion.Header>{_.filter(this.state.definitions, function(def) { return def.name == 'table_description'})[0].title}</Accordion.Header>
-                                                                    <Accordion.Body>
-                                                                        <p className="text-black-50 mt-3">{_.filter(this.state.definitions, function(def) { return def.name == 'table_description'})[0].text}</p>
-                                                                    </Accordion.Body>
-                                                                </Accordion.Item>
-                                                            </>
-                                                            : ''}
+                                                            <Accordion.Item eventKey="0">
+                                                                <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
+                                                                </Accordion.Body>
+                                                            </Accordion.Item>
+                                                            {/* <Accordion.Item eventKey="1">
+                                                                <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'table_description'})[0].title}</Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'table_description'})[0].text}</p>
+                                                                </Accordion.Body>
+                                                            </Accordion.Item> */}
                                                         </Accordion>
                                                     </Modal.Body>
                                                 </Modal>
@@ -522,7 +478,7 @@ export class App extends React.Component {
 
                                 {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? ''  :
                                     
-                                        this.state.tab == 'map' ?
+                                        this.state.tab == 'map' && this.state.selectedCountries.length == 0 ?
                                             <Row>
                                                 <Col xs="auto" lg={3}>
                                                     <h5 className="mt-1">Current date showing:</h5>
@@ -652,33 +608,44 @@ export class App extends React.Component {
 
                 { this.state.tab == 'map' ? 
                     <Container className="my-4">
-                        <Row>
-                            {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? '' :
-                                <Col lg={6} className="mb-4">
-                                    {this.state.definitions.length > 0 ?
-                                        <RiskMap onCountrySelect={this.countrySelect} data={this.state.selectedDateDataMap} onModeSwitch={this.onModeSwitch} definitions={this.state.definitions}/>
-                                    : '' }
+                        { this.state.selectedCountries.length > 0 ?
+                            <Row>
+                                <Col>
+                                    <CountryData
+                                        selectedCountry={this.state.selectedCountries}
+                                        onDeselectCountry={this.onDeselectCountry}
+                                        api={this.state.api}
+                                    /> 
                                 </Col>
-                            }
-                            <Col>
-                                { 
-                                    this.state.selectedCountries.length > 0 ? 
-                                        <CountryData selectedCountries={this.state.selectedCountries} onDeselectCountry={this.onDeselectCountry} definitions={this.state.definitions} api={this.state.api}/> 
-                                    :
-                                        <>
-                                            {this.state.definitions.length > 0 ?
-                                                <Leaderboard data={this.state.selectedDateData} onCountrySelect={this.countrySelect} playingTimeline={this.state.playingTimeline} definitions={this.state.definitions}/>
-                                            : '' }
-                                        </>
-                                }
-                            </Col>
-                        </Row>
+                            </Row>
+                        :
+                            <Row>
+                                <Col lg={6} className="mb-4">
+                                        <CaseMap
+                                            onCountrySelect={this.countrySelect}
+                                            data={this.state.selectedDateDataMap}
+                                            api={this.state.api}
+                                        />
+                                </Col>
+                                <Col>
+                                    <Leaderboard 
+                                        data={this.state.selectedDateData}
+                                        onCountrySelect={this.countrySelect}
+                                        playingTimeline={this.state.playingTimeline}
+                                        api={this.state.api}
+                                    />
+                                </Col>
+                            </Row>
+                        }
                     </Container>
                 :
                     <Container className="my-4" fluid>
                         <Row>
                             <Col>
-                                <CovidDataTable currentDate={this.state.currentDate} api={this.state.api} />
+                                <CovidDataTable 
+                                    currentDate={this.state.currentDate}
+                                    api={this.state.api}
+                                />
                             </Col>
                         </Row>
                     </Container>

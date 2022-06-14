@@ -17,17 +17,23 @@ import DataTable, { defaultThemes } from 'react-data-table-component';
 
 import { MultiSelect } from "react-multi-select-component";
 
-import { Sparklines, SparklinesLine } from 'react-sparklines';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { faFileDownload,faTimes, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+
+import 'react-dates/initialize';
+import { DateRangePicker } from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
 
 import Spinner from 'react-bootstrap/Spinner';
 
 import * as countriesList from '../data/countries.json';
 
 import { owid_fields } from '../data/owid_fields.js';
+import * as definitions from '../data/definitions.json';
+import * as texts from '../data/texts.json';
+
+import moment from 'moment';
 
 
 export class CovidDataTable extends React.Component {
@@ -35,12 +41,15 @@ export class CovidDataTable extends React.Component {
         super();
         this.state = {
             data: [],
-            visible_data: [],
-            columns: [],
-            columns_select: [],
-            columns_selected: [],
+            metrics: [],
+            metric_selected: '',
             countries_select: [],
             countries_selected: [],
+            maxDate: null,
+            minDate: null,
+            startDate: null,
+            endDate: null,
+            focusedInput: null,
             customStyles: {
                 table: {
                     style: {
@@ -61,10 +70,14 @@ export class CovidDataTable extends React.Component {
                 },
                 headCells: {
                     style: {
+                        background: '#eee',
+                        fontWeight: 'bold',
                         '&:not(:last-of-type)': {
                             borderRightStyle: 'solid',
                             borderRightWidth: '1px',
                             borderRightColor: defaultThemes.default.divider.default,
+                            background: '#eee',
+                            fontWeight: 'bold',
                         },
                     }
                 },
@@ -80,86 +93,16 @@ export class CovidDataTable extends React.Component {
                 }
             },
             loading: true
+
         }
     }
 
     componentDidMount() {
-        let self = this;
 
-        let columns = [];
-        let columns_select = [];
+        let metrics = [];
+
         let countries_select = [];
-
-
         
-        console.log(this.props.currentDate);
-
-
-
-
-        for (let i = 0; i < owid_fields.length; i++) {
-
-            let cell = row => row[owid_fields[i]];
-            let cellStyles = [];
-
-            if(owid_fields[i] == 'location') {
-                
-                cell = row => 
-                    <>
-                        <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
-                            <ReactCountryFlag
-                            svg
-                            countryCode={getCountryISO2(row.iso_code)}
-                            style={{
-                                position: 'absolute', 
-                                top: '30%',
-                                left: '30%',
-                                marginTop: '-50%',
-                                marginLeft: '-50%',
-                                fontSize: '2.8em',
-                                lineHeight: '2.8em',
-                            }}/>
-                        </div>
-                        <div className="text-truncate">{ row.location }</div>
-                    </>
-            }
-
-            if(owid_fields[i] == 'case_history') {
-                cell = row =>
-                    row.case_history != undefined ? 
-                    <Sparklines data={row.case_history.replaceAll('nan','0.0').split('|')}>
-                        <SparklinesLine style={{ strokeWidth: 2, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
-                    </Sparklines>
-                    : '';
-                cellStyles = {
-                    padding: 0,
-                    // maxWidth: '150px'
-                }
-                
-            }
-            
-            columns.push(
-                {
-                    name: <span className="text-uppercase text-truncate">{owid_fields[i].replaceAll('_', ' ')}</span>,
-                    selector: row => row[owid_fields[i]],
-                    cell: cell,
-                    sortable: owid_fields[i] == 'case_history' ? false : true,
-                    field: owid_fields[i],
-                    width: owid_fields[i] == 'location' ? '200px' : owid_fields[i] == 'case_history' ? '150px' : '',
-                    style: cellStyles,
-                }
-            )
-
-            columns_select.push(
-                {
-                    value: owid_fields[i],
-                    label: owid_fields[i]
-                }
-            )
-
-            
-        }
-
         for (let i = 0; i < countriesList.length; i++) {
             countries_select.push(
                 {
@@ -169,140 +112,81 @@ export class CovidDataTable extends React.Component {
             )
         }
 
-        self.setState(
-            {
-                columns: columns, 
-                visible_columns: columns,
-                columns_select: columns_select,
-                columns_selected: columns_select,
-                countries_select: countries_select,
-                countries_selected: countries_select
-            }
-        );
+        let query = 'SELECT%20max%28date%29%2Cmin%28date%29%20FROM%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"';
 
-        self.get_data_debounce();
-       
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        let self = this;
-        
-        if(prevProps.currentDate != self.props.currentDate) {
-            self.get_data_debounce();
-        }
-        
-    }
-
-    debounce(func, timeout = 1000){
-        let timer;
-        return (...args) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => { func.apply(this, args); }, timeout);
-        };
-    }
-
-    get_data_debounce = this.debounce(() => this.get_data());
-
-    get_data() {
-        let self = this;
-
-        self.setState({loading:true})
-
-        axios.get('https://adhtest.opencitieslab.org/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.countryData + '"%20where%20date%20%3D%20%27' + this.props.currentDate + '%27',
-            { 
-                headers: {
+        axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=' + query,
+            { headers: {
                 authorization: process.env.REACT_API_KEY
-                }
             }
-        ).then(function(response) {
+        }).then((response) => {
 
-            let incoming_data = response.data.result.records;
-
-            for(let i=0; i < incoming_data.length; i++) {
-                for (const key in incoming_data[i]) {
-                    if (incoming_data[i].hasOwnProperty(key)) {
-                        if (key != 'location' && key != 'iso_code') {
-                            if(key != 'stringency_index') {
-                                incoming_data[i][key] = incoming_data[i][key] == 'NaN' ? '-' : parseInt(incoming_data[i][key]);
-                            } else {
-                                incoming_data[i][key] = incoming_data[i][key] == 'NaN' ? '-' : parseFloat(incoming_data[i][key]);
-                            }
-                            
-                            if(incoming_data[i][key] == NaN) {
-                                incoming_data[i][key] = ''
-                            }
-
-                        }
-                    }
-                }
-
-                _.merge(incoming_data[i], _.find(self.props.resurgenceData, function(o) { return o.iso_code == incoming_data[i].iso_code; }))
-
-            }
-
-            let countries = [];
-
-            for (let i = 0; i < self.state.countries_selected.length; i++) {
-                countries.push(self.state.countries_selected[i].value);
-            }
-
-            let visible_data = _.filter(incoming_data, function(o) { return _.find(countries, function(c) { return c == o.iso_code; }) != undefined });
-
-            self.setState({visible_data: visible_data});
-
-
-            self.setState(
+            this.setState(
                 {
-                    data: incoming_data,
-                    visible_data: visible_data
+                    countries_select: countries_select,
+                    countries_selected: countries_select,
+                    metric_selected: 'total_cases',
+                    startDate: moment(response.data.result.records[0].max).add(-1,'months'),
+                    endDate: moment(response.data.result.records[0].max),
+                    maxDate: moment(response.data.result.records[0].max),
+                    minDate: moment(response.data.result.records[0].min)
+                    
+    
                 }
             );
-
-            self.setState({loading:false})
+            
 
         })
 
+        
 
+
+        
+
+        
+
+        setTimeout(() => {
+            this.getData();
+        }, 1000);
+
+
+        
+
+    }
+
+    componentDidUpdate() {
 
     }
 
     select_countries = (e) => {
-        let self = this;
 
-        self.setState({countries_selected: e});
+        this.setState({countries_selected: e, loading: true});
+        
+        setTimeout(() => {
+            this.getData();
+        }, 1000);
 
-        let countries = [];
 
-        for (let i = 0; i < e.length; i++) {
-            countries.push(e[i].value);
-        }
-
-        let visible_data = _.filter(this.state.data, function(o) { return _.find(countries, function(c) { return c == o.iso_code; }) != undefined });
-
-        self.setState({visible_data: visible_data});
 
     }
 
-    select_columns = (e) => {
-        let self = this;
-        self.setState({columns_selected: e})
+    select_metric = (e) => {
 
-        let columns = [];
-
-        for (let i = 0; i < e.length; i++) {
-            columns.push(e[i].value);
-        }
-
-        let visible_columns = _.filter(this.state.columns, function(o) { return _.find(columns, function(c) { return c == o.field }) != undefined });
-
-        self.setState({visible_columns: visible_columns});
-
+        this.setState({metric_selected: e.target.value, loading: true });
+        
+        setTimeout(() => {
+            this.getData();
+        }, 1000);
     }
 
+    select_dates = ({ startDate, endDate }) => {
+
+        this.setState({ startDate, endDate, loading: true });
+
+
+        setTimeout(() => {
+            this.getData();
+        }, 1000);
     
-
-    customSort = (rows, selector, direction) => {
-        return _.orderBy(rows, selector, direction);
     }
 
     convertArrayOfObjectsToCSV(array) {
@@ -330,15 +214,13 @@ export class CovidDataTable extends React.Component {
     
         return result;
     }
-    
-    
-    downloadCSV(array) {
 
+    downloadCSV = () => {
         const link = document.createElement('a');
-        let csv = this.convertArrayOfObjectsToCSV(array);
+        let csv = this.convertArrayOfObjectsToCSV(this.state.data);
         if (csv == null) return;
     
-        const filename = 'export.csv';
+        const filename = 'export-' + this.state.metric_selected + '-' + moment(this.state.startDate).format('DDMMYY') + '-' + moment(this.state.endDate).format('DDMMYY') + '.csv';
     
         if (!csv.match(/^data:text\/csv/i)) {
             csv = `data:text/csv;charset=utf-8,${csv}`;
@@ -349,15 +231,111 @@ export class CovidDataTable extends React.Component {
         link.click();
     }
 
-    
+    getData() {
 
-   
+        let self = this;
+
+        let countries_selected_query = '';
+
+        let countries_selected = this.state.countries_selected;
+
+        for (let index = 0; index < countries_selected.length; index++) {
+            countries_selected_query += '%27' + countries_selected[index].value + '%27';
+            if(index < (countries_selected.length - 1)) {
+                countries_selected_query += '%2C';
+            }
+        }
+
+        let query = 'SELECT%20date%2Ciso_code%2Clocation%2C' + this.state.metric_selected + '%20FROM%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20date%20BETWEEN%20%27' + moment(this.state.startDate).format('YYYY-MM-DD') + '%27%20AND%20%27' + moment(this.state.endDate).format('YYYY-MM-DD') + '%27%20AND%20iso_code%20IN%28' + countries_selected_query + '%29';
+        
+        
+
+        if(this.state.countries_selected.length > 0) {
+
+            axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=' + query,
+                { headers: {
+                    authorization: process.env.REACT_API_KEY
+                }
+            }).then(function(response) {
+
+                let data = []
+
+                let columns = [
+                    {
+                        name: 'COUNTRY',
+                        selector: row => row.iso_code,
+                        cell: row => 
+                        <>
+                            <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
+                                <ReactCountryFlag
+                                svg
+                                countryCode={getCountryISO2(row.iso_code)}
+                                style={{
+                                    position: 'absolute', 
+                                    top: '30%',
+                                    left: '30%',
+                                    marginTop: '-50%',
+                                    marginLeft: '-50%',
+                                    fontSize: '2.8em',
+                                    lineHeight: '2.8em',
+                                }}/>
+                            </div>
+                            <div className="text-truncate ms-1">{ row.location }</div>
+                        </>,
+                        width: '200px'
+
+                    }
+                ];
+
+
+
+                let grouped_data = _.groupBy(response.data.result.records,'iso_code');
+
+                let first_country = Object.keys(grouped_data)[0];
+
+                for (let index = 0; index < grouped_data[first_country].length; index++) {
+
+                    columns.push(
+                        {
+                            name: moment(grouped_data[first_country][index].date).format('DD/MM/YY'),
+                            selector: row => row[grouped_data[first_country][index].date]
+                        }
+                    )
+                    
+                }
+
+
+
+                for (const key in grouped_data) {
+                    let country_data = {
+                        iso_code: key,
+                        location: grouped_data[key][0].location
+                    }
+                    for (let index = 0; index < grouped_data[key].length; index++) {
+                        country_data[grouped_data[key][index].date] = grouped_data[key][index][self.state.metric_selected];
+
+                    }
+
+                    data.push(country_data);
+
+                }
+
+                self.setState({
+                    columns: columns, 
+                    data: data,
+                    loading: false
+                });
+
+             
+            })
+        
+        }
+    }
 
     render() {
-        let self = this;
+
         return (
-            
-            <Card className="mt-5">
+            <Card>
                 <Card.Body>
 
                     <Row className="mb-4">
@@ -380,57 +358,66 @@ export class CovidDataTable extends React.Component {
                             />
                         </Col>
                         <Col xs="3">
-                            
-                            <MultiSelect
-                                options={this.state.columns_select}
-                                value={this.state.columns_selected}
-                                onChange={this.select_columns}
-                                overrideStrings={
-                                    {
-                                        "allItemsAreSelected": "All METRICS are selected.",
-                                        "clearSearch": "Clear Search",
-                                        "noOptions": "No options",
-                                        "search": "Search",
-                                        "selectAll": "Select All",
-                                        "selectAllFiltered": "Select All (Filtered)",
-                                        "selectSomeItems": "Select Metrics"
+                            <Form.Select aria-label="Default select example" onChange={this.select_metric}>
+                                { owid_fields.map( (metric) => {
+                                    if(metric != 'location' && metric != 'case_history') {
+                                        return <option key={ metric } value={ metric }>{ metric.replaceAll('_', ' ') }</option>
                                     }
-                                }
-                            />
+                                })}
+                            </Form.Select>
                         </Col>
                         <Col>
-                                
+                        <DateRangePicker
+                            startDate={this.state.startDate} 
+                            startDateId="startDate" 
+                            endDate={this.state.endDate} 
+                            endDateId="endDate" 
+                            onDatesChange={this.select_dates} 
+                            focusedInput={this.state.focusedInput} 
+                            onFocusChange={focusedInput => this.setState({ focusedInput })} 
+                            startDatePlaceholderText='START'
+                            endDatePlaceholderText='END'
+                            small={true}
+                            minDate={this.state.minDate}
+                            maxDate={this.state.maxDate}
+                            isOutsideRange={() => false}
+                            displayFormat='DD/MM/YYYY'
+                        />                                
                         </Col>
                         <Col xs="auto" className="align-self-center">
-                            <span className="text-black-50">Source: <a className="text-black-50" target="_blank" href="https://www.ourworldindata.com">www.ourworldindata.com</a></span>
+                            <span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span>
                         </Col>
                         <Col xs="auto" className="align-self-center">
-                            <Button onClick={e => this.downloadCSV(this.state.visible_data)} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Table Data</Button>
+                            <Button onClick={this.downloadCSV} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Table Data</Button>
                         </Col>
                     </Row>
 
-                    
+                    {/* https://react-data-table-component.netlify.app/ */}
+
                     <DataTable 
-                    columns={this.state.visible_columns}
-                    data={this.state.visible_data}
-                    dense={true}
-                    striped={true}
-                    fixedHeader={true}
-                    conditionalRowStyles={this.state.conditionalRowStyles}
-                    customStyles={this.state.customStyles}
-                    sortFunction={this.customSort}
-                    progressPending={this.state.loading}
-                    progressComponent={
-                        <div className="text-center">
-                            <Spinner animation="grow" />
-                            <h3 className="mt-4">Loading</h3>
-                        </div>
-                    }
-                    highlightOnHover={false}
+                        columns={this.state.columns}
+                        data={this.state.data}
+                        dense={true}
+                        striped={true}
+                        fixedHeader={true}
+                        conditionalRowStyles={this.state.conditionalRowStyles}
+                        customStyles={this.state.customStyles}
+                        sortFunction={this.customSort}
+                        progressPending={this.state.loading}
+                        progressComponent={
+                            <div className="text-center">
+                                <Spinner animation="grow" />
+                                <h3 className="mt-4">Loading</h3>
+                            </div>
+                        }
+                        highlightOnHover={false}
                     />
                 </Card.Body>
             </Card>
-            
-        );
+        )
+
+
     }
+
+
 }
