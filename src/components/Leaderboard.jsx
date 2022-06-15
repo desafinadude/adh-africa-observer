@@ -55,6 +55,7 @@ export class Leaderboard extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
+
                         {this.props.playingTimeline == true ?
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
@@ -71,6 +72,7 @@ export class Leaderboard extends React.Component {
                                     }
                                 })}
                             </>
+
                         }
                        
                         <hr/>
