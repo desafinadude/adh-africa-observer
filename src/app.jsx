@@ -16,6 +16,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Modal from 'react-bootstrap/Modal';
 import Accordion from 'react-bootstrap/Accordion';
+import Form from 'react-bootstrap/Form'
 
 import moment from 'moment';
 
@@ -40,7 +41,6 @@ import { CountryData } from './components/CountryData';
 import * as countriesList from './data/countries.json';
 import { CovidDataTable } from './components/CovidDataTable';
 
-import * as definitions from './data/definitions.json';
 import * as texts from './data/texts.json';
 
 
@@ -88,13 +88,14 @@ export class App extends React.Component {
                 env: 'prod'
             },
 
-            definitions: [],
             no_embed_style: {
                 paddingTop: '20px'
             },
             error: false,
             loading: true,
             loadingComplete: false,
+            loggedIn: false,
+
             showIntro: false,
 
             tab: 'map',
@@ -113,7 +114,8 @@ export class App extends React.Component {
             selectedCountries: [],
             ref: null,
 
-            selectedBaseMetric: 'new_cases_smoothed_per_million',
+            selectedBaseMetric: 'new_cases_smoothed',
+            update: 0,
 
             focused: false
             
@@ -133,12 +135,24 @@ export class App extends React.Component {
             self.setState({no_embed_style: { paddingTop: paddingTop }})
         }
 
+        if(document.URL.indexOf('acdc') > -1) {
+
+            let api = self.state.api;
+            api.dataset = 'acdc';
+
+            self.setState({api: api});
+        } else {
+
+            self.setState({loggedIn: true});
+        
+        }
+
 
         // Fetch data for the latest date...
 
         axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'")',
             { headers: {
-                authorization: process.env.REACT_API_KEY
+                "Authorization": process.env.REACT_API_KEY
             }
         }).then(function(response) {
 
@@ -149,8 +163,9 @@ export class App extends React.Component {
                 loading: false,
                 currentDate: dates[dates.length-1],
                 currentDateCount: dates.length-1,
-                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc']),
-                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc'])
+                selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),[self.state.selectedBaseMetric],['desc']),
+                selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),[self.state.selectedBaseMetric],['desc']),
+                update: self.state.update + 1
             });
 
             // self.state.ref.noUiSlider.set(10);
@@ -163,7 +178,7 @@ export class App extends React.Component {
 
         axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&include_total=true',
             { headers: {
-                authorization: process.env.REACT_API_KEY
+                "Authorization": process.env.REACT_API_KEY
                 }
         }).then(function(response) {
 
@@ -180,7 +195,7 @@ export class App extends React.Component {
 
             // We're manually setting this now - this is not good and needs to be reworked.
 
-            axios.all([axios.get(queries[0])]).then(axios.spread((...responses) => {
+            axios.all([axios.get(queries[0],{ headers: {"Authorization": process.env.REACT_API_KEY}})]).then(axios.spread((...responses) => {
 
                 let data = [];
 
@@ -201,8 +216,9 @@ export class App extends React.Component {
                     loading: false,
                     currentDate: dates[dates.length-1],
                     currentDateCount: dates.length-1,
-                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc']),
-                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),['new_cases_smoothed_per_million'],['desc'])
+                    selectedDateData: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),[self.state.selectedBaseMetric],['desc']),
+                    selectedDateDataMap: _.orderBy(_.filter(self.state.data, function(o) { return (o.date == dates[dates.length-1]) }),[self.state.selectedBaseMetric],['desc']),
+                    update: self.state.update + 1
                 });
     
                 self.setState({loadingComplete: true});
@@ -213,13 +229,8 @@ export class App extends React.Component {
             })
 
         })
-
-      
     }
-
-    componentDidUpdate() {
-        let self = this;
-    }
+   
 
     CSVToJSON = csv => {
         const lines = csv.split('\n');
@@ -235,12 +246,12 @@ export class App extends React.Component {
 
     orderData = (dateCount) => {
         let self = this;
-        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o.new_cases_smoothed_per_million != null && o.new_cases_smoothed_per_million != 'NaN') }),['new_cases_smoothed_per_million'],['desc']);
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o[self.state.selectedBaseMetric] != null && o[self.state.selectedBaseMetric] != 'NaN') }),[self.state.selectedBaseMetric],['desc']);
     }
 
     orderMapData = (dateCount) => {
         let self = this;
-        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),['new_cases_smoothed_per_million'],['desc']);
+        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) }),[self.state.selectedBaseMetric],['desc']);
     }
 
     
@@ -252,7 +263,8 @@ export class App extends React.Component {
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
           selectedDateData: this.orderData(parseInt(value[0]-1)),
-          selectedDateDataMap: this.orderMapData(parseInt(value[0]-1))
+          selectedDateDataMap: this.orderMapData(parseInt(value[0]-1)),
+          update: self.state.update + 1
         });
 
     }
@@ -269,7 +281,8 @@ export class App extends React.Component {
                 currentDate: date,
                 currentDateCount: dateCount,
                 selectedDateData: this.orderData(dateCount),
-                selectedDateDataMap: this.orderMapData(dateCount)
+                selectedDateDataMap: this.orderMapData(dateCount),
+                update: self.state.update + 1
             });
         }
 
@@ -297,7 +310,8 @@ export class App extends React.Component {
             self.setState({
                 currentDate: self.state.dates[self.state.currentDateCount],
                 selectedDateData: this.orderData(self.state.currentDateCount),
-                selectedDateDataMap: this.orderMapData(self.state.currentDateCount)
+                selectedDateDataMap: this.orderMapData(self.state.currentDateCount),
+                update: self.state.update + 1
             });
             self.state.ref.noUiSlider.set(parseInt(self.state.currentDateCount));
             self.timer = setTimeout( () => { self.playTimeline() }, 500 );
@@ -313,10 +327,12 @@ export class App extends React.Component {
             currentDate: self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1],
             currentDateCount: direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1,
             selectedDateData: this.orderData(direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1),
-            selectedDateDataMap: this.orderMapData(direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1)
+            selectedDateDataMap: this.orderMapData(direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1),
+            update: self.state.update + 1
+        }, () => {
+            self.state.ref.noUiSlider.set(self.state.currentDateCount + 1);
         });
         
-        self.state.ref.noUiSlider.set(self.state.currentDateCount);
     }
 
     jumpToLatest = () => {
@@ -325,7 +341,8 @@ export class App extends React.Component {
             currentDate: self.state.dates[self.state.dates.length-1],
             currentDateCount: self.state.dates.length,
             selectedDateData: this.orderData(self.state.dates.length-1),
-            selectedDateDataMap: this.orderMapData(self.state.dates.length-1)
+            selectedDateDataMap: this.orderMapData(self.state.dates.length-1),
+            update: self.state.update + 1
         });
 
         self.state.ref.noUiSlider.set(self.state.dates.length);
@@ -334,7 +351,6 @@ export class App extends React.Component {
     countrySelect = (country) => {
         let self = this;
         if(_.find(self.state.selectedCountries, function(o) { return o.iso_code == country.iso_code }) == undefined) {
-            // self.setState({selectedCountries: [...self.state.selectedCountries, country]});
             self.setState({selectedCountries: [country]});
         }
     }
@@ -362,8 +378,34 @@ export class App extends React.Component {
         self.setState({selectedCountries: keepCountries});
     }
 
+    selectBaseMetric = () => {
+        let self = this;
+        self.setState({
+            currentDate: self.state.currentDate,
+            currentDateCount: self.state.currentDateCount,
+            selectedBaseMetric: this.state.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'new_cases_smoothed' : 'new_cases_smoothed_per_million'
+        }, () => {
+            self.setState({
+                selectedDateData: self.orderData(self.state.currentDateCount), // This must execute after setState above so that self.state.selectedBaseMetric is updated.
+                selectedDateDataMap: self.orderMapData(self.state.currentDateCount),
+                update: self.state.update + 1
+            })
+        });
+
+
+
+
+    }
+
     render() {
         return (
+            !this.state.loggedIn ?
+            <>
+                <div className="position-absolute top-50 start-50 translate-middle text-center">
+                    <h3 className="mt-4">Login</h3>
+                    <Form.Control type="password" onChange={(e) => e.target.value == process.env.ACDC_PASS ? this.setState({loggedIn: true}) : '' }></Form.Control>
+                </div>
+            </> :
             this.state.loading ? 
             <>
                 <div className="position-absolute top-50 start-50 translate-middle text-center">
@@ -453,12 +495,6 @@ export class App extends React.Component {
                                                                     <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
                                                                 </Accordion.Body>
                                                             </Accordion.Item>
-                                                            {/* <Accordion.Item eventKey="1">
-                                                                <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'table_description'})[0].title}</Accordion.Header>
-                                                                <Accordion.Body>
-                                                                    <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'table_description'})[0].text}</p>
-                                                                </Accordion.Body>
-                                                            </Accordion.Item> */}
                                                         </Accordion>
                                                     </Modal.Body>
                                                 </Modal>
@@ -615,6 +651,9 @@ export class App extends React.Component {
                                         selectedCountry={this.state.selectedCountries}
                                         onDeselectCountry={this.onDeselectCountry}
                                         api={this.state.api}
+                                        selectedBaseMetric={this.state.selectedBaseMetric}
+                                        selectBaseMetric={this.selectBaseMetric}
+                                        update={this.state.update}
                                     /> 
                                 </Col>
                             </Row>
@@ -625,6 +664,9 @@ export class App extends React.Component {
                                             onCountrySelect={this.countrySelect}
                                             data={this.state.selectedDateDataMap}
                                             api={this.state.api}
+                                            selectedBaseMetric={this.state.selectedBaseMetric}
+                                            selectBaseMetric={this.selectBaseMetric}
+                                            update={this.state.update}
                                         />
                                 </Col>
                                 <Col>
@@ -633,6 +675,7 @@ export class App extends React.Component {
                                         onCountrySelect={this.countrySelect}
                                         playingTimeline={this.state.playingTimeline}
                                         api={this.state.api}
+                                        selectedBaseMetric={this.state.selectedBaseMetric}
                                     />
                                 </Col>
                             </Row>

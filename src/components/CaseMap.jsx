@@ -4,7 +4,7 @@ import _ from 'lodash';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -24,12 +24,9 @@ export class CaseMap extends React.Component {
         }
     }
 
-    componentDidMount() {
-        let self = this;
-    }
+  
 
-    componentDidUpdate() {
-    }
+
 
     style = (feature) => {
 
@@ -42,7 +39,7 @@ export class CaseMap extends React.Component {
         else if(self.props.data != undefined && self.props.data.length > 0) {
             let country = _.filter(self.props.data, function(o) { return o.iso_code == feature.properties.adm0_a3; })[0];
             if(country != undefined) {
-                color = country.new_cases_smoothed_per_million;
+                color = country[this.props.selectedBaseMetric];
             }
         }
 
@@ -76,8 +73,8 @@ export class CaseMap extends React.Component {
         layer.on('mouseover', function (e) {
             if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
-                            let new_cases_smoothed_per_million = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0].new_cases_smoothed_per_million;
-                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + Math.round(new_cases_smoothed_per_million) + '</strong>'); 
+                            let selectedBaseMetric = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0][self.props.selectedBaseMetric];
+                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + Math.round(selectedBaseMetric) + '</strong>'); 
                     }, {permanent: true, opacity: 1}  
                 );
             } else {
@@ -110,15 +107,11 @@ export class CaseMap extends React.Component {
                     <Card.Body>
                         <Row>
                             <Col className="pt-2">
-                                <h5 className="d-inline">New Cases Per Million (Smoothed)</h5>
+                                <h5 className="d-inline">{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'New Cases Per Million (Smoothed)' : 'New Cases (Smoothed)' }</h5>
                             </Col>
-                            {/* <Col xs="auto">
-                                <Form.Select className="border-0" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectBaseMetric}>
-                                    <option>Change Metric</option>
-                                    <option value="new_cases_smoothed_per_million">New Cases Per Million (Smoothed)</option>
-                                    <option value="new_cases_smoothed">New Cases (Smoothed)</option>
-                                </Form.Select>
-                            </Col> */}
+                            <Col xs="auto">
+                                <Button className="me-1" size="md" variant={this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'primary' : 'control-grey'} onClick={() => this.props.selectBaseMetric() }>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'HIDE' : 'SHOW' } PER MILLION</Button>
+                            </Col>
                         </Row>
                         <hr/>
                         <MapContainer 
@@ -132,21 +125,38 @@ export class CaseMap extends React.Component {
                             style={{background: '#fff'}}
                             dragging={false}
                             >
+                            {/* key={this.props.data[0].date} */}
                             {this.props.data[0] != undefined ?
                                 <GeoJSON
-                                key={this.props.data[0].date}
+                                key={this.props.update}
                                 onEachFeature={this.countryAction}
                                 data={countriesData}
-                                style={this.style}/>
+                                style={this.style}
+                                />
                             : '' }
                             
                             <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
-                                <div>
-                                    <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases per million
-                                </div>
-                                <div className="my-1">
-                                    <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case per million
-                                </div>
+                                
+                                {this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ?
+                                    <>
+                                        <div>
+                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases per million
+                                        </div>
+                                        <div className="my-1">
+                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case per million
+                                        </div>
+                                    </>
+                                :
+                                    <>
+                                        <div>
+                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases
+                                        </div>
+                                        <div className="my-1">
+                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case
+                                        </div>
+                                    </>
+                                }
+
                                 <div className="my-1">
                                     <div style={{backgroundColor: '#999'}} className="chart-scale position-relative">&nbsp;</div> No Data
                                 </div>

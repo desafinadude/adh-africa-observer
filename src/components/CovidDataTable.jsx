@@ -116,7 +116,7 @@ export class CovidDataTable extends React.Component {
 
         axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=' + query,
             { headers: {
-                authorization: process.env.REACT_API_KEY
+                "Authorization": process.env.REACT_API_KEY
             }
         }).then((response) => {
 
