@@ -1,4 +1,4 @@
-# ADH CaseTracker
+# ADH Covid Observer
 
 ## Local development
 
