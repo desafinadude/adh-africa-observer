@@ -1,0 +1,31 @@
+{
+    "owid": [{
+            "name": "source",
+            "link": "https://www.ourworldindata.com",
+            "link_text": "www.ourworldindata.com"
+        },
+        {
+            "name": "introductory_paragraph",
+            "title": "How to use the African Covid Monitor",
+            "text": "The African Covid Observer..."
+        },
+        {
+            "name": "table_description",
+            "title": "",
+            "text": ""
+        },
+        {
+            "name": "undefined_data",
+            "title": "",
+            "text": "No data available on this day."
+        },
+        {
+            "name": "problematic_data",
+            "title": "",
+            "text": "This data is incomplete. Data gaps are defined as successive blocks of the same number of daily cases."
+        }
+    ],
+    "acdc": [
+
+    ]
+}

@@ -23,11 +23,6 @@ $border-radius: 6px;
 @import "bootstrap/scss/bootstrap";
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,500;0,600;1,700&display=swap');
 
-
-// div[class*="col"] {
-//     outline: 1px solid red;
-// }
-
 html {
     font-size: 0.8rem;
 }
@@ -104,20 +99,15 @@ body{
 }
 
 .SingleDatePicker_picker {
-    // z-index: 2000 !important;
     position: unset !important;
 }
 
 .SingleDatePickerInput__withBorder {
     border: none !important;
-    
 }
 
 .DayPicker__withBorder {
     box-shadow: unset !important;
-}
-
-.SingleDatePicker > div {
 }
 
 .DateRangePicker_picker {
@@ -158,13 +148,13 @@ body{
 .CalendarDay__selected_span {
     background: $primary !important; 
     border: 1px solid $primary !important; 
-  }
+}
   
-  .CalendarDay__selected {
+.CalendarDay__selected {
     background: $primary !important;
     border: 1px solid $primary !important;
     color: white;
-  }
+}
   
 
 h1 {
@@ -246,6 +236,8 @@ h1 {
     width: 10px !important;
     height: 20px !important;
     margin-right: 6px !important;
+    display: inline-block;
+    border-radius: 4px;
 }
 
 .noUi-target {
@@ -301,47 +293,6 @@ hr {
 
 .cursor-pointer {
     cursor: pointer;
-}
-
-.map-legend .scale100 {
-    background-color: #FF5454 !important;
-}
-
-.map-legend .scale50 {
-    background-color: #FF8585 !important;
-}
-
-.map-legend .scale50abs {
-    background-color: #F4A460 !important;
-}
-
-.map-legend .scale25 {
-    background-color: #FFB7B7 !important;
-}
-
-.map-legend .scale10 {
-    background-color: #FFD1D1 !important;
-}
-
-.map-legend .scale0 {
-    background-color: #FFECEC !important;
-}
-
-.map-legend .scale-10 {
-    background-color: #E0F2FF !important;
-}
-
-.map-legend .scale-25 {
-    background-color: #9DD6FF !important;
-}
-
-.map-legend .scale-50 {
-    background-color: #70C3FF !important;
-}
-
-
-.map-legend .scale-100 {
-    background-color: #2E9FF1 !important;
 }
 
 .map-legend .scale-none {
