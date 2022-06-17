@@ -78,8 +78,8 @@ export class App extends React.Component {
                             countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
                         },
                         prod: {
-                            caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
-                            countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
+                            caseData: '72da1306-e970-4398-9f1a-2a65beeb960e',
+                            countryData: '0509abb8-fb51-4b4d-a9e9-90eb33cf2cdc'
                         }
                         
                     }

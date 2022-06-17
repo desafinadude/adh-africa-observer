@@ -6,26 +6,29 @@
         },
         {
             "name": "introductory_paragraph",
-            "title": "How to use the African Covid Monitor",
-            "text": "The African Covid Observer..."
+            "title": "How to use the ADH Covid Observer",
+            "text": "The ADH Covid Observer is a simple tool to investigate various aspects of the Covid pandemic in an African context. the African narrative has often been neglected and so this dashboard looks at the country specific timelines and cases on the African continent. Journalists are encouraged to use this interactive dashboard to drill down into country specific data, compare variables such as the stringency index with trends in new confirmed cases. The dashboard allows users to download data, and country specific charts. Data is updated daily from Our World in Data."
         },
         {
             "name": "table_description",
-            "title": "",
-            "text": ""
-        },
-        {
-            "name": "undefined_data",
-            "title": "",
-            "text": "No data available on this day."
-        },
-        {
-            "name": "problematic_data",
-            "title": "",
-            "text": "This data is incomplete. Data gaps are defined as successive blocks of the same number of daily cases."
+            "title": "About the Map and List",
+            "text": "Using data from Our World In Data, the map and list ranks countries according to number of new cases in a 7-day rolling window. When viewing cases per million, the rankings are skewed towards smaller countries, so it is also useful and possible to switch between new cases and new cases per million to get a better understanding of the context."
         }
     ],
-    "acdc": [
-
+    "acdc": [{
+            "name": "source",
+            "link": "https://africacdc.org/",
+            "link_text": "africacdc.org"
+        },
+        {
+            "name": "table_description",
+            "title": "About the Map and List",
+            "text": "Using data from Our World In Data, the map and list ranks countries according to number of new cases in a 7-day rolling window. When viewing new cases per million, the rankings are skewed towards smaller countries, so it is also useful and possible to switch between new cases and new cases per million to get a better understanding of the context."
+        },
+        {
+            "name": "introductory_paragraph",
+            "title": "How to use the ADH Covid Observer",
+            "text": "The ADH Covid Observer is a simple tool to investigate various aspects of the Covid pandemic in an African context. the African narrative has often been neglected and so this dashboard looks at the country specific timelines and cases on the African continent. Journalists are encouraged to use this interactive dashboard to drill down into country specific data, compare variables such as the stringency index with trends in new confirmed cases. The dashboard allows users to download data, and country specific charts. Data is updated daily Africa CDC."
+        }
     ]
 }
