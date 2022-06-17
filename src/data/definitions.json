@@ -12,19 +12,19 @@
             "name": "new_cases_smoothed",
             "type": "metric",
             "title": "",
-            "source": "AfricaCDC",
+            "source": "COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University",
             "category": "Confirmed cases",
-            "owid_definition": "",
-            "text": "..."
+            "owid_definition": "New confirmed cases of COVID-19 (7-day smoothed)",
+            "text": "This is different to the total cases which is cumulative.\nData smoothing can be defined as a statistical approach of eliminating outliers from datasets to make the patterns clearer.\n7-day smoothed: average of a 7 day period.\nA full 7 days needs to be included to obtain an accurate picture of the data for the week. \nThis is commonly applied to COVID-19 data because not all health facilities report new cases, deaths or tests on a daily basis.\nThis value is a useful indicator to show the absolute number of new confirmed COVID-19 cases smoothed but it is more common to use new smoothed cases per million when comparing to other countries."
         },
         {
             "name": "new_cases_smoothed_per_million",
             "type": "metric",
             "title": "",
-            "source": "AfricaCDC",
+            "source": "COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University",
             "category": "Confirmed cases",
-            "owid_definition": "",
-            "text": "..."
+            "owid_definition": "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people",
+            "text": "This is different to the total cases which is cumulative.\nData smoothing can be defined as a statistical approach of eliminating outliers from datasets to make the patterns clearer.\n7-day smoothed: average of a 7 day period.\nA full 7 days needs to be included to obtain an accurate picture of the data for the week. \nThis is commonly applied to COVID-19 data because not all health facilities report new cases, deaths or tests on a daily basis.\nCountries around the world each have different population sizes and comparing new confirmed COVID-19 cases between vastly different countries isn't necessarily helpful. By comparing per million, it helps give a relative size and allows better comparisons between countries."
         },
         {
             "name": "total_cases",
