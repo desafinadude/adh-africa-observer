@@ -285,7 +285,7 @@ export class CountryData extends React.Component {
                                     <option value="">{this.state.selectedMetric == '' ? 'Add a comparison metric' : 'Remove comparison metric'}</option>
 
                                     {/* OWID */}
-                                    { this.props.api.dataset != 'acdc' ?
+                                    { this.props.api.dataset != 'acdc1' ?
                                     <>
                                         <option value="new_cases">Confirmed Cases: New Cases</option>
                                         <option value="new_cases_smoothed">Confirmed Cases: New Cases Smoothed</option>
