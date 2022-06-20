@@ -58,10 +58,10 @@ export class App extends React.Component {
                 },
                 data: {
                     owid: {
-                        dev: {
-                            caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
-                            countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118'
-                        },
+                        // dev: {
+                        //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
+                        //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118'
+                        // },
                         // prod: {
                         //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
                         //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118',
@@ -73,13 +73,13 @@ export class App extends React.Component {
                         }
                     },
                     acdc: {
-                        dev: {
-                            caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
-                            countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
-                        },
+                        // dev: {
+                        //     caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
+                        //     countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
+                        // },
                         prod: {
-                            caseData: '72da1306-e970-4398-9f1a-2a65beeb960e',
-                            countryData: '0509abb8-fb51-4b4d-a9e9-90eb33cf2cdc'
+                            caseData: '1b16284b-8fbf-46c7-b940-99e7fdbb8a3e',
+                            countryData: 'f283fdbb-cb46-427f-8fb8-0875c0e659f6'
                         }
                         
                     }

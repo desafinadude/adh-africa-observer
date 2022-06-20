@@ -190,12 +190,30 @@
         }
     ],
     "acdc": [{
+            "name": "new_cases",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed cases",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
             "name": "new_cases_smoothed",
             "type": "metric",
             "title": "",
             "source": "AfricaCDC",
             "category": "Confirmed cases",
-            "owid_definition": "...",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_cases_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed cases",
+            "acdc_definition": "...",
             "text": "..."
         },
         {
@@ -204,7 +222,196 @@
             "title": "",
             "source": "AfricaCDC",
             "category": "Confirmed cases",
-            "owid_definition": "...",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_cases",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed cases",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_cases_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed cases",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_cases_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed cases",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_deaths",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_deaths_smoothed",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_deaths_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_deaths_smoothed_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_deaths",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_deaths_per_million",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Confirmed deaths",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_vaccinations",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Vaccinations",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_people_vaccinated_smoothed",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Vaccinations",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_people_vaccinated_smoothed_per_hundred",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Vaccinations",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_boosters",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Vaccinations",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_boosters_per_hundred",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Vaccinations",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_tests",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_tests_smoothed",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_tests_per_thousand",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "new_tests_smoothed_per_thousand",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_tests",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "total_tests_per_thousand",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
+            "text": "..."
+        },
+        {
+            "name": "positive_rate",
+            "type": "metric",
+            "title": "",
+            "source": "AfricaCDC",
+            "category": "Tests &amp; Positivity",
+            "acdc_definition": "...",
             "text": "..."
         }
     ]
