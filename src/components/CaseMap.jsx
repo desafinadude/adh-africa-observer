@@ -44,7 +44,7 @@ export class CaseMap extends React.Component {
         }
 
         return {
-            fillColor: CaseGradient(color),
+            fillColor: CaseGradient(color, this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 250 : 2500),
             weight: 0.5,
             opacity: 1,
             color: '#fff',
@@ -149,7 +149,7 @@ export class CaseMap extends React.Component {
                                 :
                                     <>
                                         <div>
-                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases
+                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 5000 new cases
                                         </div>
                                         <div className="my-1">
                                             <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case
