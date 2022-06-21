@@ -155,7 +155,6 @@ export class App extends React.Component {
                 "Authorization": process.env.REACT_API_KEY
             }
         }).then(function(response) {
-
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -195,7 +194,7 @@ export class App extends React.Component {
 
             // We're manually setting this now - this is not good and needs to be reworked.
 
-            axios.all([axios.get(queries[0],{ headers: {"Authorization": process.env.REACT_API_KEY}})]).then(axios.spread((...responses) => {
+            axios.all([axios.get(queries[0],{ headers: {"Authorization": process.env.REACT_API_KEY}}),axios.get(queries[1],{ headers: {"Authorization": process.env.REACT_API_KEY}})]).then(axios.spread((...responses) => {
 
                 let data = [];
 
