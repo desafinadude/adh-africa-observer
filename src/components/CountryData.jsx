@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
@@ -12,7 +13,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 // import Tooltip from 'react-bootstrap/Tooltip';
 
 import { ResponsiveContainer, ComposedChart, Bar, Brush, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-
+import { saveAs } from 'file-saver';
 
 import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
@@ -21,7 +22,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 
 import * as definitions from '../data/definitions.json';
-import * as texts from '../data/texts.json';
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -61,15 +61,6 @@ export class CountryData extends React.Component {
             
             let records = _.sortBy(response.data.result.records, ['date']);
 
-            // let records_no_nulls = [];
-                
-            // _.forEach(records, function(record, index) {
-            //     if(record.new_cases_smoothed == 'NaN') {
-            //         record.new_cases_smoothed = 0;
-            //     }
-            //     records_no_nulls.push(record);
-            // })
-
             self.setState({
                 data: records,
                 loading: false
@@ -104,15 +95,6 @@ export class CountryData extends React.Component {
 
                 let records = _.sortBy(response.data.result.records, ['date']);
                 
-                // let records_no_nulls = [];
-                
-                // _.forEach(records, function(record, index) {
-                //     if(record.new_cases_smoothed == 'NaN') {
-                //         record.new_cases_smoothed = 0;
-                //     }
-                //     records_no_nulls.push(record);
-                // })
-
                 self.setState({
                     data: records,
                     loading: false
@@ -130,9 +112,11 @@ export class CountryData extends React.Component {
         this.setState({selectedMetric: e.target.value})
     }
 
-    handleExportChart = () => {
+    downloadChart = () => {
 
-        let chartSVG = ReactDOM.findDOMNode(this.currentChart).children[0];
+        let self = this;
+
+        let chartSVG = document.querySelector('svg.recharts-surface');
         const width = chartSVG.clientWidth;
         const height = chartSVG.clientHeight;
         let svgURL = new XMLSerializer().serializeToString(chartSVG);
@@ -148,10 +132,11 @@ export class CountryData extends React.Component {
             let context = canvas.getContext('2d');
             context.drawImage(image, 0, 0, context.canvas.width, context.canvas.height);
             let png = canvas.toDataURL('image/png', 1.0);
-            FileSaver.saveAs(png, "Test.png");
+            saveAs(png, self.props.selectedCountry[0].iso_code + '--' + self.props.selectedBaseMetric + '--' + self.state.selectedMetric);
         };
 
         image.src = blobURL;
+
     }
     
 
