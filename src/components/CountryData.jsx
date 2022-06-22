@@ -9,8 +9,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import Tooltip from 'react-bootstrap/Tooltip';
+import Spinner from 'react-bootstrap/Spinner';
 
 import { ResponsiveContainer, ComposedChart, Bar, Brush, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { saveAs } from 'file-saver';
@@ -85,6 +84,10 @@ export class CountryData extends React.Component {
         let self = this;
 
         if(snapshot == true) {
+
+            self.setState({
+                loading: true
+            });
 
             axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
                 { headers: {
@@ -281,21 +284,30 @@ export class CountryData extends React.Component {
                                 </Form.Select>   
                             </Col>
                         </Row>
-
-                        {this.state.data != undefined && (
-                        <ResponsiveContainer width="100%" height={400}>
-                            <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
-                                <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('DD/MM') }/>
-                                <YAxis yAxisId="left" orientation="left" stroke="#99b3bb" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
-                                <YAxis yAxisId="right" orientation="right" stroke="#089fd1" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
-                                <CartesianGrid strokeDasharray="3 3"/>
-                                <Tooltip content={<CustomTooltip/>} />
-                                <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill="#99b3bb"/>
-                                {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dot={false} dataKey={this.state.selectedMetric} stroke="#089fd1" />)}
-                                <Brush dataKey="date" height={30} stroke="#8eb4bf"  tickFormatter={ tick => moment(tick).format('DD/MM') }/>
-                            </ComposedChart>
-                        </ResponsiveContainer>)}
-
+                        <div style={{minHeight: '100px'}} className="position-relative">
+                            {this.state.loading && (
+                                <div className="position-absolute top-50 start-50 translate-middle text-center">
+                                    <Spinner animation="grow" />
+                                    <h3 className="mt-4">Loading</h3>
+                                </div>)
+                            }
+                            <>
+                                {this.state.data != undefined && (
+                                    <ResponsiveContainer width="100%" height={400}>
+                                        <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
+                                            <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('DD/MM') }/>
+                                            <YAxis yAxisId="left" orientation="left" stroke="#99b3bb" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
+                                            <YAxis yAxisId="right" orientation="right" stroke="#089fd1" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
+                                            <CartesianGrid strokeDasharray="3 3"/>
+                                            <Tooltip content={<CustomTooltip/>} />
+                                            <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill="#99b3bb"/>
+                                            {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dot={false} dataKey={this.state.selectedMetric} stroke="#089fd1" />)}
+                                            <Brush dataKey="date" height={30} stroke="#8eb4bf"  tickFormatter={ tick => moment(tick).format('DD/MM') }/>
+                                        </ComposedChart>
+                                    </ResponsiveContainer>)
+                                }
+                            </>
+                            </div>
                         <hr/>
                         
                         { this.state.selectedMetric != '' ?
