@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 // import Tooltip from 'react-bootstrap/Tooltip';
 
-import { ResponsiveContainer, ComposedChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, ComposedChart, Bar, Brush, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 
 import getCountryISO2 from 'country-iso-3-to-2';
@@ -23,6 +23,20 @@ import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 import * as definitions from '../data/definitions.json';
 import * as texts from '../data/texts.json';
 
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="custom-tooltip">
+                <strong>{`${moment(label).format('DD/MM/YY')}`}</strong>
+                { payload.map(metric => 
+                    <div style={{color: metric.color}}><strong>{`${metric.name.replaceAll('_',' ')}`}</strong>: {`${Math.round(metric.value)}`}</div>
+                ) }
+            </div>
+        );
+    }
+  
+    return null;
+  };
 
 export class CountryData extends React.Component {
     constructor() {
@@ -116,11 +130,34 @@ export class CountryData extends React.Component {
         this.setState({selectedMetric: e.target.value})
     }
 
+    handleExportChart = () => {
+
+        let chartSVG = ReactDOM.findDOMNode(this.currentChart).children[0];
+        const width = chartSVG.clientWidth;
+        const height = chartSVG.clientHeight;
+        let svgURL = new XMLSerializer().serializeToString(chartSVG);
+        let svgBlob = new Blob([svgURL], { type: "image/svg+xml;charset=utf-8" });
+        let URL = window.URL || window.webkitURL || window;
+        let blobURL = URL.createObjectURL(svgBlob);
+
+        let image = new Image();
+        image.onload = () => {
+            let canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            let context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0, context.canvas.width, context.canvas.height);
+            let png = canvas.toDataURL('image/png', 1.0);
+            FileSaver.saveAs(png, "Test.png");
+        };
+
+        image.src = blobURL;
+    }
     
 
     render() {
         let self = this;
-        let val = null;
+
         return (
             <>
                 <Card className={ window.innerWidth < 800 ? 'mt-5 border-0 rounded' : 'border-0 rounded' }>
@@ -263,13 +300,14 @@ export class CountryData extends React.Component {
                         {this.state.data != undefined && (
                         <ResponsiveContainer width="100%" height={400}>
                             <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
-                                <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('MM/YY') }/>
-                                <YAxis yAxisId="left" orientation="left" stroke="#083745" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
-                                <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
+                                <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('DD/MM') }/>
+                                <YAxis yAxisId="left" orientation="left" stroke="#99b3bb" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
+                                <YAxis yAxisId="right" orientation="right" stroke="#089fd1" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
                                 <CartesianGrid strokeDasharray="3 3"/>
-                                <Tooltip/>
-                                <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill='#083745'/>
-                                {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dataKey={this.state.selectedMetric} stroke="#82ca9d" />)}
+                                <Tooltip content={<CustomTooltip/>} />
+                                <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill="#99b3bb"/>
+                                {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dot={false} dataKey={this.state.selectedMetric} stroke="#089fd1" />)}
+                                <Brush dataKey="date" height={30} stroke="#8eb4bf"  tickFormatter={ tick => moment(tick).format('DD/MM') }/>
                             </ComposedChart>
                         </ResponsiveContainer>)}
 
