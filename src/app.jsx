@@ -652,7 +652,6 @@ export class App extends React.Component {
                                         api={this.state.api}
                                         selectedBaseMetric={this.state.selectedBaseMetric}
                                         selectBaseMetric={this.selectBaseMetric}
-                                        update={this.state.update}
                                     /> 
                                 </Col>
                             </Row>
