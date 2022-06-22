@@ -17,6 +17,17 @@ import { CaseGradient } from '../utils/Gradient';
 
 export class LeaderboardItem extends React.Component {
 
+    checkLocation = (country) => {
+        let location = '';
+        let check_location = _.filter(countriesList, (o) => { return o.iso_code == this.props.country.iso_code });
+        
+        if(check_location.length > 0) {
+            location = check_location[0].location;
+        }
+
+        return location;
+    }
+
     render() {
         return (
             <>
@@ -42,13 +53,17 @@ export class LeaderboardItem extends React.Component {
                         <Col onClick={() => this.props.onCountrySelect(this.props.country)}>
                             <div className="rounded position-relative" style={{height: '2em', background: '#f6f6f6'}}>
                                 <div className="rounded" style={{background: '#E4EAEB', width: '100%', height: '100%'}}></div>
-                                <div className="position-absolute text-truncate display-block" style={{top: '50%', transform: 'translateY(-50%)', left: '0.5em'}}>{_.filter(countriesList, (o) => { return o.iso_code == this.props.country.iso_code })[0].location}</div>
+                                <div className="position-absolute text-truncate display-block" style={{top: '50%', transform: 'translateY(-50%)', left: '0.5em'}}>
+                                    {
+                                        this.checkLocation(this.props.country)
+                                    }
+                                </div>
                             </div>
                         </Col>
                         <Col xs="auto" className="d-grid">
                             <OverlayTrigger
                             placement="left"
-                            overlay={<Tooltip>New Cases Smoothed Per Million</Tooltip>}>
+                            overlay={<Tooltip>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'New Cases Smoothed Per Million' : 'New Cases Smoothed'}</Tooltip>}>
                                 <Button style={{background: CaseGradient(this.props.country[this.props.selectedBaseMetric]), width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
                                     { Math.round(this.props.country[this.props.selectedBaseMetric]) }
                                 </Button>
