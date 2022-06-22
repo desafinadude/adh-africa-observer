@@ -11,6 +11,8 @@ import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 // import Tooltip from 'react-bootstrap/Tooltip';
 
+import { ResponsiveContainer, ComposedChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+
 
 import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
@@ -30,7 +32,6 @@ export class CountryData extends React.Component {
             selectedMetric: '',
             data: undefined,
             loading: true,
-            hoverValue: null
         }
     }
 
@@ -258,6 +259,19 @@ export class CountryData extends React.Component {
                                 </Form.Select>   
                             </Col>
                         </Row>
+
+                        {this.state.data != undefined && (
+                        <ResponsiveContainer width="100%" height={400}>
+                            <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
+                                <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('MM/YY') }/>
+                                <YAxis yAxisId="left" orientation="left" stroke="#083745" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
+                                <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
+                                <CartesianGrid strokeDasharray="3 3"/>
+                                <Tooltip/>
+                                <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill='#083745'/>
+                                {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dataKey={this.state.selectedMetric} stroke="#82ca9d" />)}
+                            </ComposedChart>
+                        </ResponsiveContainer>)}
 
                         <hr/>
                         
