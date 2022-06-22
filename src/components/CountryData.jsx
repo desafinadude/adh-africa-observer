@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import _ from 'lodash';
+import moment from 'moment';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -8,9 +9,10 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+// import Tooltip from 'react-bootstrap/Tooltip';
 
-import ReactECharts from 'echarts-for-react';
+import { ResponsiveContainer, ComposedChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+
 
 import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
@@ -28,20 +30,45 @@ export class CountryData extends React.Component {
         this.state = {
             selectedCountry: '',
             selectedMetric: '',
-            options: {},
-            loading: true
+            data: undefined,
+            loading: true,
         }
     }
 
     componentDidMount() {
         let self = this;
-        this.drawChart();
+
+        axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
+            { headers: {
+                "Authorization": process.env.REACT_API_KEY
+            }
+        })
+        .then(function(response) {
+            
+            let records = _.sortBy(response.data.result.records, ['date']);
+
+            // let records_no_nulls = [];
+                
+            // _.forEach(records, function(record, index) {
+            //     if(record.new_cases_smoothed == 'NaN') {
+            //         record.new_cases_smoothed = 0;
+            //     }
+            //     records_no_nulls.push(record);
+            // })
+
+            self.setState({
+                data: records,
+                loading: false
+            });
+
+            
+        })
 
     }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
         if(this.props.selectedCountry[0].iso_code != prevProps.selectedCountry[0].iso_code ||
-            this.state.selectedMetric != prevState.selectedMetric || this.props.update != prevState.update) {
+            this.state.selectedMetric != prevState.selectedMetric ) {
             return true;
          } else {
             return null;
@@ -50,183 +77,50 @@ export class CountryData extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
 
+        let self = this;
+
         if(snapshot == true) {
 
-            this.drawChart();
+            axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
+                { headers: {
+                    "Authorization": process.env.REACT_API_KEY
+                }
+            })
+            .then(function(response) {
+
+                let records = _.sortBy(response.data.result.records, ['date']);
+                
+                // let records_no_nulls = [];
+                
+                // _.forEach(records, function(record, index) {
+                //     if(record.new_cases_smoothed == 'NaN') {
+                //         record.new_cases_smoothed = 0;
+                //     }
+                //     records_no_nulls.push(record);
+                // })
+
+                self.setState({
+                    data: records,
+                    loading: false
+                });
+
+            })
 
         }
         
     }
 
-    drawChart = () => {
-
-        let self = this;
-
-        const echartInstance = this.echartRef.getEchartsInstance();
-
-        axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
-            { headers: {
-                "Authorization": process.env.REACT_API_KEY
-            }
-        })
-        .then(function(response) {
-
-            let dates = _.map(response.data.result.records,'date');
-
-            let data = _.map(response.data.result.records, self.props.selectedBaseMetric);
-            let overlay = [];
-
-            let series = [
-                {
-                    name: self.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'New Cases Per Million (Smoothed)' : 'New Cases (Smoothed)',
-                    data: data,
-                    type: 'bar',
-                    smooth: true,
-                    itemStyle: {
-                        color: '#93ABB2'
-                    },
-                },
-            ];
-
-            if(self.state.selectedMetric != '') {
-                overlay = _.map(response.data.result.records, self.state.selectedMetric);
-                series.push(
-                    {
-                        name: self.state.selectedMetric,
-                        data: overlay,
-                        type: 'line',
-                        smooth: true,
-                        yAxisIndex: 1,
-                        itemStyle: {
-                            borderWidth: 3,
-                            width: 2,
-                            color: '#094151'
-                        },
-                    },
-                )
-            } else {
-                series.splice(1,1);
-            }
-
-            echartInstance.setOption(
-                {
-                    grid: { top:20, bottom: 80, left: window.innerWidth < 800 ? 30 : 60, right: window.innerWidth < 800 ? 0 : 60},
-                    dataZoom: [
-                        {
-                            type: 'slider',
-                            xAxisIndex: [0],
-                            show: true,
-                            start: 0,
-                            end: 100,
-                            bottom: 10,
-                            labelFormatter: function (value, valueStr) {
-                                return valueStr.split('T')[0];
-                            }
-                        },
-                    ],
-                    yAxis: [
-                        {
-                            
-                            type: 'value',
-                            name: '',
-                            position: 'left',
-                            offset: 0,
-                            axisLabel: {
-                                formatter: '{value}'
-                            }
-                        },
-                        {
-                            type: 'value',
-                            name: '',
-                            position: 'right',
-                            axisLabel: {
-                                formatter: (function(value){
-                                    let val = '';
-                                    if(value >= 1000000) {
-                                        val = value / 1000000 + 'm';
-                                    } else if(value >= 1000) {
-                                        val = value / 1000 + 'k';
-                                    } else {
-                                        val = value;
-                                    } 
-        
-        
-                                    return val;
-                                })
-                            }
-                        }
-                    ],
-                    xAxis: {
-                        type: 'category', 
-                        axisLabel: {
-                            formatter: (function(value){
-                                return value.split('T')[0];
-                            })
-                        },
-                        data: dates,
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        formatter: function (params) {
-                            let label = '<strong>' + params[0].axisValue.split('T')[0] + '</strong><hr/>';
-                            _.forEach(params, function(param) {
-                                let value = Math.round(param.value);
-                                if(param.seriesName == 'positive_rate') {
-                                    value = (Math.round(param.value * 100) / 100) + '%';
-                                }
-                                if(param.seriesName == 'reproduction_rate') {
-                                    value = Math.round(param.value * 100) / 100;
-                                }
-                                label += '<strong style="color: ' + param.color + '; text-transform: capitalize;">' + param.seriesName.replaceAll('_',' ') + '</strong>: ' + value + '<br/>'
-                            })
-        
-                            return label
-                        }
-                    },
-                    series: series
-                    
-                }, true
-            )
-
-            self.setState({loading: false});
-
-        })
-    }
+   
 
     selectMetric = (e) => {
         this.setState({selectedMetric: e.target.value})
     }
 
-    downloadChart = () => {
-        const echartInstance = this.echartRef.getEchartsInstance();
-
-        echartInstance.setOption({
-            graphic: [
-                { 
-                    type: 'image',
-                    left: 'center', 
-                    top: '0%',  
-                    style: {
-                        image: '/adh-logo.svg',
-                        width: 150,
-                        opacity: 0.3
-                    }
-                }
-            ]    
-        })
-        
-        var a = document.createElement("a");
-        a.href = echartInstance.getDataURL({
-            pixelRatio: 2,
-            backgroundColor: '#fff'
-        });
-        a.download = this.props.selectedCountry[0].location;
-        a.click();
-        
-    }
+    
 
     render() {
         let self = this;
+        let val = null;
         return (
             <>
                 <Card className={ window.innerWidth < 800 ? 'mt-5 border-0 rounded' : 'border-0 rounded' }>
@@ -269,11 +163,9 @@ export class CountryData extends React.Component {
                                 <Button className="me-1" size="md" variant={this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'primary' : 'control-grey'} onClick={() => this.props.selectBaseMetric() }>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'HIDE' : 'SHOW' } PER MILLION</Button>
                             </Col>
                             <Col xs={12} md="auto" className={window.innerWidth < 800 ? 'text-center my-3' : 'my-0'}>
-                                <OverlayTrigger
-                                placement="top"
-                                overlay={<Tooltip>Download an image of the current chart.</Tooltip>}>
-                                    <Button onClick={() => this.downloadChart()} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Image</Button>
-                                </OverlayTrigger>
+                                
+                                <Button onClick={() => this.downloadChart()} variant="light-grey" style={{color: "#094151"}}><FontAwesomeIcon icon={faFileDownload} />&nbsp;Download Image</Button>
+                                
                             </Col>
                         </Row>
                         
@@ -367,14 +259,20 @@ export class CountryData extends React.Component {
                                 </Form.Select>   
                             </Col>
                         </Row>
-                        
-                        <ReactECharts
-                        ref={(e) => { this.echartRef = e; }}
-                        option={{}}
-                        style={{height: '400px'}}
-                        showLoading={this.state.loading}
-                        />
-                       
+
+                        {this.state.data != undefined && (
+                        <ResponsiveContainer width="100%" height={400}>
+                            <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
+                                <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('MM/YY') }/>
+                                <YAxis yAxisId="left" orientation="left" stroke="#083745" domain={[0,_.maxBy(this.state.data.map(day => day[this.props.selectedBaseMetric] == 'NaN' ? null : parseInt(day[this.props.selectedBaseMetric])))]}/>
+                                <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" domain={[0,_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseInt(day[this.state.selectedMetric])))]}/>
+                                <CartesianGrid strokeDasharray="3 3"/>
+                                <Tooltip/>
+                                <Bar yAxisId="left" dataKey={this.props.selectedBaseMetric} barSize={20} fill='#083745'/>
+                                {this.state.selectedMetric != '' && (<Line type="monotone" yAxisId="right" dataKey={this.state.selectedMetric} stroke="#82ca9d" />)}
+                            </ComposedChart>
+                        </ResponsiveContainer>)}
+
                         <hr/>
                         
                         { this.state.selectedMetric != '' ?
