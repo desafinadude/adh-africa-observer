@@ -53,15 +53,15 @@ export class App extends React.Component {
            
             api: {
                 url: {
-                    dev: 'https://adhtest.opencitieslab.org/api/3/',
+                    dev: 'https://ckandev.africadatahub.org/api/3/',
                     prod: 'https://ckan.africadatahub.org/api/3/'
                 },
                 data: {
                     owid: {
-                        // dev: {
-                        //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
-                        //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118'
-                        // },
+                        dev: {
+                            caseData: '9cdc672f-7e1e-4d40-91e2-be0d9989c759',
+                            countryData: '65a5b80d-b57a-43d4-bf9c-20cafddc7d60'
+                        },
                         // prod: {
                         //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
                         //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118',
@@ -85,7 +85,7 @@ export class App extends React.Component {
                     }
                 },
                 dataset: 'owid',
-                env: 'prod'
+                env: 'dev'
             },
 
             no_embed_style: {
