@@ -139,6 +139,7 @@ export class App extends React.Component {
 
             let api = self.state.api;
             api.dataset = 'acdc';
+            api.env = 'prod';
 
             self.setState({api: api});
         } else {
@@ -151,7 +152,7 @@ export class App extends React.Component {
         // Fetch data for the latest date...
         axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'")',
             { headers: {
-                "Authorization": process.env.REACT_API_KEY
+                "Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
             }
         }).then(function(response) {
             self.setState({data: response.data.result.records});
@@ -176,7 +177,7 @@ export class App extends React.Component {
 
         axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&include_total=true',
             { headers: {
-                "Authorization": process.env.REACT_API_KEY
+                "Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
                 }
         }).then(function(response) {
 
@@ -193,7 +194,7 @@ export class App extends React.Component {
 
             for (let query = 0; query < queries.length; query++) {
                 
-                queries_get.push(axios.get(queries[query],{ headers: {"Authorization": process.env.REACT_API_KEY}}))
+                queries_get.push(axios.get(queries[query],{ headers: {"Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN}}))
 
             }
 

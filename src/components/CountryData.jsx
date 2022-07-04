@@ -53,7 +53,7 @@ export class CountryData extends React.Component {
 
         axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
             { headers: {
-                "Authorization": process.env.REACT_API_KEY
+                "Authorization": this.props.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
             }
         })
         .then(function(response) {
@@ -91,7 +91,7 @@ export class CountryData extends React.Component {
 
             axios.get(this.props.api.url[this.props.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.data[this.props.api.dataset][this.props.api.env].countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
                 { headers: {
-                    "Authorization": process.env.REACT_API_KEY
+                    "Authorization": this.props.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
                 }
             })
             .then(function(response) {
