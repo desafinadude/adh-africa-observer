@@ -228,6 +228,30 @@ h1 {
     border-radius: 4px;
 }
 
+.chart-gradient-container {
+    position: relative;
+}
+
+.chart-gradient-container .chart-amount {
+    position: absolute;
+    left: 20px;
+    top: 0em;
+    white-space: nowrap;
+}
+
+.chart-gradient-container .chart-amount:last-child {
+    top: unset;
+    bottom: 0;
+}
+
+.chart-gradient {
+    border-radius: 5px;
+    width: 10px;
+    height: 80px;
+    background: rgb(255,238,238);
+    background: linear-gradient(0deg, rgba(255,238,238,1) 0%, rgba(255,84,84,1) 100%);
+}
+
 .noUi-target {
     background: $control-grey !important;
     border: none !important;

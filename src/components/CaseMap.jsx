@@ -139,21 +139,20 @@ export class CaseMap extends React.Component {
                                 
                                 {this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ?
                                     <>
-                                        <div>
-                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases per million
-                                        </div>
-                                        <div className="my-1">
-                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> 0 new case per million
+                                        <div className="chart-gradient-container">
+                                            <div className="chart-amount">&gt; 500 per million</div>
+                                            <div className="chart-gradient"></div>
+                                            <div className="chart-amount">0 per million</div>
                                         </div>
                                     </>
                                 :
                                     <>
-                                        <div>
-                                            <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 5000 new cases
+                                        <div className="chart-gradient-container">
+                                            <div className="chart-amount">&gt; 5000</div>
+                                            <div className="chart-gradient"></div>
+                                            <div className="chart-amount">0</div>
                                         </div>
-                                        <div className="my-1">
-                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> 0 new cases
-                                        </div>
+                                        
                                     </>
                                 }
 
