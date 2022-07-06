@@ -24,22 +24,6 @@ export class Leaderboard extends React.Component {
         
     }
 
-    getSnapshotBeforeUpdate(prevProps, prevState) {
-        if(this.props.selectedBaseMetric != prevProps.selectedBaseMetric) {
-            return true;
-         } else {
-            return null;
-         }
-    }
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        let self = this;
-
-        if (snapshot == true) {
-            
-
-        }
-    }
-
 
     toggleList = () => {
         let self = this;
