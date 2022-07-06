@@ -74,7 +74,7 @@ export class CaseMap extends React.Component {
             if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
                             let selectedBaseMetric = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0][self.props.selectedBaseMetric];
-                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + Math.round(selectedBaseMetric) + '</strong>'); 
+                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + (selectedBaseMetric < 1 ? Math.round(selectedBaseMetric * 100) / 100  : Math.round(selectedBaseMetric)) + '</strong>'); 
                     }, {permanent: true, opacity: 1}  
                 );
             } else {
@@ -143,7 +143,7 @@ export class CaseMap extends React.Component {
                                             <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 500 new cases per million
                                         </div>
                                         <div className="my-1">
-                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case per million
+                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> 0 new case per million
                                         </div>
                                     </>
                                 :
@@ -152,7 +152,7 @@ export class CaseMap extends React.Component {
                                             <div style={{backgroundColor: CaseGradient(1000)}} className="chart-scale position-relative">&nbsp;</div> &gt; 5000 new cases
                                         </div>
                                         <div className="my-1">
-                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> &lt; 1 new case
+                                            <div style={{backgroundColor: CaseGradient(0)}} className="chart-scale position-relative">&nbsp;</div> 0 new cases
                                         </div>
                                     </>
                                 }
