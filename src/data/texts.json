@@ -6,7 +6,7 @@
         },
         {
             "name": "introductory_paragraph",
-            "title": "How to use the ADH Covid Observer",
+            "title": "How to use the COVID-19 Observer",
             "text": "The COVID-19 Observer is a tool developed by the Africa Data Hub that facilitates the interrogation and analysis of COVID-19 data in Africa. The tool provides access to numerous metrics, including case numbers, deaths, testing, vaccinations and interventions. This data is updated daily from Our World In Data (OWID). Users are encouraged to use this interactive tool to drill down into country specific data, to overlay and compare key variables against each other as well as to choose certain time periods or dates. Journalists are also encouraged to download the data for their own analysis."
         },
         {
@@ -27,8 +27,8 @@
         },
         {
             "name": "introductory_paragraph",
-            "title": "How to use the ADH Covid Observer",
-            "text": "The ADH Covid Observer is a simple tool to investigate various aspects of the Covid pandemic in an African context. the African narrative has often been neglected and so this dashboard looks at the country specific timelines and cases on the African continent. Journalists are encouraged to use this interactive dashboard to drill down into country specific data, compare variables such as the stringency index with trends in new confirmed cases. The dashboard allows users to download data, and country specific charts. Data is updated daily by Africa CDC."
+            "title": "How to use the COVID-19 Observer",
+            "text": "The COVID-19 Observer is a tool developed by the Africa Data Hub that facilitates the interrogation and analysis of COVID-19 data in Africa. The tool provides access to numerous metrics, including case numbers, deaths, testing and vaccinations. This data is updated daily from Africa CDC (ACDC). Users are encouraged to use this interactive tool to drill down into country specific data, to overlay and compare key variables against each other as well as to choose certain time periods or dates. Journalists are also encouraged to download the data for their own analysis."
         }
     ]
 }
