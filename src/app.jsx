@@ -435,6 +435,15 @@ export class App extends React.Component {
                        
                             <Container style={this.state.no_embed_style} className="justify-content-between">
 
+                                { document.URL.indexOf('?embed') > -1 &&
+                                    <Row>
+                                        <Col>
+                                            <h1>Covid-19 Observer</h1>
+                                        </Col>
+                                    </Row>
+                                }
+
+
 
                                 { this.state.tab == 'map' ? 
                                     <>
