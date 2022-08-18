@@ -63,23 +63,23 @@ export class LeaderboardItem extends React.Component {
                         <Col xs="auto" className="d-grid">
                             <OverlayTrigger
                             placement="left"
-                            overlay={<Tooltip>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'New Cases Smoothed Per Million' : 'New Cases Smoothed'}</Tooltip>}>
-                                <Button style={{background: CaseGradient(this.props.country[this.props.selectedBaseMetric], this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 250 : 2500), width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
+                            overlay={<Tooltip>{this.props.selectedBaseMetric}</Tooltip>}>
+                                <Button style={{background: CaseGradient(this.props.country[this.props.selectedBaseMetric],50), width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
                                     { Math.round(this.props.country[this.props.selectedBaseMetric]) }
                                 </Button>
                             </OverlayTrigger>
                         </Col>
-                        <Col xs={2} className="d-none d-lg-block">
+                        {/* <Col xs={2} className="d-none d-lg-block">
                             <OverlayTrigger
                             placement="left"
-                            overlay={<Tooltip>New cases over the last 14 days.</Tooltip>}>
+                            overlay={<Tooltip>-</Tooltip>}>
                                 <div>
-                                    <Sparklines data={this.props.country.case_history.replaceAll('nan','0.0').split('|')}>
+                                    <Sparklines data={this.props.country[this.props.selectedBaseMetric].replaceAll('nan','0.0').split('|')}>
                                         <SparklinesLine style={{ strokeWidth: 3, stroke: "#094151", fill: "#B3D2DB", fillOpacity: "1" }}/>
                                     </Sparklines>
                                 </div>
                             </OverlayTrigger>
-                        </Col>
+                        </Col> */}
                        
                     </Row>
                 </div>

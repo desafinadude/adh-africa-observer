@@ -1,0 +1,38 @@
+[
+    {
+        "indicator_name": "Food and non-alcoholic beverages",
+        "indicator_code": "PCPIF_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Housing, Water, Electricity, Gas and Other Fuels",
+        "indicator_code": "PCPIH_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Furnishings, household equipment and routine household maintenance",
+        "indicator_code": "PCPIHO_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Recreation and culture",
+        "indicator_code": "PCPIR_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Consumer Price Index, All items",
+        "indicator_code": "PCPI_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Health",
+        "indicator_code": "PCPIM_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Clothing and footwear",
+        "indicator_code": "PCPIA_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Miscellaneous goods and services",
+        "indicator_code": "PCPIO_PC_CP_A_PT"
+    },
+    {
+        "indicator_name": "Transport",
+        "indicator_code": "PCPIT_PC_CP_A_PT"
+    }
+]

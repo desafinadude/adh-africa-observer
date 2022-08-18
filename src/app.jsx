@@ -16,7 +16,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Modal from 'react-bootstrap/Modal';
 import Accordion from 'react-bootstrap/Accordion';
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
 
 import moment from 'moment';
 
@@ -34,14 +34,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faExclamationTriangle, faRedo, faPlay, faPause, faArrowLeft, faStepForward, faStepBackward, faInfo, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 
 import { Header } from './components/Header';
-import { CaseMap } from './components/CaseMap';
+import { ObserverMap } from './components/ObserverMap';
 import { Leaderboard } from './components/Leaderboard';
 import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
-import { CovidDataTable } from './components/CovidDataTable';
+import { DataExplorer } from './components/DataExplorer';
 
 import * as texts from './data/texts.json';
+
+import * as indicators from './data/indicators.json';
+
+import * as settings from './data/settings.json';
+
+
 
 
 export class App extends React.Component {
@@ -51,42 +57,7 @@ export class App extends React.Component {
         super();
         this.state = {
            
-            api: {
-                url: {
-                    dev: 'https://ckandev.africadatahub.org/api/3/',
-                    prod: 'https://ckan.africadatahub.org/api/3/'
-                },
-                data: {
-                    owid: {
-                        dev: {
-                            caseData: '9cdc672f-7e1e-4d40-91e2-be0d9989c759',
-                            countryData: '65a5b80d-b57a-43d4-bf9c-20cafddc7d60'
-                        },
-                        // prod: {
-                        //     caseData: 'c7c03399-021e-4339-ad9d-93aee8aa950a',
-                        //     countryData: 'b2b6b48a-3685-4e1a-8d8c-8aab5bae3118',
-                        //     definitions: 'c070bdc8-59df-4d11-bc2d-cf0fa5e425fe'
-                        // },
-                        prod: {
-                            caseData: '72da1306-e970-4398-9f1a-2a65beeb960e',
-                            countryData: '0509abb8-fb51-4b4d-a9e9-90eb33cf2cdc'
-                        }
-                    },
-                    acdc: {
-                        // dev: {
-                        //     caseData: '75e4ca59-8971-41f6-a54b-e182297685fa',
-                        //     countryData: '1b14898d-d74c-4eb5-a97d-fd45e3f36c49'
-                        // },
-                        prod: {
-                            caseData: '1b16284b-8fbf-46c7-b940-99e7fdbb8a3e',
-                            countryData: 'f283fdbb-cb46-427f-8fb8-0875c0e659f6'
-                        }
-                        
-                    }
-                },
-                dataset: 'owid',
-                env: 'dev'
-            },
+            api: settings.api,
 
             no_embed_style: {
                 paddingTop: '20px'
@@ -114,7 +85,7 @@ export class App extends React.Component {
             selectedCountries: [],
             ref: null,
 
-            selectedBaseMetric: 'new_cases_smoothed',
+            selectedBaseMetric: settings.map.selectedBaseMetric,
             update: 0,
 
             focused: false
@@ -126,6 +97,7 @@ export class App extends React.Component {
     }
 
     componentDidMount() {
+
         let self = this;
 
         if(document.URL.indexOf('?embed') == -1) {
@@ -135,26 +107,18 @@ export class App extends React.Component {
             self.setState({no_embed_style: { paddingTop: paddingTop }})
         }
 
-        if(document.URL.indexOf('acdc') > -1) {
-
-            let api = self.state.api;
-            api.dataset = 'acdc';
-            api.env = 'prod';
-
-            self.setState({api: api});
-        } else {
-
-            self.setState({loggedIn: true});
-        
-        }
-
+        self.setState({loggedIn: true});
 
         // Fetch data for the latest date...
-        axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'"%20WHERE%20date%20IN%20(SELECT%20max(date)%20FROM%20"' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData +'")',
+        // Check Date/date capitalization
+
+
+        axios.get(self.state.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + self.state.api.overviewData +'"%20WHERE%20Date%20IN%20(SELECT%20max(Date)%20FROM%20"' + self.state.api.overviewData +'")',
             { headers: {
-                "Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
+                "Authorization": process.env.CKAN
             }
         }).then(function(response) {
+
             self.setState({data: response.data.result.records});
             let dates = _.map(_.uniqBy(response.data.result.records, 'date'),'date');
             self.setState({
@@ -175,9 +139,9 @@ export class App extends React.Component {
        
         //  CKAN returns a max of 32000 rows. Find out how many row there are in the entire set.
 
-        axios.get(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&include_total=true',
+        axios.get(self.state.api.url + 'action/datastore_search?resource_id=' + self.state.api.overviewData + '&include_total=true',
             { headers: {
-                "Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN
+                "Authorization": process.env.CKAN
                 }
         }).then(function(response) {
 
@@ -187,14 +151,14 @@ export class App extends React.Component {
 
             for (let count = 0; count < Math.ceil(response.data.result.total / 32000); count++) {
                 let offset = count > 0 ? '&offset=' + (count * 32000) : '';
-                queries.push(self.state.api.url[self.state.api.env] + 'action/datastore_search?resource_id=' + self.state.api.data[self.state.api.dataset][self.state.api.env].caseData + '&limit=32000' + offset);
+                queries.push(self.state.api.url + 'action/datastore_search?resource_id=' + self.state.api.overviewData + '&limit=32000' + offset);
             }
 
             let queries_get = [];
 
             for (let query = 0; query < queries.length; query++) {
                 
-                queries_get.push(axios.get(queries[query],{ headers: {"Authorization": self.state.api.env == 'dev' ? process.env.CKANDEV : process.env.CKAN}}))
+                queries_get.push(axios.get(queries[query],{ headers: {"Authorization": process.env.CKAN}}))
 
             }
 
@@ -202,12 +166,15 @@ export class App extends React.Component {
 
             axios.all(queries_get).then(axios.spread((...responses) => {
 
+
                 let data = [];
 
                 for (let count = 0; count < responses.length; count++) {
                     let response = responses[count];
                     data = data.concat(response.data.result.records);
                 }
+
+                
 
                 self.setState({
                     data: data
@@ -373,7 +340,7 @@ export class App extends React.Component {
 
     switchTab() {
         let self = this;
-        self.setState({tab: this.state.tab == 'map' ? 'datatable' : 'map'});
+        self.setState({tab: this.state.tab == 'map' ? 'dataexplorer' : 'map'});
     }
 
     countryRemove = (country) => {
@@ -383,12 +350,13 @@ export class App extends React.Component {
         self.setState({selectedCountries: keepCountries});
     }
 
-    selectBaseMetric = () => {
+    selectBaseMetric = (e) => {
+
         let self = this;
         self.setState({
             currentDate: self.state.currentDate,
             currentDateCount: self.state.currentDateCount,
-            selectedBaseMetric: this.state.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'new_cases_smoothed' : 'new_cases_smoothed_per_million'
+            selectedBaseMetric: e.target.value
         }, () => {
             self.setState({
                 selectedDateData: self.orderData(self.state.currentDateCount), // This must execute after setState above so that self.state.selectedBaseMetric is updated.
@@ -436,95 +404,39 @@ export class App extends React.Component {
                             <Container style={this.state.no_embed_style} className="justify-content-between">
 
                                 { document.URL.indexOf('?embed') == -1 &&
-                                    <Row>
+                                    <Row className="mb-4">
                                         <Col>
-                                            <h1>COVID-19 Observer</h1>
+                                            <h1>{settings.title}</h1>
+                                            <h2>{settings.subtitle}</h2>
+                                        </Col>
+                                        <Col xs="auto">
+                                            {/* <div className="d-none d-md-block">
+                                                <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
+                                                <Button size="md" variant={this.state.tab == 'dataexplorer' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATA EXPLORER</Button>
+                                            </div> */}
+                                            <div className="d-md-none">
+                                                <Button className="me-1" size="md" variant={this.state.showIntro == true ? 'primary' : 'control-grey'} onClick={() => this.setState({ showIntro: !this.state.showIntro }) }>About</Button>
+                                            </div>
                                         </Col>
                                     </Row>
                                 }
+                                    <Modal show={this.state.showIntro} onHide={() => this.setState({showIntro: false})} centered>
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>How it works</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            
 
-
-
-                                { this.state.tab == 'map' ? 
-                                    <>
-                                        <Row className="mt-4 d-none d-md-block">
-                                            <Col><h5>Select a country: </h5></Col>
-                                        </Row>
-                                        
-                                            <>
-                                                <Row className="mt-2 mb-4">
-
-                                                    <Col xs="auto">
-
-                                                        <DropdownButton title={this.selectedCountry()} className="country-select">
-                                                            {countriesList.map((country,index) => (
-                                                                <Dropdown.Item key={country.iso_code} onClick={() => this.countrySelect({iso_code: country.iso_code, location: country.location})}>
-                                                                    <div style={{width: '1.5em', height: '1.5em', borderRadius: '50%', overflow: 'hidden', position: 'relative', display: 'inline-block'}} className="border">
-                                                                        <ReactCountryFlag
-                                                                        svg
-                                                                        countryCode={getCountryISO2(country.iso_code)}
-                                                                        style={{
-                                                                            position: 'absolute', 
-                                                                            top: '30%',
-                                                                            left: '30%',
-                                                                            marginTop: '-50%',
-                                                                            marginLeft: '-50%',
-                                                                            fontSize: '2em',
-                                                                            lineHeight: '2em',
-                                                                        }}/>
-                                                                    </div>
-                                                                    <div className="text-black d-inline-block ms-1" style={{position: 'relative', top: '-5px'}}>{country.location}</div>
-                                                                </Dropdown.Item>
-                                                            ))}
-                                                        </DropdownButton>
-
-                                                    </Col>
-                                                    
-
-                                                    <Col></Col>
-                                                
-                                                
-                                                    <Col xs="auto" className="align-self-center">
-                                                        <div className="d-none d-md-block">
-                                                            <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
-                                                            <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
-                                                        </div>
-                                                        <div className="d-md-none">
-                                                            <Button className="me-1" size="md" variant={this.state.showIntro == true ? 'primary' : 'control-grey'} onClick={() => this.setState({ showIntro: !this.state.showIntro }) }>About</Button>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-
-                                                <Modal show={this.state.showIntro} onHide={() => this.setState({showIntro: false})} centered>
-                                                    <Modal.Header closeButton>
-                                                        <Modal.Title>How it works</Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body>
-                                                        
-
-                                                        <Accordion className="d-md-none mt-2">
-                                                            <Accordion.Item eventKey="0">
-                                                                <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</Accordion.Header>
-                                                                <Accordion.Body>
-                                                                    <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
-                                                                </Accordion.Body>
-                                                            </Accordion.Item>
-                                                        </Accordion>
-                                                    </Modal.Body>
-                                                </Modal>
-                                            </>
-                                    </>
-                                :  
-                                <div className="py-2">
-                                    <Row>
-                                        <Col></Col>
-                                        <Col xs="auto" className="align-self-center">
-                                            <Button className="me-1" size="md" variant={this.state.tab == 'map' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() }>MAP</Button>
-                                            <Button size="md" variant={this.state.tab == 'datatable' ? 'primary' : 'control-grey'} onClick={() => this.switchTab() } className="me-3">DATATABLE</Button>
-                                        </Col>
-                                    </Row>
-                                </div>}
-
+                                            <Accordion className="d-md-none mt-2">
+                                                <Accordion.Item eventKey="0">
+                                                    {/* <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</Accordion.Header>
+                                                    <Accordion.Body>
+                                                        <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
+                                                    </Accordion.Body> */}
+                                                </Accordion.Item>
+                                            </Accordion>
+                                        </Modal.Body>
+                                    </Modal>
 
                                 {this.state.selectedCountries.length > 0 && window.innerWidth < 800 ? ''  :
                                     
@@ -539,8 +451,7 @@ export class App extends React.Component {
                                                                 'en-gb',
                                                                 {
                                                                 year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
+                                                                month: 'long'
                                                                 }
                                                             )
                                                         } <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize:"14px"}} color="#094151" className="cursor-pointer"/>
@@ -667,18 +578,20 @@ export class App extends React.Component {
                                         api={this.state.api}
                                         selectedBaseMetric={this.state.selectedBaseMetric}
                                         selectBaseMetric={this.selectBaseMetric}
+                                        indicators={indicators}
                                     /> 
                                 </Col>
                             </Row>
                         :
                             <Row>
                                 <Col lg={6} className="mb-4">
-                                        <CaseMap
+                                        <ObserverMap
                                             onCountrySelect={this.countrySelect}
                                             data={this.state.selectedDateDataMap}
                                             api={this.state.api}
                                             selectedBaseMetric={this.state.selectedBaseMetric}
                                             selectBaseMetric={this.selectBaseMetric}
+                                            indicators={indicators}
                                             update={this.state.update}
                                         />
                                 </Col>
@@ -689,6 +602,7 @@ export class App extends React.Component {
                                         playingTimeline={this.state.playingTimeline}
                                         api={this.state.api}
                                         selectedBaseMetric={this.state.selectedBaseMetric}
+                                        selectBaseMetric={this.selectBaseMetric}
                                     />
                                 </Col>
                             </Row>
@@ -698,7 +612,7 @@ export class App extends React.Component {
                     <Container className="my-4" fluid>
                         <Row>
                             <Col>
-                                <CovidDataTable 
+                                <DataExplorer 
                                     currentDate={this.state.currentDate}
                                     api={this.state.api}
                                 />

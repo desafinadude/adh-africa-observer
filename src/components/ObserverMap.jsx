@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -16,7 +17,7 @@ import * as definitions from '../data/definitions.json';
 import * as texts from '../data/texts.json';
 
 
-export class CaseMap extends React.Component {
+export class ObserverMap extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -44,7 +45,7 @@ export class CaseMap extends React.Component {
         }
 
         return {
-            fillColor: CaseGradient(color, this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 250 : 2500),
+            fillColor: CaseGradient(color, 50),
             weight: 0.5,
             opacity: 1,
             color: '#fff',
@@ -107,11 +108,16 @@ export class CaseMap extends React.Component {
                     <Card.Body>
                         <Row>
                             <Col className="pt-2">
-                                <h5 className="d-inline">{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'New Cases Per Million (Smoothed)' : 'New Cases (Smoothed)' }</h5>
+                                {/* <h5 className="d-inline">{_.find(this.props.indicators, (indicator) => indicator.indicator_code == this.props.selectedBaseMetric)['indicator_name']}</h5> */}
+                                <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.props.selectBaseMetric}>
+                                    { this.props.indicators.map((indicator, index) => 
+                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
+                                    ) }
+                                </Form.Select>
                             </Col>
-                            <Col xs="auto">
+                            {/* <Col xs="auto">
                                 <Button className="me-1" size="md" variant={this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'primary' : 'control-grey'} onClick={() => this.props.selectBaseMetric() }>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'HIDE' : 'SHOW' } PER MILLION</Button>
-                            </Col>
+                            </Col> */}
                         </Row>
                         <hr/>
                         <MapContainer 
@@ -163,12 +169,12 @@ export class CaseMap extends React.Component {
                         </MapContainer>
                         <hr/>
                         <Row className="align-items-center">
-                            <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span></Col>
+                            {/* <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span></Col> */}
                         </Row>
                         <hr className="d-none d-md-block"/>
                         <div className="d-none d-md-block">
-                            <h6 className="mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
-                            <p className="text-black-50 mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
+                            {/* <h6 className="mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6> */}
+                            {/* <p className="text-black-50 mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p> */}
                         </div>
                     </Card.Body>
                 </Card>

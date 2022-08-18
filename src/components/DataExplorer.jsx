@@ -36,7 +36,7 @@ import * as texts from '../data/texts.json';
 import moment from 'moment';
 
 
-export class CovidDataTable extends React.Component {
+export class DataExplorer extends React.Component {
     constructor() {
         super();
         this.state = {
