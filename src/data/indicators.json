@@ -1,5 +1,9 @@
 [
     {
+        "indicator_name": "Consumer Price Index, All items",
+        "indicator_code": "PCPI_PC_CP_A_PT"
+    },
+    {
         "indicator_name": "Food and non-alcoholic beverages",
         "indicator_code": "PCPIF_PC_CP_A_PT"
     },
@@ -14,10 +18,6 @@
     {
         "indicator_name": "Recreation and culture",
         "indicator_code": "PCPIR_PC_CP_A_PT"
-    },
-    {
-        "indicator_name": "Consumer Price Index, All items",
-        "indicator_code": "PCPI_PC_CP_A_PT"
     },
     {
         "indicator_name": "Health",

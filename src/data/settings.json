@@ -2,13 +2,13 @@
     "title": "Africa Observer",
     "subtitle": "Inflation Data",
     "map": {
-        "selectedBaseMetric": "PCPIF_PC_CP_A_PT"
+        "selectedBaseMetric": "PCPI_PC_CP_A_PT"
     },
     "leaderboard": {
-        "selectedBaseMetric": "PCPIF_PC_CP_A_PT"
+        "selectedBaseMetric": "PCPI_PC_CP_A_PT"
     },
     "countryChart": {
-        "selectedBaseMetric": "PCPIF_PC_CP_A_PT"
+        "selectedBaseMetric": "PCPI_PC_CP_A_PT"
     },
     "api": {
         "url": "https://ckan.africadatahub.org/api/3/",
