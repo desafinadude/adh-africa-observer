@@ -217,8 +217,21 @@ export class App extends React.Component {
     };
 
     orderData = (dateCount) => {
+
         let self = this;
-        return _.orderBy(_.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount] && o[self.state.selectedBaseMetric] != null && o[self.state.selectedBaseMetric] != 'NaN') }),[self.state.selectedBaseMetric],['desc']);
+
+        let filteredData = _.filter(self.state.data, function(o) { return (o.date == self.state.dates[dateCount]) });
+
+        filteredData.forEach((d,i) => {
+            for (let key in d) {
+                if (key != 'Country' && key != 'date' && key != 'iso_code') {
+                    d[key] = parseInt(d[key]);
+                }
+            }
+        })
+        filteredData = _.orderBy(filteredData,[self.state.selectedBaseMetric],['desc']);
+
+        return filteredData;
     }
 
     orderMapData = (dateCount) => {
@@ -230,7 +243,6 @@ export class App extends React.Component {
 
     onUpdate = (render, handle, value, un, percent) => {
         let self = this;
-
         this.setState({
           currentDate: this.state.dates[parseInt(value[0]-1)],
           currentDateCount: parseInt(value[0]-1),
@@ -294,6 +306,7 @@ export class App extends React.Component {
     }
 
     stepTimeline = (direction) => {
+        
         let self = this;
         this.setState({
             currentDate: self.state.dates[direction == 'forward' ? self.state.currentDateCount + 1 : self.state.currentDateCount - 1],
@@ -603,6 +616,7 @@ export class App extends React.Component {
                                         api={this.state.api}
                                         selectedBaseMetric={this.state.selectedBaseMetric}
                                         selectBaseMetric={this.selectBaseMetric}
+                                        update={this.state.update}
                                     />
                                 </Col>
                             </Row>
