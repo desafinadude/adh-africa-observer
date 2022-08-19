@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import parse from 'html-react-parser';
+
 import axios from 'axios';
 import _ from 'lodash';
 import './app.scss';
@@ -40,8 +42,6 @@ import { CountryData } from './components/CountryData';
 
 import * as countriesList from './data/countries.json';
 import { DataExplorer } from './components/DataExplorer';
-
-import * as texts from './data/texts.json';
 
 import * as indicators from './data/indicators.json';
 
@@ -435,19 +435,10 @@ export class App extends React.Component {
                                 }
                                     <Modal show={this.state.showIntro} onHide={() => this.setState({showIntro: false})} centered>
                                         <Modal.Header closeButton>
-                                            <Modal.Title>How it works</Modal.Title>
+                                            <Modal.Title>About this tool</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                            
-
-                                            <Accordion className="d-md-none mt-2">
-                                                <Accordion.Item eventKey="0">
-                                                    {/* <Accordion.Header>{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</Accordion.Header>
-                                                    <Accordion.Body>
-                                                        <p className="text-black-50 mt-3">{_.filter(texts[this.state.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p>
-                                                    </Accordion.Body> */}
-                                                </Accordion.Item>
-                                            </Accordion>
+                                            {parse(_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].text)}
                                         </Modal.Body>
                                     </Modal>
 
@@ -467,7 +458,8 @@ export class App extends React.Component {
                                                                 month: 'long'
                                                                 }
                                                             )
-                                                        } <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize:"14px"}} color="#094151" className="cursor-pointer"/>
+                                                        } 
+                                                        {/* <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize:"14px"}} color="#094151" className="cursor-pointer"/> */}
                                                     </h1>
 
                                                     <Modal show={this.state.focused} onHide={() => this.setState({focused: false})} centered>

@@ -1,4 +1,5 @@
 import React from 'react';
+import parse from 'html-react-parser';
 import _ from 'lodash';
 
 import Row from 'react-bootstrap/Row';
@@ -14,7 +15,7 @@ import { CaseGradient } from '../utils/Gradient';
 import { countriesData } from '../data/geojson/africa.js';
 
 import * as definitions from '../data/definitions.json';
-import * as texts from '../data/texts.json';
+import * as settings from '../data/settings.json';
 
 
 export class ObserverMap extends React.Component {
@@ -108,16 +109,12 @@ export class ObserverMap extends React.Component {
                     <Card.Body>
                         <Row>
                             <Col className="pt-2">
-                                {/* <h5 className="d-inline">{_.find(this.props.indicators, (indicator) => indicator.indicator_code == this.props.selectedBaseMetric)['indicator_name']}</h5> */}
                                 <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.props.selectBaseMetric}>
                                     { this.props.indicators.map((indicator, index) => 
                                         <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
                                     ) }
                                 </Form.Select>
                             </Col>
-                            {/* <Col xs="auto">
-                                <Button className="me-1" size="md" variant={this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'primary' : 'control-grey'} onClick={() => this.props.selectBaseMetric() }>{this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ? 'HIDE' : 'SHOW' } PER MILLION</Button>
-                            </Col> */}
                         </Row>
                         <hr/>
                         <MapContainer 
@@ -142,25 +139,12 @@ export class ObserverMap extends React.Component {
                             : '' }
                             
                             <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
-                                
-                                {this.props.selectedBaseMetric == 'new_cases_smoothed_per_million' ?
-                                    <>
-                                        <div className="chart-gradient-container">
-                                            <div className="chart-amount">&gt; 500 per million</div>
-                                            <div className="chart-gradient"></div>
-                                            <div className="chart-amount">0 per million</div>
-                                        </div>
-                                    </>
-                                :
-                                    <>
-                                        <div className="chart-gradient-container">
-                                            <div className="chart-amount">&gt; 5000</div>
-                                            <div className="chart-gradient"></div>
-                                            <div className="chart-amount">0</div>
-                                        </div>
-                                        
-                                    </>
-                                }
+                               
+                                <div className="chart-gradient-container">
+                                    <div className="chart-amount">&gt; 100</div>
+                                    <div className="chart-gradient"></div>
+                                    <div className="chart-amount">0</div>
+                                </div>
 
                                 <div className="my-1">
                                     <div style={{backgroundColor: '#999'}} className="chart-scale position-relative">&nbsp;</div> No Data
@@ -169,12 +153,12 @@ export class ObserverMap extends React.Component {
                         </MapContainer>
                         <hr/>
                         <Row className="align-items-center">
-                            {/* <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span></Col> */}
+                            <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(settings.texts, function(def) { return def.name == 'source'})[0].link}>{_.filter(settings.texts, function(def) { return def.name == 'source'})[0].link_text}</a></span></Col>
                         </Row>
                         <hr className="d-none d-md-block"/>
                         <div className="d-none d-md-block">
-                            {/* <h6 className="mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6> */}
-                            {/* <p className="text-black-50 mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'introductory_paragraph'})[0].text}</p> */}
+                            <h6 className="mt-3">{_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
+                            <p className="text-black-50 mt-3">{parse(_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].text)}</p>
                         </div>
                     </Card.Body>
                 </Card>

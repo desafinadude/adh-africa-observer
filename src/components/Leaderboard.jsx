@@ -8,7 +8,7 @@ import FlipMove from 'react-flip-move';
 import { LeaderboardItem } from './LeaderboardItem';
 import _ from 'lodash';
 
-import * as texts from '../data/texts.json';
+import * as settings from '../data/settings.json';
 
 
 export class Leaderboard extends React.Component {
@@ -60,13 +60,8 @@ export class Leaderboard extends React.Component {
                         }
                        
                         <hr/>
-                        <div className="d-none d-md-block">
-                            {/* <h6 className="mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'table_description'})[0].title}</h6> */}
-                            {/* <p className="text-black-50 mt-3">{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'table_description'})[0].text}</p> */}
-                        </div>
-                        <hr/>
                         <Row className="align-items-center">
-                            {/* <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link}>{_.filter(texts[this.props.api.dataset], function(def) { return def.name == 'source'})[0].link_text}</a></span></Col> */}
+                            <Col><span className="text-black-50">Source: <a className="text-black-50" target="_blank" href={_.filter(settings.texts, function(def) { return def.name == 'source'})[0].link}>{_.filter(settings.texts, function(def) { return def.name == 'source'})[0].link_text}</a></span></Col>
                         </Row>
                     </Card.Body>
                 </Card>
