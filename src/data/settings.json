@@ -1,6 +1,6 @@
 {
-    "title": "Africa Observer",
-    "subtitle": "Inflation indicators for African countries",
+    "title": "Africa Observer: Consumer Price Inflation (CPI)",
+    "subtitle": "Search and visualise inflation indicators for African countries (2008-2022)",
     "map": {
         "selectedBaseMetric": "PCPI_PC_CP_A_PT"
     },
@@ -19,12 +19,12 @@
         {
             "name": "source",
             "link": "https://ckan.africadatahub.org/dataset/inflation-data-for-africa",
-            "link_text": "Africa Data Hub"
+            "link_text": "IMF, Various national agencies, Africa Data Hub"
         },
         {
             "name": "introductory_paragraph",
             "title": "",
-            "text": "<p>This explorer uses data from the IMF, the Kenyan National Bureau of Statistics and the Ugandan Bureau of Statistics to monitor consumer price inflation (CPI) data on a monthly basis across all countries. You can use this tool to view the data by indicator (for example food prices or transport), or by annual or monthly change.</p><p>Click on a country name to view detailed charts that can be downloaded or embedded in articles.</p><p>The underlying data for this tool is available here. You can see our series of articles about inflation data in Africa here. A list of national-level authorities that publish inflation data is available here.</p>"
+            "text": "<p>The Africa Data Hub Consumer Price Indicator Explorer is created to help journalists, researchers and civil society organisations access up to date information about inflation indicators in their country and compare it with their neighbours. All numbers shown are percentage change, year-on-year, for the given indicator.</p>"
         }
     ]
 }

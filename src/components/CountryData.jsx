@@ -194,7 +194,8 @@ export class CountryData extends React.Component {
                     <Card.Body>
                         <Row className="justify-content-between">
                            
-                            <Col className="d-flex align-items-center">
+                            <Col>
+                                <h3 className="mb-0 text-primary">Monthly inflation rates in Africa:</h3>
                                 {self.state.selectedMetric != '' &&
                                     <h4 className="mb-0 align-middle">{
                                     _.find(this.props.indicators, indicator => { return indicator.indicator_code == self.state.selectedMetric}).indicator_name

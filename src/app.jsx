@@ -489,7 +489,7 @@ export class App extends React.Component {
                                                 <Col lg={9}>
                                                     { this.state.loadingComplete ?
                                                     <>
-                                                        <h5 className="mt-1">Scrub the timeline to change date:</h5>
+                                                        <h5 className="mt-1">Select a time period to show or press play for a month-by-month animation:</h5>
                                                         <Row className="sticky-top">
                                                             <Col xs="auto">
                                                                 <OverlayTrigger
@@ -595,8 +595,9 @@ export class App extends React.Component {
                                         <Card className="border-0 rounded mb-3">
                                             <Card.Body>
                                                 <Row>
-                                                    <Col className="d-flex align-items-center">
-                                                        <h4 className="mb-0 align-middle">{_.find(indicators, indicator => { return indicator.indicator_code == this.state.selectedBaseMetric}).indicator_name}</h4>
+                                                    <Col>
+                                                        <h3 className="mb-0 text-primary">Monthly inflation rates in Africa:</h3>
+                                                        <h4 className="mb-0 text-info">{_.find(indicators, indicator => { return indicator.indicator_code == this.state.selectedBaseMetric}).indicator_name}</h4>
                                                     </Col>
                                                     <Col xs={2}>
                                                         <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectBaseMetric}>
