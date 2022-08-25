@@ -64,8 +64,8 @@ export class LeaderboardItem extends React.Component {
                             <OverlayTrigger
                             placement="left"
                             overlay={<Tooltip>{this.props.selectedBaseMetric}</Tooltip>}>
-                                <Button style={{background: CaseGradient(this.props.country[this.props.selectedBaseMetric],50), width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
-                                    { Math.round(this.props.country[this.props.selectedBaseMetric]) }
+                                <Button style={{background: this.props.country[this.props.selectedBaseMetric] > 0 ? CaseGradient(this.props.country[this.props.selectedBaseMetric], 37.5) : this.props.country[this.props.selectedBaseMetric] < 0 ? '#089fd1' : '#999', width: '80px', height: '2em'}} className="border-0 badge-inc-dec px-0 py-0">
+                                    { this.props.country[this.props.selectedBaseMetric] }%
                                 </Button>
                             </OverlayTrigger>
                         </Col>

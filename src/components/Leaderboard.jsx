@@ -43,7 +43,7 @@ export class Leaderboard extends React.Component {
                         {this.props.playingTimeline == true ?
                             <FlipMove>
                                 {self.props.data.map((country,index) => {
-                                    if(country[this.props.selectedBaseMetric] >= 1) {
+                                    if(!isNaN(country[this.props.selectedBaseMetric])) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} selectedBaseMetric={this.props.selectedBaseMetric}/>
                                     }
                                 })}
@@ -51,7 +51,7 @@ export class Leaderboard extends React.Component {
                         :
                             <>
                                 {self.props.data.map((country,index) => {
-                                    if(country[this.props.selectedBaseMetric] >= 1) {
+                                    if(!isNaN(country[this.props.selectedBaseMetric])) {
                                         return <LeaderboardItem index={index} key={country.iso_code} country={country} onCountrySelect={self.props.onCountrySelect} selectedBaseMetric={this.props.selectedBaseMetric}/>
                                     }
                                 })}

@@ -18,8 +18,8 @@
     "texts": [
         {
             "name": "source",
-            "link": "https://www.imf.org",
-            "link_text": "International Monetary Fund"
+            "link": "https://ckan.africadatahub.org/dataset/inflation-data-for-africa",
+            "link_text": "Africa Data Hub"
         },
         {
             "name": "introductory_paragraph",

@@ -19,6 +19,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Modal from 'react-bootstrap/Modal';
 import Accordion from 'react-bootstrap/Accordion';
 import Form from 'react-bootstrap/Form';
+import Card from 'react-bootstrap/Card';
 
 import moment from 'moment';
 
@@ -225,7 +226,7 @@ export class App extends React.Component {
         filteredData.forEach((d,i) => {
             for (let key in d) {
                 if (key != 'Country' && key != 'date' && key != 'iso_code') {
-                    d[key] = parseInt(d[key]);
+                    d[key] = parseFloat(d[key]);
                 }
             }
         })
@@ -588,30 +589,54 @@ export class App extends React.Component {
                                 </Col>
                             </Row>
                         :
-                            <Row>
-                                <Col lg={6} className="mb-4">
-                                        <ObserverMap
+                            <>
+                                <Row>
+                                    <Col>
+                                        <Card className="border-0 rounded mb-3">
+                                            <Card.Body>
+                                                <Row>
+                                                    <Col className="d-flex align-items-center">
+                                                        <h4 className="mb-0 align-middle">{_.find(indicators, indicator => { return indicator.indicator_code == this.state.selectedBaseMetric}).indicator_name}</h4>
+                                                    </Col>
+                                                    <Col xs={2}>
+                                                        <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectBaseMetric}>
+                                                            
+                                                            { indicators.map((indicator, index) => 
+                                                                <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
+                                                            ) }
+                                                        </Form.Select>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                    <Col lg={6} className="mb-4">
+                                            <ObserverMap
+                                                onCountrySelect={this.countrySelect}
+                                                data={this.state.selectedDateDataMap}
+                                                api={this.state.api}
+                                                selectedBaseMetric={this.state.selectedBaseMetric}
+                                                selectBaseMetric={this.selectBaseMetric}
+                                                indicators={indicators}
+                                                update={this.state.update}
+                                            />
+                                    </Col>
+                                    <Col>
+                                        <Leaderboard 
+                                            data={this.state.selectedDateData}
                                             onCountrySelect={this.countrySelect}
-                                            data={this.state.selectedDateDataMap}
+                                            playingTimeline={this.state.playingTimeline}
                                             api={this.state.api}
                                             selectedBaseMetric={this.state.selectedBaseMetric}
                                             selectBaseMetric={this.selectBaseMetric}
-                                            indicators={indicators}
                                             update={this.state.update}
                                         />
-                                </Col>
-                                <Col>
-                                    <Leaderboard 
-                                        data={this.state.selectedDateData}
-                                        onCountrySelect={this.countrySelect}
-                                        playingTimeline={this.state.playingTimeline}
-                                        api={this.state.api}
-                                        selectedBaseMetric={this.state.selectedBaseMetric}
-                                        selectBaseMetric={this.selectBaseMetric}
-                                        update={this.state.update}
-                                    />
-                                </Col>
-                            </Row>
+                                    </Col>
+                                </Row>
+                            </>
                         }
                     </Container>
                 :

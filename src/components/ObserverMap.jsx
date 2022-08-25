@@ -46,7 +46,7 @@ export class ObserverMap extends React.Component {
         }
 
         return {
-            fillColor: CaseGradient(color, 50),
+            fillColor: color > 0 ? CaseGradient(color, 37.5) : color < 0 ? '#089fd1' : '#ccc',
             weight: 0.5,
             opacity: 1,
             color: '#fff',
@@ -76,7 +76,7 @@ export class ObserverMap extends React.Component {
             if(e.target.feature.properties.adm0_a3 != 'SOL' && e.target.feature.properties.adm0_a3 != 'SAH') {
                 layer.bindTooltip(function (layer) {
                             let selectedBaseMetric = _.filter(self.props.data, function(o) { return o.iso_code == e.target.feature.properties.adm0_a3})[0][self.props.selectedBaseMetric];
-                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + (selectedBaseMetric < 1 ? Math.round(selectedBaseMetric * 100) / 100  : Math.round(selectedBaseMetric)) + '</strong>'); 
+                            return ('<strong>' + e.target.feature.properties.name + '<br/>' + (isNaN(selectedBaseMetric) ? '-' : selectedBaseMetric + '%') + '</strong>'); 
                     }, {permanent: true, opacity: 1}  
                 );
             } else {
@@ -107,16 +107,7 @@ export class ObserverMap extends React.Component {
             <>
                 <Card className="border-0 rounded">
                     <Card.Body>
-                        <Row>
-                            <Col className="pt-2">
-                                <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.props.selectBaseMetric}>
-                                    { this.props.indicators.map((indicator, index) => 
-                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
-                                    ) }
-                                </Form.Select>
-                            </Col>
-                        </Row>
-                        <hr/>
+                        
                         <MapContainer 
                             center={[-0, 20]}
                             zoom={2.5}
@@ -141,9 +132,9 @@ export class ObserverMap extends React.Component {
                             <div className="position-absolute fw-bold map-legend" style={{bottom: 0}}>
                                
                                 <div className="chart-gradient-container">
-                                    <div className="chart-amount">&gt; 100</div>
+                                    <div className="chart-amount">&gt; 75%</div>
                                     <div className="chart-gradient"></div>
-                                    <div className="chart-amount">0</div>
+                                    <div className="chart-amount">0%</div>
                                 </div>
 
                                 <div className="my-1">
@@ -158,7 +149,7 @@ export class ObserverMap extends React.Component {
                         <hr className="d-none d-md-block"/>
                         <div className="d-none d-md-block">
                             <h6 className="mt-3">{_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].title}</h6>
-                            <p className="text-black-50 mt-3">{parse(_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].text)}</p>
+                            <div className="text-black-50 mt-3">{parse(_.filter(settings.texts, function(def) { return def.name == 'introductory_paragraph'})[0].text)}</div>
                         </div>
                     </Card.Body>
                 </Card>
