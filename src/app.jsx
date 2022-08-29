@@ -417,11 +417,11 @@ export class App extends React.Component {
                        
                             <Container style={this.state.no_embed_style} className="justify-content-between">
 
-                                { document.URL.indexOf('?embed') == -1 &&
+                                
                                     <Row className="mb-4">
                                         <Col>
                                             <h1>{settings.title}</h1>
-                                            <h2>{settings.subtitle}</h2>
+                                            <h3>{settings.subtitle}</h3>
                                         </Col>
                                         <Col xs="auto">
                                             {/* <div className="d-none d-md-block">
@@ -433,7 +433,7 @@ export class App extends React.Component {
                                             </div>
                                         </Col>
                                     </Row>
-                                }
+                                
                                     <Modal show={this.state.showIntro} onHide={() => this.setState({showIntro: false})} centered>
                                         <Modal.Header closeButton>
                                             <Modal.Title>About this tool</Modal.Title>
