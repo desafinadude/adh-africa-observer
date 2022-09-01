@@ -420,8 +420,11 @@ export class App extends React.Component {
                                 
                                     <Row className="mb-4">
                                         <Col>
-                                            <h1>{settings.title}</h1>
-                                            <h3>{settings.subtitle}</h3>
+                                            { document.URL.indexOf('?embed') == -1 &&
+                                            <>
+                                                <h1>{settings.title}</h1>
+                                                <h3>{settings.subtitle}</h3>
+                                            </> }
                                         </Col>
                                         <Col xs="auto">
                                             {/* <div className="d-none d-md-block">
