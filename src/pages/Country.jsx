@@ -83,43 +83,7 @@ export class Country extends React.Component {
         })
     }
 
-    // getSnapshotBeforeUpdate(prevProps, prevState) {
-    //     if(this.props.match.params.isocode != prevProps.match.params.isocode ||
-    //         this.state.selectedMetric != prevState.selectedMetric ) {
-    //         return true;
-    //      } else {
-    //         return null;
-    //      }
-    // }
-
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-
-    //     let self = this;
-
-    //     console.log('hihi')
-
-    //     if(snapshot == true) {
-
-    //         self.setState({
-    //             loading: true
-    //         });
-
-    //         axios.get(settings.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + settings.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + self.state.selectedCountry + '%27',
-    //             { headers: {
-    //                 "Authorization": process.env.CKAN
-    //             }
-    //         })
-    //         .then(function(response) {
-    //             let records = _.sortBy(response.data.result.records, ['date']);
-    //             self.setState({
-    //                 data: records,
-    //                 loading: false
-    //             });
-    //         })
-    //     }
-        
-    // }
-
+    
    
 
     selectMetric = (e) => {
@@ -208,7 +172,7 @@ export class Country extends React.Component {
                                 {this.state.data != undefined && (
                                     <ResponsiveContainer width="100%" height={400}>
                                         <ComposedChart data={this.state.data} margin={{top: 20, right: 0, bottom: 0, left: 0}}>
-                                            <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('MM/YY') }/>
+                                            <XAxis dataKey="date" tickFormatter={ tick => moment(tick).format('MMM YY') } interval={11}/>
 
                                             <YAxis yAxisId="left" orientation="left" stroke="#99b3bb" domain={[_.minBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseFloat(day[this.state.selectedMetric]))),_.maxBy(this.state.data.map(day => day[this.state.selectedMetric] == 'NaN' ? null : parseFloat(day[this.state.selectedMetric])))]}/>
                                             
