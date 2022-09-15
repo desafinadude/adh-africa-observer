@@ -1,9 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+
 import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
@@ -14,15 +15,19 @@ import Spinner from 'react-bootstrap/Spinner';
 import { ResponsiveContainer, ComposedChart, Bar, Brush, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { saveAs } from 'file-saver';
 
+import { CountrySelect } from '../components/CountrySelect';
+
 import getCountryISO2 from 'country-iso-3-to-2';
 import ReactCountryFlag from 'react-country-flag';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 
-import * as definitions from '../data/definitions.json';
-
 import * as settings from '../data/settings.json';
+import { locationToUrl, urlToLocation, locationToISO } from '../utils/func.js';
+
+
+
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -37,14 +42,16 @@ const CustomTooltip = ({ active, payload, label }) => {
     }
   
     return null;
-  };
+};
 
-export class CountryData extends React.Component {
+export class Country extends React.Component {
+
     constructor() {
         super();
         this.state = {
-            selectedCountry: '',
-            selectedMetric: '',
+            selectedCountry: undefined,
+            selectedCountryIso2: undefined,
+            selectedMetric: settings.countryChart.selectedBaseMetric,
             data: undefined,
             loading: true,
         }
@@ -53,7 +60,11 @@ export class CountryData extends React.Component {
     componentDidMount() {
         let self = this;
 
-        axios.get(this.props.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
+        let country = urlToLocation(window.location.pathname.replace('/',''));
+
+        console.log(country);
+
+        axios.get(settings.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + settings.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + country.iso_code + '%27',
             { headers: {
                 "Authorization": process.env.CKAN
             }
@@ -63,57 +74,51 @@ export class CountryData extends React.Component {
             let records = _.sortBy(response.data.result.records, ['date']);
 
             self.setState({
-                selectedMetric: self.props.selectedBaseMetric,
+                selectedCountry: country,
+                selectedCountryIso2: getCountryISO2(country.iso_code),
+                selectedMetric: settings.countryChart.selectedBaseMetric,
                 data: records,
                 loading: false
             });
-
-            
         })
-
     }
 
-    getSnapshotBeforeUpdate(prevProps, prevState) {
-        if(this.props.selectedCountry[0].iso_code != prevProps.selectedCountry[0].iso_code ||
-            this.state.selectedMetric != prevState.selectedMetric ) {
-            return true;
-         } else {
-            return null;
-         }
-    }
+    // getSnapshotBeforeUpdate(prevProps, prevState) {
+    //     if(this.props.match.params.isocode != prevProps.match.params.isocode ||
+    //         this.state.selectedMetric != prevState.selectedMetric ) {
+    //         return true;
+    //      } else {
+    //         return null;
+    //      }
+    // }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    // componentDidUpdate(prevProps, prevState, snapshot) {
 
-        let self = this;
+    //     let self = this;
 
-        if(snapshot == true) {
+    //     console.log('hihi')
 
-            self.setState({
-                loading: true
-            });
+    //     if(snapshot == true) {
 
-            axios.get(this.props.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + this.props.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + this.props.selectedCountry[0].iso_code + '%27',
-                { headers: {
-                    "Authorization": process.env.CKAN
-                }
-            })
-            .then(function(response) {
+    //         self.setState({
+    //             loading: true
+    //         });
 
-                console.log(response);
-
-                let records = _.sortBy(response.data.result.records, ['date']);
-                
-                self.setState({
-                    data: records,
-                    loading: false
-                });
-
-            })
-
-        }
-
+    //         axios.get(settings.api.url + 'action/datastore_search_sql?sql=SELECT%20*%20from%20"' + settings.api.countryData + '"%20WHERE%20iso_code%20LIKE%20%27' + self.state.selectedCountry + '%27',
+    //             { headers: {
+    //                 "Authorization": process.env.CKAN
+    //             }
+    //         })
+    //         .then(function(response) {
+    //             let records = _.sortBy(response.data.result.records, ['date']);
+    //             self.setState({
+    //                 data: records,
+    //                 loading: false
+    //             });
+    //         })
+    //     }
         
-    }
+    // }
 
    
 
@@ -146,88 +151,52 @@ export class CountryData extends React.Component {
             context.fillText('Africa Data Hub', canvas.width - 250, 30);
             context.drawImage(image, 0, 0, context.canvas.width-10, context.canvas.height-10);
             let jpeg = canvas.toDataURL('image/jpeg', 1.0);
-            saveAs(jpeg, self.props.selectedCountry[0].iso_code + '--' + _.find(this.props.indicators, indicator => { return indicator.indicator_code == self.state.selectedMetric}).indicator_name);
+            saveAs(jpeg, self.state.selectedCountry + '--' + _.find(settings.indicators, indicator => { return indicator.indicator_code == self.state.selectedMetric}).indicator_name);
         };
 
         image.src = blobURL;
 
     }
-    
 
     render() {
         let self = this;
 
+       
+
         return (
-            <>  
+            <Container>  
                 <Card className={ window.innerWidth < 800 ? 'mt-5 border-0 rounded' : 'border-0 rounded' }>
                     <Card.Body>
-                        <Row className="gx-2 align-items-center">
-                            <Col xs="auto">
-                                <Button variant="light-grey" style={{color: "#094151"}} onClick={() => self.props.onDeselectCountry() }><FontAwesomeIcon icon={faArrowLeft} />&nbsp;Back</Button>
-                            </Col>
-                            <Col xs="auto">
-                                <div style={{width: '2em', height: '2em', borderRadius: '50%', overflow: 'hidden', position: 'relative'}} className="border">
-                                    {this.props.selectedCountry[0].iso_code != undefined ?
-                                        <ReactCountryFlag
-                                        svg
-                                        countryCode={getCountryISO2(this.props.selectedCountry[0].iso_code)}
-                                        style={{
-                                            position: 'absolute', 
-                                            top: '30%',
-                                            left: '30%',
-                                            marginTop: '-50%',
-                                            marginLeft: '-50%',
-                                            fontSize: '2.8em',
-                                            lineHeight: '2.8em',
-                                        }}/> : ''
-                                    }
-                                </div>
+                        <Row className="gx-2 row-eq-height">
+                            <Col>
+                                <CountrySelect />
                             </Col>
                             <Col>
-                                <div>{this.props.selectedCountry[0].location}</div>
+                                <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6', height: '100%'}} onChange={this.selectMetric}>
+                                    { settings.indicators.map((indicator, index) => 
+                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
+                                    ) }
+                                </Form.Select>
                             </Col>
                         </Row>
                     </Card.Body>
                 </Card>
 
-                <Card className="border-0 rounded mt-4">
+                <Card className="border-0 rounded mt-4 py-4">
                     <Card.Body>
-                        <Row className="justify-content-between">
-                           
-                            <Col>
-                                <h3 className="mb-0 text-primary">Monthly inflation rates in Africa:</h3>
+                        <Row>
+                            <Col className="text-center">
+                                <h3 className="mb-0 text-primary">Monthly inflation rates in <mark>{this.state.selectedCountry != undefined ? this.state.selectedCountry.location : ''}</mark>:</h3>
                                 {self.state.selectedMetric != '' &&
                                     <h4 className="mb-0 align-middle">{
-                                    _.find(this.props.indicators, indicator => { return indicator.indicator_code == self.state.selectedMetric}).indicator_name
+                                    _.find(settings.indicators, indicator => { return indicator.indicator_code == self.state.selectedMetric}).indicator_name
                                     }</h4>
                                 }
                             </Col>
-                            <Col xs={2}>
-                                <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
-                                    { this.props.indicators.map((indicator, index) => 
-                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
-                                    ) }
-                                </Form.Select>
-                            </Col>
-                            
                         </Row>
                         
                         <hr/>
-                        {/* <Row className="mb-5"> */}
-                            {/* <Col xs="auto" className="position-relative"><div className="position-relative top-50 start-50 translate-middle"><strong>Overlay dataset:</strong></div></Col> */}
-                            {/* <Col xs="auto"> */}
-                                {/* <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.selectMetric}>
-                                    { this.props.indicators.map((indicator, index) => 
-                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
-                                    ) }
-                                </Form.Select> */}
-                                {/* <Form.Select className="border-0 me-1" style={{backgroundColor: '#F6F6F6'}} onChange={this.props.selectBaseMetric}>
-                                    { this.props.indicators.map((indicator, index) => 
-                                        <option key={indicator.indicator_code} value={indicator.indicator_code}>{indicator.indicator_name}</option>
-                                    ) }
-                                </Form.Select> */}
-                            {/* </Col> */}
-                        {/* </Row> */}
+                        
                         <div style={{minHeight: '100px'}} className="position-relative">
                             {this.state.loading && (
                                 <div className="position-absolute top-50 start-50 translate-middle text-center">
@@ -276,7 +245,7 @@ export class CountryData extends React.Component {
                 </Card>
 
 
-            </>
+            </Container>
         );
     }
 }
